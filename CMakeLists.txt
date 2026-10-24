@@ -1,0 +1,126 @@
+# AI Terra mower HMI firmware
+#
+# Target build:
+#   cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/arm-none-eabi.cmake \
+#         -DSTM32CUBE_H7=/path/to/STM32CubeH7 -DGUI_BACKEND=touchgfx
+#   cmake --build build
+#
+# Host unit tests (no hardware, no vendor SDK):  make -C tests
+
+cmake_minimum_required(VERSION 3.22)
+project(mower_hmi C CXX ASM)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_CXX_STANDARD 17)
+
+set(PAL_PORT     "stm32h7" CACHE STRING "PAL port directory under pal/port")
+set(GUI_BACKEND  "touchgfx" CACHE STRING "touchgfx | qtmcu | none")
+set(STM32CUBE_H7 "" CACHE PATH "STM32CubeH7 firmware package root")
+
+if(NOT STM32CUBE_H7)
+  message(FATAL_ERROR "Set -DSTM32CUBE_H7=<path to STM32CubeH7 package>")
+endif()
+
+# ---- portable code (identical on every MCU) --------------------------------
+set(PORTABLE_SRC
+  lib/crc.c
+  drivers/w25q/w25q.c
+  drivers/rtc/rv3028.c
+  drivers/gnss/nmea.c
+  drivers/touch/gt911.c
+  drivers/psoc_link/psoc_link.c
+  middleware/j1939/j1939.c
+  middleware/j1939/j1939_signals.c
+  services/vehicle_data.c
+  services/datalog.c
+  services/nvstore.c
+  services/fuel_runtime.c
+  services/gps_services.c
+  services/anomaly.c
+  services/fleet_ble.c
+  gui/ui_model.c
+  app/app_tasks.c
+  app/main.c
+  pal/osal/osal_freertos.c
+)
+
+set(PORTABLE_INC
+  config lib pal/include drivers drivers/w25q drivers/rtc drivers/gnss drivers/touch
+  drivers/psoc_link middleware/j1939 services gui app
+)
+
+# ---- MCU port ----------------------------------------------------------------
+file(GLOB PORT_SRC pal/port/${PAL_PORT}/*.c)
+
+set(CUBE_HAL ${STM32CUBE_H7}/Drivers/STM32H7xx_HAL_Driver)
+set(CUBE_HAL_MODULES
+  hal hal_cortex hal_rcc hal_rcc_ex hal_pwr hal_pwr_ex hal_gpio hal_dma hal_dma_ex hal_mdma
+  hal_fdcan hal_uart hal_uart_ex hal_i2c hal_i2c_ex hal_qspi hal_ltdc hal_ltdc_ex hal_dma2d
+  hal_sdram ll_fmc hal_flash hal_flash_ex hal_iwdg hal_tim hal_tim_ex
+)
+set(CUBE_SRC)
+foreach(m ${CUBE_HAL_MODULES})
+  list(APPEND CUBE_SRC ${CUBE_HAL}/Src/stm32h7xx_${m}.c)
+endforeach()
+list(APPEND CUBE_SRC
+  ${STM32CUBE_H7}/Drivers/CMSIS/Device/ST/STM32H7xx/Source/Templates/system_stm32h7xx.c
+  ${STM32CUBE_H7}/Drivers/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h743xx.s
+)
+
+set(RTOS ${STM32CUBE_H7}/Middlewares/Third_Party/FreeRTOS/Source)
+set(RTOS_SRC
+  ${RTOS}/tasks.c ${RTOS}/queue.c ${RTOS}/list.c ${RTOS}/timers.c
+  ${RTOS}/portable/GCC/ARM_CM7/r0p1/port.c ${RTOS}/portable/MemMang/heap_4.c
+)
+
+# CubeMX-generated board support (MSP init, stm32h7xx_hal_conf.h, it.c, TIM6 timebase)
+file(GLOB BOARD_SRC board/stm32h743_mower/cubemx/Src/*.c)
+
+add_executable(mower_hmi.elf ${PORTABLE_SRC} ${PORT_SRC} ${CUBE_SRC} ${RTOS_SRC} ${BOARD_SRC})
+
+target_include_directories(mower_hmi.elf PRIVATE
+  ${PORTABLE_INC}
+  pal/port/${PAL_PORT}
+  board/stm32h743_mower/cubemx/Inc
+  ${CUBE_HAL}/Inc
+  ${STM32CUBE_H7}/Drivers/CMSIS/Device/ST/STM32H7xx/Include
+  ${STM32CUBE_H7}/Drivers/CMSIS/Include
+  ${RTOS}/include
+  ${RTOS}/portable/GCC/ARM_CM7/r0p1
+)
+
+target_compile_definitions(mower_hmi.elf PRIVATE STM32H743xx USE_HAL_DRIVER)
+target_compile_options(mower_hmi.elf PRIVATE
+  $<$<COMPILE_LANGUAGE:C>:-Wall -Wextra -Wno-unused-parameter>
+  -Os -g3
+)
+target_link_options(mower_hmi.elf PRIVATE
+  -T${CMAKE_SOURCE_DIR}/linker/stm32h743xi_app.ld
+  -Wl,-Map=mower_hmi.map,--print-memory-usage
+)
+target_link_libraries(mower_hmi.elf PRIVATE m)
+
+# ---- GUI backend -------------------------------------------------------------
+if(GUI_BACKEND STREQUAL "touchgfx")
+  # TouchGFX Designer project lives in gui/touchgfx/designer (generated code + libtouchgfx)
+  set(TGFX gui/touchgfx/designer/TouchGFX)
+  file(GLOB_RECURSE TGFX_SRC ${TGFX}/gui/src/*.cpp ${TGFX}/generated/*.cpp ${TGFX}/target/*.cpp)
+  target_sources(mower_hmi.elf PRIVATE ${TGFX_SRC} gui/touchgfx/gui_backend_touchgfx.cpp gui/touchgfx/Model.cpp)
+  target_include_directories(mower_hmi.elf PRIVATE gui/touchgfx ${TGFX}/gui/include
+    ${TGFX}/generated/gui_generated/include ${TGFX}/generated/images/include
+    ${TGFX}/generated/fonts/include ${TGFX}/generated/texts/include ${TGFX}/../Middlewares/ST/touchgfx/framework/include)
+  target_link_libraries(mower_hmi.elf PRIVATE
+    ${CMAKE_SOURCE_DIR}/${TGFX}/../Middlewares/ST/touchgfx/lib/core/cortex_m7/gcc/libtouchgfx-float-abi-hard.a)
+elseif(GUI_BACKEND STREQUAL "qtmcu")
+  # Qt for MCUs: use the Qul CMake package; qul_target_qml_sources() adds Dashboard.qml
+  find_package(Qul REQUIRED)
+  target_sources(mower_hmi.elf PRIVATE gui/qtmcu/gui_backend_qt.cpp)
+  qul_target_qml_sources(mower_hmi.elf gui/qtmcu/Dashboard.qml)
+  qul_target_generate_interfaces(mower_hmi.elf gui/qtmcu/VehicleBridge.h)
+  target_link_libraries(mower_hmi.elf PRIVATE Qul::Core Qul::Platform)
+endif()
+
+add_custom_command(TARGET mower_hmi.elf POST_BUILD
+  COMMAND ${CMAKE_OBJCOPY} -O binary mower_hmi.elf mower_hmi.bin
+  COMMAND ${CMAKE_SIZE} mower_hmi.elf)
