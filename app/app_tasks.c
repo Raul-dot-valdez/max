@@ -16,6 +16,7 @@
 #include <math.h>
 #include <string.h>
 
+#include "ai_health.h"
 #include "anomaly.h"
 #include "board_config.h"
 #include "datalog.h"
@@ -737,6 +738,20 @@ static void task_app(void *arg)
             }
             osal_mutex_unlock(mtx_app);
 
+            /* edge-AI health classifier (same code on the STM32H743 and GD32H759 paths) */
+            if (fs.engine_running) {
+#define VDF(id) (v.valid[id] ? v.value[id] : NAN)
+                const float smp[AI_F_COUNT] = { VDF(VD_ENGINE_RPM), VDF(VD_ENGINE_LOAD_PCT), VDF(VD_COOLANT_C),
+                                                VDF(VD_OIL_PRESS_KPA), VDF(VD_FUEL_RATE_LPH), VDF(VD_HYD_OIL_C),
+                                                VDF(VD_AMBIENT_C), VDF(VD_WHEEL_SPEED_KMH), blade ? 1.0f : 0.0f };
+#undef VDF
+                ai_health_result_t ar;
+                if (ai_health_push(smp, &ar) && ar.new_alert)
+                    app_log_event(EV_AI_HEALTH, ar.cls, (int32_t)(ar.prob * 100.0f));
+            } else {
+                ai_health_reset();
+            }
+
             if (v.valid[VD_COOLANT_C] && v.value[VD_COOLANT_C] > trip.max_coolant) trip.max_coolant = v.value[VD_COOLANT_C];
             if (v.valid[VD_HYD_OIL_C] && v.value[VD_HYD_OIL_C] > trip.max_hyd) trip.max_hyd = v.value[VD_HYD_OIL_C];
 
@@ -861,6 +876,7 @@ void app_init(void)
     load_persisted();
     fr_init(&fuel_cfg, &counters, app_log_event);
     an_init(&an_model, app_log_event);
+    ai_health_init(); /* inactive when no AI backend is linked */
     gps_svc_init(cov_grid, deck_width_m, app_log_event);
     for (uint8_t i = 0; i < GEOFENCE_SLOTS; i++) {
         geofence_t g;

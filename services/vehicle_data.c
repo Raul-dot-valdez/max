@@ -18,6 +18,7 @@ static const uint32_t k_timeout_ms[VD_COUNT] = {
     [VD_HYD_OIL_C]       = 3000,  /* VF 1 s */
     [VD_BLADE_ENGAGED]   = 1000,
     [VD_DECK_HEIGHT_MM]  = 3000,
+    [VD_AMBIENT_C]       = 3000,  /* AMB 1 s */
 };
 
 #define DM1_TIMEOUT_MS 3500u /* DM1 is sent every 1 s; drop a source after 3 misses */

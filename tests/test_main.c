@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "ai_backend.h"
+#include "ai_health.h"
 #include "anomaly.h"
 #include "crc.h"
 #include "datalog.h"
@@ -583,6 +585,68 @@ static void test_fleet_ble(void)
     free(s.mem);
 }
 
+/* ---- edge-AI health module (shared by both MCU paths) with a stub backend ---- */
+
+static float stub_last_x[60 * 9];
+static int stub_calls;
+static float stub_probs[4] = { 1, 0, 0, 0 };
+static pal_status_t stub_init(void) { return PAL_OK; }
+static pal_status_t stub_infer(const float *x, float *p) { memcpy(stub_last_x, x, sizeof(stub_last_x)); memcpy(p, stub_probs, sizeof(stub_probs)); stub_calls++; return PAL_OK; }
+static const ai_backend_t stub_backend = { "stub", stub_init, stub_infer };
+const ai_backend_t *ai_backend_get(void) { return &stub_backend; }
+
+static void sample(float *f, float rpm, float cool, float oilp, float hyd)
+{
+    float v[AI_F_COUNT] = { rpm, 50, cool, oilp, 3.6f, hyd, 22, 10, 1 };
+    memcpy(f, v, sizeof(v));
+}
+
+static void test_ai_health(void)
+{
+    puts("ai_health");
+    ai_health_result_t r;
+    float f[AI_F_COUNT];
+    CHECK(ai_health_init() == PAL_OK);
+    int results = 0;
+    for (int t = 1; t <= 120; t++) {
+        sample(f, 2900, 85, 290, 60);
+        if (ai_health_push(f, &r)) results++;
+    }
+    CHECK(results == 3 && stub_calls == 3);              /* first at 60 s, then every 30 s */
+    CHECK(r.cls == AI_CLASS_NORMAL && !r.alert);
+    /* normalisation: rpm 2900 -> (2900 - mean) / std, oldest sample first */
+    NEAR(stub_last_x[0], (2900 - 2894.845459) / 221.851395, 1e-4);
+
+    /* rules: hot coolant with blades engaged -> screen clog, alert on the second repeat */
+    for (int t = 0; t < 30; t++) { sample(f, 2900, 99, 290, 60); ai_health_push(f, &r); }
+    CHECK(r.cls == AI_CLASS_SCREEN_CLOG && r.rule_cls == AI_CLASS_SCREEN_CLOG && !r.alert);
+    bool raised = false;
+    for (int t = 0; t < 30; t++) { sample(f, 2900, 99, 290, 60); if (ai_health_push(f, &r)) raised = r.new_alert; }
+    CHECK(r.alert && raised);
+
+    /* model owns low oil: rules see nothing (pressure 180 kPa > 150), model says low oil */
+    ai_health_reset();
+    stub_probs[0] = 0.1f; stub_probs[2] = 0.9f;
+    for (int t = 0; t < 90; t++) { sample(f, 2900, 85, 180, 60); ai_health_push(f, &r); }
+    CHECK(r.cls == AI_CLASS_LOW_OIL && r.model_cls == AI_CLASS_LOW_OIL && r.rule_cls == AI_CLASS_NORMAL && r.alert);
+
+    /* rules override the model for hydraulic overheat */
+    for (int t = 0; t < 30; t++) { sample(f, 2900, 85, 290, 96); ai_health_push(f, &r); }
+    CHECK(r.cls == AI_CLASS_HYD_OVERHEAT && r.model_cls == AI_CLASS_LOW_OIL);
+
+    /* not-available values hold the last valid sample; no result before every feature was seen */
+    ai_health_init();
+    stub_probs[0] = 1; stub_probs[2] = 0;
+    float nan_f[AI_F_COUNT];
+    for (int i = 0; i < AI_F_COUNT; i++) nan_f[i] = NAN;
+    CHECK(!ai_health_push(nan_f, &r));
+    for (int t = 0; t < 59; t++) { sample(f, 2900, 85, 290, 60); ai_health_push(f, &r); }
+    f[AI_F_OILP] = NAN;
+    CHECK(ai_health_push(f, &r) && r.cls == AI_CLASS_NORMAL);
+    NEAR(stub_last_x[59 * 9 + AI_F_OILP], (290 - 288.332642) / 38.168674, 1e-4);
+    CHECK(strcmp(ai_class_name(AI_CLASS_LOW_OIL), "low_oil") == 0);
+}
+
 int main(void)
 {
     test_crc();
@@ -595,6 +659,7 @@ int main(void)
     test_gps();
     test_anomaly();
     test_fleet_ble();
+    test_ai_health();
     printf("\n%d checks, %d failed\n", g_checks, g_fail);
     return g_fail ? 1 : 0;
 }

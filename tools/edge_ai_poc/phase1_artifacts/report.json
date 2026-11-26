@@ -1,0 +1,145 @@
+{
+  "split_windows": {
+    "train": 23927,
+    "val": 4492,
+    "test": 4590
+  },
+  "train_class_counts": {
+    "normal": 21416,
+    "screen_clog": 1346,
+    "low_oil": 497,
+    "hyd_overheat": 668
+  },
+  "test_class_counts": {
+    "normal": 3733,
+    "screen_clog": 204,
+    "low_oil": 529,
+    "hyd_overheat": 124
+  },
+  "candidates": {
+    "lstm": {
+      "float_macro_f1": 0.9468,
+      "float_per_class_f1": {
+        "normal": 0.986,
+        "screen_clog": 0.831,
+        "low_oil": 0.986,
+        "hyd_overheat": 0.984
+      },
+      "float_accuracy": 0.978,
+      "params": 3732,
+      "macs_per_inference": 190528,
+      "fp32_tflite_bytes": 24124
+    },
+    "cnn": {
+      "float_macro_f1": 0.9052,
+      "float_per_class_f1": {
+        "normal": 0.969,
+        "screen_clog": 0.758,
+        "low_oil": 0.917,
+        "hyd_overheat": 0.976
+      },
+      "float_accuracy": 0.9505,
+      "params": 3148,
+      "macs_per_inference": 43648,
+      "fp32_tflite_bytes": 16272
+    }
+  },
+  "deployment_model": "cnn (M1b)",
+  "macro_f1": {
+    "cnn_float": 0.9052,
+    "cnn_int8": 0.9077,
+    "lstm_float": 0.9468,
+    "rules_baseline": 0.9145,
+    "hybrid_rules_plus_cnn_int8": 0.9601
+  },
+  "per_class_f1": {
+    "float": {
+      "normal": 0.969,
+      "screen_clog": 0.758,
+      "low_oil": 0.917,
+      "hyd_overheat": 0.976
+    },
+    "int8": {
+      "normal": 0.97,
+      "screen_clog": 0.765,
+      "low_oil": 0.92,
+      "hyd_overheat": 0.976
+    },
+    "rules": {
+      "normal": 0.969,
+      "screen_clog": 0.936,
+      "low_oil": 0.752,
+      "hyd_overheat": 1.0
+    },
+    "hybrid": {
+      "normal": 0.985,
+      "screen_clog": 0.936,
+      "low_oil": 0.92,
+      "hyd_overheat": 1.0
+    }
+  },
+  "accuracy": {
+    "cnn_float": 0.9505,
+    "cnn_int8": 0.9523
+  },
+  "int8_float_agreement": 0.9939,
+  "confusion_int8": [
+    [
+      3532,
+      119,
+      76,
+      6
+    ],
+    [
+      4,
+      200,
+      0,
+      0
+    ],
+    [
+      14,
+      0,
+      515,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      124
+    ]
+  ],
+  "model": {
+    "params": 3148,
+    "int8_tflite_bytes": 8928,
+    "fp32_tflite_bytes": 16272,
+    "tflite_ops": [
+      "CONV_2D",
+      "DELEGATE",
+      "FULLY_CONNECTED",
+      "MEAN",
+      "RESHAPE",
+      "SOFTMAX"
+    ],
+    "macs_per_inference": 43648
+  },
+  "estimates_cortex_m7": {
+    "assumption": "int8 CNN with CMSIS-NN-class kernels at 2-4 cycles per MAC incl. overhead; not measured on hardware",
+    "stm32h743_480mhz_ms": [
+      0.18,
+      0.36
+    ],
+    "gd32h759_600mhz_ms": [
+      0.15,
+      0.29
+    ]
+  },
+  "host_int8_ms_per_window": 0.011,
+  "train_seconds": 35.3,
+  "tensorflow": "2.21.0",
+  "notes": [
+    "Full-int8 conversion of the LSTM crashed (segfault) in this TensorFlow version; LSTM exported in float for vendor quantizers.",
+    "hyd_overheat labels derive from visible hydraulic temperature, so that class is easy by construction.",
+    "dull_blades merged into normal unless --keep-dull-blades: a weeks-long drift is invisible in 60 s windows (F1 about 0.2 when kept)."
+  ]
+}

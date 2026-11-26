@@ -1,0 +1,7 @@
+{
+ "windows": 4590,
+ "bit_exact_outputs": 4550,
+ "max_abs_diff_int8": 10,
+ "tflm_macro_f1": 0.9083,
+ "tflm_arena_used_bytes": null
+}

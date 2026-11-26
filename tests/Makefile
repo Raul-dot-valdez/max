@@ -7,7 +7,7 @@ ROOT    := ..
 INC     := -I$(ROOT)/config -I$(ROOT)/lib -I$(ROOT)/pal/include -I$(ROOT)/drivers \
            -I$(ROOT)/drivers/w25q -I$(ROOT)/drivers/rtc -I$(ROOT)/drivers/gnss \
            -I$(ROOT)/drivers/touch -I$(ROOT)/drivers/psoc_link -I$(ROOT)/middleware/j1939 \
-           -I$(ROOT)/services -I$(ROOT)/gui -I$(ROOT)/app -I.
+           -I$(ROOT)/services -I$(ROOT)/gui -I$(ROOT)/app -I$(ROOT)/ai -I.
 CFLAGS  := -std=gnu11 -O1 -g -Wall -Wextra -Werror -Wno-unused-function -DPAL_HOST \
            -fsanitize=address,undefined -fno-omit-frame-pointer $(INC)
 
@@ -24,9 +24,10 @@ SRC := test_main.c osal_host.c \
        $(ROOT)/services/gps_services.c \
        $(ROOT)/services/anomaly.c \
        $(ROOT)/services/fleet_ble.c \
-       $(ROOT)/gui/ui_model.c
+       $(ROOT)/gui/ui_model.c \
+       $(ROOT)/ai/ai_health.c
 
-SYNTAX_SRC := $(ROOT)/app/app_tasks.c $(ROOT)/app/main.c \
+SYNTAX_SRC := $(ROOT)/app/app_tasks.c $(ROOT)/app/main.c $(ROOT)/ai/backends/ai_backend_gd32.c \
               $(ROOT)/drivers/w25q/w25q.c $(ROOT)/drivers/rtc/rv3028.c $(ROOT)/drivers/touch/gt911.c
 
 all: run

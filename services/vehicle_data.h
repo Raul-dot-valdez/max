@@ -23,6 +23,7 @@ typedef enum {
     VD_HYD_OIL_C,
     VD_BLADE_ENGAGED,     /* 0/1, OEM proprietary PGN */
     VD_DECK_HEIGHT_MM,    /* OEM proprietary PGN */
+    VD_AMBIENT_C,         /* AMB, SPN 171 */
     VD_COUNT
 } vd_id_t;
 

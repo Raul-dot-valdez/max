@@ -99,6 +99,9 @@ void j1939_signals_on_rx(const j1939_msg_t *m, void *ctx)
     case PGN_VF: /* SPN 1638, byte 1, 1 °C/bit, -40 */
         PUT(VD_HYD_OIL_C, u8(m, 0, &v), (float)v - 40.0f);
         break;
+    case PGN_AMB: /* SPN 171, bytes 4-5, 0.03125 °C/bit, -273 */
+        PUT(VD_AMBIENT_C, u16(m, 3, &v), v * 0.03125f - 273.0f);
+        break;
     case PGN_OEM_DECK: /* byte 1 bits 0-1: blade clutch (J1939 2-bit state); byte 2: deck height, 2 mm/bit */
         if (m->len >= 2) {
             uint8_t st = m->data[0] & 0x03;
