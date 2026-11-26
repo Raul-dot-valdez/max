@@ -1,4 +1,4 @@
-# Firmware architecture 2: one firmware for every Bad Boy and Hustler mower
+# Firmware architecture 2: one firmware for every C1 and Hustler zero-turn mower
 
 Architecture 1 assumes one engine with one J1939 signal set. The fleet review
 (`docs/fleet-expansion/` at the repository root) found:
@@ -151,7 +151,7 @@ diagnostics.
 | Item | Owner | Blocks |
 |---|---|---|
 | Bench CAN logs, one per family (7) | integration | replacing `verify` in profiles and JSON |
-| maxAI 430 fitment list from Bad Boy | product | Tier 1 rollout |
+| maxAI 430 fitment list from C1 | product | Tier 1 rollout |
 | `pal_analog_sample()` in the STM32H7 port, pin map on the 430 inputs | firmware | Tier 2 on hardware |
 | Pulses per revolution per carb engine | integration | analog rpm accuracy |
 | Train air-cooled and no-ECU heads on `config_fleet.json` with masks | data science | AI beyond rules on those families |

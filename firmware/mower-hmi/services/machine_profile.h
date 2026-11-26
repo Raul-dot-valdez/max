@@ -3,7 +3,7 @@
  * each one comes from (J1939, an analog input, a switch, or derived in the display).
  *
  * Firmware architecture 2 (docs/firmware_architecture_2.md). One firmware image runs on every
- * Bad Boy / Hustler model; the active profile tells the services and the edge AI what to expect,
+ * C1 / Hustler model; the active profile tells the services and the edge AI what to expect,
  * so a missing coolant temperature on an air-cooled engine is "not fitted", never "sensor fault".
  *
  * Sources: docs/fleet-expansion/fleet_profiles.json. Entries marked MP_CONF_VERIFY must be
@@ -35,7 +35,7 @@ typedef enum {
     MP_FAM_PERKINS_1100,   /* Perkins 1100 cc diesel (Renegade Diesel) */
     MP_FAM_AIR_EFI,        /* air-cooled EFI, make not identified (auto-detect result) */
     MP_FAM_CARB,           /* carbureted, no ECU, no J1939 */
-    MP_FAM_EV_80V,         /* Bad Boy 80 V battery system (E-Magnum) */
+    MP_FAM_EV_80V,         /* C1 80 V battery system (E-Magnum) */
     MP_FAM_COUNT
 } mp_family_t;
 

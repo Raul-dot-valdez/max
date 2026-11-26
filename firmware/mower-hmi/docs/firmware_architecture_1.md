@@ -2,7 +2,7 @@
 
 This is the map of the current firmware (`firmware/mower-hmi`) placed on the **maxAI 430**
 hardware. One engine type, one J1939 signal set, one edge-AI model. Firmware architecture 2
-(`firmware_architecture_2.md`) extends it to every Bad Boy and Hustler mower.
+(`firmware_architecture_2.md`) extends it to every C1 and Hustler mower.
 
 > The code base was first written against a 7-inch reference board (`config/board_config.h`:
 > 32 MB SDRAM, 64 MB NOR, touch panel). The maxAI 430 is smaller. Section 5 lists what has to
