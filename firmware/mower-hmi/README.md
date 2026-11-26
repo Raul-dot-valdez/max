@@ -45,6 +45,4 @@ cmake --build build
 
 The target build has not been run yet. It needs the CubeMX-generated board package (`board/stm32h743_mower/cubemx`), the TouchGFX Designer project, and real hardware. See `docs/architecture.md` §12 for the bring-up checklist.
 
-## Independence from the website
 
-This folder is separate from the Astro site at the repository root. The site build (`npm run build` → `dist/`) does not read it.
