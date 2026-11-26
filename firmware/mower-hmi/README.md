@@ -1,4 +1,4 @@
-# AI Terra mower HMI firmware
+# System HMI firmware
 
 Firmware for a 7" touchscreen display on an OEM commercial mower. It is built on an STM32H743 with FreeRTOS, external ISSI SDRAM, Winbond QSPI NOR, an RV-3028 RTC, a GNSS receiver, and a PSoC 4 BLE (Bluetooth 4.2) co-processor. The display reads the machine over SAE J1939.
 
