@@ -1,7 +1,5 @@
 # max
-
-Engineering work for maxAI displays and mower firmware: the firmware itself, architecture
-reviews, strategy decks, the CRA roadmap and a synthetic J1939 dataset.
+architecture reviews, strategy decks
 
 ## Contents
 
