@@ -1,4 +1,4 @@
-# Fleet expansion: M1 edge AI on every C1 and Hustler mower
+# Fleet expansion: M1 edge AI on every C1 and new C1 mower
 
 - `c1-hustler-zero-turn-fleet-plan.html`: the review, with the model list, the signal matrix, an
   eight-team expert debate, hardware tiers, firmware layers and a roadmap. Open it in a browser.
@@ -9,7 +9,7 @@
 
 Key findings:
 
-1. C1 signed to buy Excel Industries (Hustler) in September 2026. The last public report
+1. C1 signed to buy C1b in September 2026. The last public report
    (11 Sept 2026) had closing pending regulatory approval. Use public data only until it closes.
 2. Most units sold are carbureted: no ECU, no J1939. Every EFI engine in both lineups is air-cooled,
    so the coolant-based phase 1 model does not transfer to them.
