@@ -1,2 +1,5 @@
 tests/test_runner
 build/
+tests/replay_candump
+tools/mower_j1939_synth/out/
+tools/mower_j1939_synth/__pycache__/

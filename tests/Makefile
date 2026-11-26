@@ -31,6 +31,12 @@ SYNTAX_SRC := $(ROOT)/app/app_tasks.c $(ROOT)/app/main.c \
 
 all: run
 
+REPLAY_SRC := replay_candump.c osal_host.c $(ROOT)/lib/crc.c $(ROOT)/middleware/j1939/j1939.c \
+              $(ROOT)/middleware/j1939/j1939_signals.c $(ROOT)/services/vehicle_data.c
+
+replay_candump: $(REPLAY_SRC)
+	$(CC) $(CFLAGS) $(REPLAY_SRC) -o $@ -lm
+
 test_runner: $(SRC) $(wildcard *.h) $(wildcard $(ROOT)/*/*.h $(ROOT)/*/*/*.h)
 	$(CC) $(CFLAGS) $(SRC) -o $@ -lm
 
@@ -42,6 +48,6 @@ syntax:
 	  $(CC) -std=gnu11 -Wall -Wextra -Werror -Wno-unused-parameter -fsyntax-only $(INC) $$f || exit 1; done
 
 clean:
-	rm -f test_runner
+	rm -f test_runner replay_candump
 
 .PHONY: all run syntax clean
