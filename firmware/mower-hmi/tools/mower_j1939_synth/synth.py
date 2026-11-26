@@ -68,7 +68,7 @@ def seeded(*parts):
 # ---------------------------------------------------------------------------
 
 class RTC:
-    """maxAI display real-time clock as the device would record it.
+    """M1 display real-time clock as the device would record it.
 
     mode: 'battery' (coin cell, survives storage), 'supercap' (survives backup_days),
           'none' (no RTC: clock restarts at 2000-01-01 on every power-up until synced).
@@ -721,7 +721,7 @@ def main():
         "signal_dictionary": [dict(column=c, message=msg, pgn=p, spn=s, scaling=sc, unit=u) for c, msg, p, s, sc, u in SIGNAL_DICTIONARY],
         "timestamps": {
             "t_true_utc": "ground-truth UTC (simulation clock); use for labels and joins",
-            "t_rtc": "what the maxAI display's real-time clock reported (drift, resets, syncs)",
+            "t_rtc": "what the M1 display's real-time clock reported (drift, resets, syncs)",
             "uptime_s": "seconds since this power-up; resets at every key-on (boot_id increments)",
             "can logs": "candump timestamps are a reference logger's clock (true UTC)",
         },

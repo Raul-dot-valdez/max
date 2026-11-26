@@ -1,5 +1,5 @@
 {
-  "_about": "C1 + Hustler fleet: models, engine families and which J1939 signals each family can give the maxAI edge-AI. Built from public sources on 2026-11-26. confidence: confirmed = stated by a manufacturer source; inferred = follows from sources; verify = must be checked by logging a real machine.",
+  "_about": "C1 + Hustler fleet: models, engine families and which J1939 signals each family can give the M1 edge-AI. Built from public sources on 2026-11-26. confidence: confirmed = stated by a manufacturer source; inferred = follows from sources; verify = must be checked by logging a real machine.",
   "canonical_signals": [
     {"id": "rpm",          "name": "Engine speed",            "spn": 190, "pgn": "61444 EEC1"},
     {"id": "load_pct",     "name": "Engine load at speed",    "spn": 92,  "pgn": "61443 EEC2"},
@@ -46,7 +46,7 @@
     {"brand":"C1","model":"Rebel","segment":"commercial","engines":["CARB","KAW_EVO_EFI","VAN_EFI_ETC"],"engine_detail":"Kawasaki FX850, EVO820 EFI, FX1000; Vanguard EFI 37 HP (Rebel X)","display":"verify"},
     {"brand":"C1","model":"Rogue","segment":"commercial","engines":["CARB","KAW_FX_EFI","VAN_EFI_ETC","KOH_EFI"],"engine_detail":"Kawasaki FX1000 35 HP, FX1000 EFI 38.5 HP, Vanguard EFI 40 HP, Kohler EFI 38.5 HP","display":"verify"},
     {"brand":"C1","model":"Revolt (stand-on)","segment":"commercial","engines":["CARB","KAW_EVO_EFI","KAW_FX_EFI","VAN_EFI_ETC"],"engine_detail":"Kawasaki FS600, EVO781 EFI, FX1000 EFI; Vanguard EFI 40 HP","display":"verify"},
-    {"brand":"C1","model":"Outlaw Renegade (gas)","segment":"commercial flagship","engines":["verify"],"engine_detail":"'high-torque gas', model not published","display":"digital display with diagnostics and cut-time vs run-time (C1 feature page); likely maxAI 430 candidate (verify)"},
+    {"brand":"C1","model":"Outlaw Renegade (gas)","segment":"commercial flagship","engines":["verify"],"engine_detail":"'high-torque gas', model not published","display":"digital display with diagnostics and cut-time vs run-time (C1 feature page); likely M1 candidate (verify)"},
     {"brand":"C1","model":"Outlaw Renegade Diesel","segment":"commercial flagship","engines":["PERKINS_1100"],"engine_detail":"Perkins 1100 cc 24.7 hp, 13 gal tank","display":"verify whether the digital display is fitted"},
     {"brand":"Hustler","model":"Raptor X / XL / XD","segment":"residential","engines":["CARB"],"engine_detail":"Kawasaki 18-23 HP","display":"hour meter (verify)"},
     {"brand":"Hustler","model":"X-ONE","segment":"commercial entry","engines":["CARB","KAW_FX_EFI"],"engine_detail":"Kawasaki 27-29.5 HP, carbureted or fuel-injected","display":"verify"},

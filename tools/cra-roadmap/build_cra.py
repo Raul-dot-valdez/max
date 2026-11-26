@@ -1,5 +1,5 @@
 import os
-"""maxAI 430 dual CRA roadmap workbook."""
+"""M1 dual CRA roadmap workbook."""
 import math
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
@@ -7,7 +7,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import CellIsRule
 
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "docs", "cra", "maxAI430_CRA_dual_roadmap.xlsx")
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "docs", "cra", "M1_CRA_dual_roadmap.xlsx")
 
 F = "Arial"
 GRAPHITE = "0F1418"
@@ -58,12 +58,12 @@ def title(ws, text, sub=None):
 # ======================================================================
 ws = wb.active
 ws.title = "README"
-title(ws, "maxAI 430 — EU Cyber Resilience Act (CRA) dual roadmap",
+title(ws, "M1 — EU Cyber Resilience Act (CRA) dual roadmap",
       "Engineering planning tool, not legal advice. Confirm interpretations with counsel or a notified body before signing an EU declaration of conformity.")
 rows = [
-    ("Purpose", "Plan CRA compliance for two maxAI 430 product roadmaps, requirement by requirement, with three alternative next steps for each."),
-    ("Roadmap 1: Listen-only", "maxAI 430 receiving J1939 only. No Bluetooth, no CAN FD, no transmission to ECUs beyond what J1939 itself needs (address claim, requests if used). USB kept only for factory and service updates. Smallest attack surface."),
-    ("Roadmap 2: Connected", "maxAI 430 with Bluetooth (phone app, configuration, logs, updates) and CAN FD, interacting with vehicle systems and ECUs (commands, parameter changes, diagnostics). Larger attack surface; extra regulations may apply."),
+    ("Purpose", "Plan CRA compliance for two M1 product roadmaps, requirement by requirement, with three alternative next steps for each."),
+    ("Roadmap 1: Listen-only", "M1 receiving J1939 only. No Bluetooth, no CAN FD, no transmission to ECUs beyond what J1939 itself needs (address claim, requests if used). USB kept only for factory and service updates. Smallest attack surface."),
+    ("Roadmap 2: Connected", "M1 with Bluetooth (phone app, configuration, logs, updates) and CAN FD, interacting with vehicle systems and ECUs (commands, parameter changes, diagnostics). Larger attack surface; extra regulations may apply."),
     ("Proposed CRA category", "Both roadmaps: default category (not 'important' or 'critical'). An instrument display is not listed in Annex III or Annex IV. Conformity by internal control (Module A, Annex VIII). Annex I and Annex II apply in full to both."),
     ("Alternative 1: Lean", "Minimum defensible measure, done in-house at lowest cost. Suitable where risk is low and evidence can be argued in the risk assessment."),
     ("Alternative 2: Recommended", "Balanced measure aligned with emerging standards and good practice (e.g. IEC 62443-4-1 / 4-2 style processes, signed firmware, documented testing). Default choice."),
@@ -71,7 +71,7 @@ rows = [
     ("Status values", "Not started / In progress / Done / Not applicable. Edit the yellow cells in the 'CRA requirements' sheet: Owner, Status, Target date, Notes."),
     ("Priority", "P1 = needed for the first compliant release or already in force · P2 = needed before 11 Dec 2027 · P3 = improvement or roadmap 2 only."),
     ("Key dates", "11 Sep 2026: reporting obligations (Art. 14) apply, including to products already on the market. 11 Dec 2027: main obligations apply (Annex I, II, conformity assessment, CE marking). The 'Dashboard' sheet counts the days remaining."),
-    ("VERIFY", "Rows or notes marked VERIFY rely on interpretation or on facts not yet confirmed (e.g. exact wording of support-period and retention rules, RED delegated act applicability, maxAI 430 MCU part number). Check before relying on them."),
+    ("VERIFY", "Rows or notes marked VERIFY rely on interpretation or on facts not yet confirmed (e.g. exact wording of support-period and retention rules, RED delegated act applicability, M1 MCU part number). Check before relying on them."),
     ("Sheets", "README · Dashboard (formula summary) · Variant comparison · CRA requirements (main table) · Annex map · Dual roadmap (quarterly plan) · Sources"),
     ("How to use", "Filter the 'CRA requirements' sheet by roadmap or priority. Pick one alternative per row, record it in Notes, set Owner, Status and Target date. The Dashboard updates automatically."),
 ]
@@ -115,7 +115,7 @@ vc.freeze_panes = "B5"
 # Sheet: CRA requirements (main table)
 # ======================================================================
 rq = wb.create_sheet("CRA requirements")
-title(rq, "CRA requirement matrix — maxAI 430, two roadmaps",
+title(rq, "CRA requirement matrix — M1, two roadmaps",
       "Requirement texts are paraphrased from Regulation (EU) 2024/2847. Yellow columns are for your team to fill in.")
 COLS = ["ID", "Annex / Article", "Area", "Requirement (paraphrased)",
         "Applies to " + R1, "Applies to " + R2,
@@ -167,9 +167,9 @@ REQ = [
      "Signed updates via USB and Bluetooth/app; app notifies the user; opt-out and postpone options.",
      "Update procedure; signed-image format; user instructions", "Firmware lead", "P1", D27,
      "USB bootloader accepts only images signed with maximatecc's key.",
-     "Secure bootloader with signature check, version anti-rollback and A/B or recovery image (e.g. MCUboot or ST X-CUBE-SBSFU — VERIFY fit for the 430 MCU).",
+     "Secure bootloader with signature check, version anti-rollback and A/B or recovery image (e.g. MCUboot or ST X-CUBE-SBSFU — VERIFY fit for the M1 MCU).",
      "Update mechanism reviewed externally; key management in a hardware security module (HSM) or managed signing service.",
-     "VERIFY 430 MCU part number and bootloader capabilities."),
+     "VERIFY M1 MCU part number and bootloader capabilities."),
     ("I-2d", "Annex I Part I (2)(d)", "Access control", "Protect from unauthorised access with appropriate controls (authentication, identity or access management) and report possible unauthorised access.",
      "Limited", "Yes",
      "Service functions behind a key sequence and PIN; USB update requires signed image; debug locked.",
@@ -370,7 +370,7 @@ REQ = [
      "—", "Document the app setting.", "—", ""),
     ("A2-8f", "Annex II (8)(f)", "User information", "For products integrated into other products: information the integrator needs to comply.",
      "Yes", "Yes", "Integration guide for OEMs: network placement, USB access, update duties.", "Also: command interface security, ECU whitelist configuration, app deployment.", "OEM integration guide", "Applications engineering", "P1", D27,
-     "Security chapter in the OEM integration guide.", "Integration guide plus security checklist the OEM signs.", "Joint review with key OEMs.", "Important: the 430 is always integrated into an OEM machine."),
+     "Security chapter in the OEM integration guide.", "Integration guide plus security checklist the OEM signs.", "Joint review with key OEMs.", "Important: the M1 is always integrated into an OEM machine."),
     ("A2-9", "Annex II (9)", "User information", "If the SBOM is made available to users, where it can be accessed.",
      "Optional", "Optional", "Provide on request to OEMs.", "Provide on request to OEMs.", "SBOM access process", "Product security lead", "P3", D27,
      "SBOM on request.", "SBOM portal for OEM customers.", "Public SBOM.", ""),
@@ -443,7 +443,7 @@ rq.cell(row=last + 2, column=1, value="Example of a filled row: set Owner (assig
 # Sheet: Annex map
 # ======================================================================
 am = wb.create_sheet("Annex map")
-title(am, "Which CRA annexes apply to the maxAI 430")
+title(am, "Which CRA annexes apply to the M1")
 cols = ["Annex", "Content", R1, R2, "Comment"]
 widths = [12, 46, 18, 18, 52]
 header(am, 4, cols, widths)
@@ -552,7 +552,7 @@ src = [
     ("CMS: CRA scope and product classification", "https://cms.law/en/int/legal-updates/does-the-eu-cyber-resilience-act-apply-to-your-product-scope-definitions-and-the-product-classification-system-explained"),
     ("CRA Annex III text (Prighter)", "https://prighter.com/resources/laws/cyber-resilience-act/articles/annex-iii.md"),
     ("Irish NCSC: EU Cyber Resilience Act", "https://ncsc.gov.ie/cra/"),
-    ("maxAI 430 product page (interfaces, Bluetooth variants)", "https://www.maximatecc.com/maxai-430/"),
+    ("M1 product page (interfaces, Bluetooth variants)", "https://www.maximatecc.com/maxai-430/"),
     ("Note", "Annex I and II requirement texts in this workbook are paraphrased from the regulation; check the Official Journal text for exact wording."),
 ]
 for i, (a, b) in enumerate(src, start=3):

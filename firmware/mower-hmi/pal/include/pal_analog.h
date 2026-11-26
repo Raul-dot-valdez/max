@@ -1,6 +1,6 @@
 /*
  * Analog and pulse inputs used on mowers whose engine has no ECU (firmware architecture 2).
- * The maxAI 430 has 5 inputs plus a 4-20 mA input; which pin carries which signal is a board
+ * The M1 has 5 inputs plus a 4-20 mA input; which pin carries which signal is a board
  * and harness decision (config/board_config.h). Not yet implemented in the STM32H7 port:
  * services/analog_signals.c links a weak default that reports PAL_ERR, so the build works and
  * analog features stay off until the port adds this function.

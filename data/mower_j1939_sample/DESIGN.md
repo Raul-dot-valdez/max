@@ -2,7 +2,7 @@
 
 ## The brief
 
-Create a **simple, sustainable, close-to-real** J1939 dataset for a commercial zero-turn mower, with the signals a maxAI 430-class display sees and realistic real-time-clock behaviour. It must be good enough to develop and test:
+Create a **simple, sustainable, close-to-real** J1939 dataset for a commercial zero-turn mower, with the signals a M1-class display sees and realistic real-time-clock behaviour. It must be good enough to develop and test:
 
 - display firmware: decoding, staleness, diagnostics
 - the fuel and runtime estimator
@@ -99,9 +99,9 @@ DTCs are generated from the physics, with occurrence counts:
 
 **Coverage rule:** rare faults left to chance can vanish from a dataset (this happened during development). Each discrete fault type is therefore guaranteed to appear on at least one machine.
 
-## Debate 5: the maxAI 430 clock
+## Debate 5: the M1 clock
 
-- **Timekeeping engineer:** "maximatecc's public 430 specifications don't state whether it has a battery-backed RTC (**verify**). So simulate the three realistic cases:
+- **Timekeeping engineer:** "maximatecc's public M1 specifications don't state whether it has a battery-backed RTC (**verify**). So simulate the three realistic cases:
   - a coin-cell RTC
   - a supercapacitor RTC that holds for about a week
   - no RTC at all."
@@ -121,7 +121,7 @@ The simulation starts after **150 days of winter storage**. Its findings:
 - **Supercapacitor clocks** reset to the year 2000.
 - **Units without an RTC** reset at every power-up until someone syncs them.
 
-Firmware rules this suggests for the maxAI 430:
+Firmware rules this suggests for the M1:
 1. Log both RTC time and uptime.
 2. Flag records written before the first sync.
 3. Sync from J1939 TD or the phone whenever available.

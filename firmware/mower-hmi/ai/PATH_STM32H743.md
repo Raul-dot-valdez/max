@@ -1,4 +1,4 @@
-# Edge-AI path A: STM32H743 (maxAI 280 / 430 class)
+# Edge-AI path A: STM32H743 (M1 280 / M1 class)
 
 **Primary toolchain: ST Edge AI** (decision of 2026-11-26). TensorFlow Lite Micro stays as the
 open-source reference and fallback; both use the same `ai_backend_t` contract, so switching is one

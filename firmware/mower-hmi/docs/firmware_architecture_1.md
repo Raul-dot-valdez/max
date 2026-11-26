@@ -1,16 +1,16 @@
-# Firmware architecture 1: maxAI 430 (as built today)
+# Firmware architecture 1: M1 (as built today)
 
-This is the map of the current firmware (`firmware/mower-hmi`) placed on the **maxAI 430**
+This is the map of the current firmware (`firmware/mower-hmi`) placed on the **M1**
 hardware. One engine type, one J1939 signal set, one edge-AI model. Firmware architecture 2
 (`firmware_architecture_2.md`) extends it to every C1 and Hustler mower.
 
 > The code base was first written against a 7-inch reference board (`config/board_config.h`:
-> 32 MB SDRAM, 64 MB NOR, touch panel). The maxAI 430 is smaller. Section 5 lists what has to
+> 32 MB SDRAM, 64 MB NOR, touch panel). The M1 is smaller. Section 5 lists what has to
 > change before the image fits the 430. Items marked **VERIFY** are not published by maximatecc.
 
 ## 1. Hardware the firmware runs on
 
-| Item | maxAI 430 (datasheet) | Reference board in `board_config.h` | Impact |
+| Item | M1 (datasheet) | Reference board in `board_config.h` | Impact |
 |---|---|---|---|
 | MCU | Arm Cortex-M7, part not published (**VERIFY**; assumed STM32H743 class) | STM32H743 at 400 MHz | none if it is an H743 |
 | Internal RAM / flash | 1 MB / 2 MB | 1 MB / 2 MB | none |
@@ -19,8 +19,8 @@ hardware. One engine type, one J1939 signal set, one edge-AI model. Firmware arc
 | Display | 4.3 in, 480×272, 24-bit, 1000 nit | 7 in, 800×480, touch | GUI layouts, input method (**VERIFY** keys vs touch) |
 | CAN | 2 × J1939, 250 / 500 kbit/s | 1 bus used | second bus available for implement / machine controllers |
 | Inputs | 5 inputs + 4–20 mA, 1 output | not used | used by architecture 2 for machines without an ECU |
-| Bluetooth | BT 4.2 on 430v / 430iv | PSoC 4 BLE over UART | module and link (**VERIFY**) |
-| Camera | analog camera input on 430v / 430iv | none | budget in `tools/resource_budget` |
+| Bluetooth | BT 4.2 on M1v / M1iv | PSoC 4 BLE over UART | module and link (**VERIFY**) |
+| Camera | analog camera input on M1v / M1iv | none | budget in `tools/resource_budget` |
 | GNSS / RTC | not listed (**VERIFY**) | u-blox M10, RV-3028 | GPS features need an external receiver or the phone |
 
 ## 2. Layers
@@ -71,7 +71,7 @@ flowchart TB
 Rules carried from `docs/architecture.md`: `pal_` prefix, logical resources only, no vendor
 header above the PAL port, no GUI calls from app code, host build in CI (`make -C tests`).
 
-## 3. Data flow on the 430
+## 3. Data flow on the M1
 
 ```mermaid
 flowchart LR
@@ -80,7 +80,7 @@ flowchart LR
   VD --> FR["fuel / runtime"] --> UI["ui_model"] --> LCD["4.3 in display"]
   VD --> AIH["ai_health (1 Hz in, every 30 s out)"] --> EV["EV_AI_HEALTH event"]
   VD --> LOG["datalog (periodic + events)"] --> NOR["16 MB flash"]
-  NOR --> BLEX["fleet_ble"] --> PHONE["phone app (430v / 430iv)"]
+  NOR --> BLEX["fleet_ble"] --> PHONE["phone app (M1v / M1iv)"]
   EV --> LOG
 ```
 
@@ -90,16 +90,16 @@ flowchart LR
 |---|---|---|---|
 | wdg | 7 | 500 ms | watchdog, kicks only if every task checked in |
 | can | 6 | RX queue / 20 ms | J1939 stack, signal decode |
-| gnss | 5 | UART | NMEA, geofences, coverage (needs a receiver on the 430) |
-| ble | 4 | UART / 20 ms | phone link, log streaming (430v / 430iv) |
+| gnss | 5 | UART | NMEA, geofences, coverage (needs a receiver on the M1) |
+| ble | 4 | UART / 20 ms | phone link, log streaming (M1v / M1iv) |
 | app | 4 | 100 ms, 1 Hz logic | fuel / runtime, anomaly, **ai_health**, logging policy, UI model |
 | gui | 3 | vsync | TouchGFX or Qt for MCUs |
 | log | 2 | queue | only writer of the external flash log |
 | ai (planned) | 1 | 30 s | runs the backend inference below the GUI, per `tools/resource_budget` rule R3 |
 
-## 5. What must change to fit the maxAI 430
+## 5. What must change to fit the M1
 
-| Area | Today | maxAI 430 plan |
+| Area | Today | M1 plan |
 |---|---|---|
 | Frame buffers | 2 × 750 KB (800×480 RGB565) | 2 × 255 KB (480×272 RGB565) |
 | GUI bitmap cache | 16 MB in SDRAM | about 300 KB: alarm screens and fonts only; other assets stay in flash |
@@ -107,11 +107,11 @@ flowchart LR
 | Log ring | 44 MB | about 10 MB; record rate unchanged |
 | Firmware staging | 4 MB | 2 MB |
 | Bitmaps | 16 MB, cached at boot | 4 MB; flash erase must never block alarm screens (budget rule R4/R5) |
-| Inputs | touch (GT911) | **VERIFY**: keys or touch on the 430 |
+| Inputs | touch (GT911) | **VERIFY**: keys or touch on the M1 |
 | MPU region for SDRAM | 32 MB | 2 MB |
 
-SDRAM on the 430 after these changes: 510 KB frame buffers + 255 KB transition snapshot + 300 KB
-alarm cache + 512 KB coverage (+ 338 KB camera on 430v / 430iv) ≈ 1.9 MB of 2 MB. Tight but it fits.
+SDRAM on the M1 after these changes: 510 KB frame buffers + 255 KB transition snapshot + 300 KB
+alarm cache + 512 KB coverage (+ 338 KB camera on M1v / M1iv) ≈ 1.9 MB of 2 MB. Tight but it fits.
 Dropping the coverage grid from the display frees a quarter of it.
 
 ## 6. J1939 signals (architecture 1)

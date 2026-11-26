@@ -83,7 +83,7 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
 <div class="wrap">
 <header>
   <div class="eyebrow">AI Terra · fleet expansion review · public sources only</div>
-  <h1>Taking maxAI edge AI to <span class="accent">every C1 and Hustler zero-turn mower</span></h1>
+  <h1>Taking M1 edge AI to <span class="accent">every C1 and Hustler zero-turn mower</span></h1>
   <p>Which models exist, what each engine family can actually tell the display over J1939, and how one edge-AI system can cover machines that range from an ECU-managed 40 HP EFI engine to a carbureted 19 HP residential twin and an 80 V battery mower. Eight expert teams debate the plan.</p>
   <div class="meta">
     <span>Date <b>2026-11-26</b></span>
@@ -100,7 +100,7 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
     <div class="kv">
       <div><span class="k">Acquisition</span><span>C1 signed to buy Excel Industries (Hustler) from Stanley Black &amp; Decker on 1 September 2026. The deal was announced on 4 September, with about $300 M of FY2026 revenue. The last public report found (11 September) still had closing pending regulatory approval.</span></div>
       <div><span class="k">Signal reality</span><span>Only Kawasaki FX EFI has a manufacturer statement of J1939 support. Vanguard EFI/ETC is J1939 according to a retailer and accepts CAN speed control. For Kohler EFI, Kawasaki EVO EFI and the Perkins diesel, no public source settles it. Carbureted engines have no data bus. The E-Magnum's 80 V protocol is not public.</span></div>
-      <div><span class="k">maxAI 430 today</span><span>No public source names the C1 models that carry the maxAI 430. The Outlaw Renegade's digital display, with diagnostics and cut time vs run time, is the most likely one. Confirm the fitment list with C1 engineering. Hustler manuals show an electronic hour meter and an engine malfunction light, not a CAN display.</span></div>
+      <div><span class="k">M1 today</span><span>No public source names the C1 models that carry the M1. The Outlaw Renegade's digital display, with diagnostics and cut time vs run time, is the most likely one. Confirm the fitment list with C1 engineering. Hustler manuals show an electronic hour meter and an engine malfunction light, not a CAN display.</span></div>
       <div><span class="k">Recommendation</span><span>Four hardware tiers over one firmware and AI platform. A canonical signal layer with availability masks. Separate model heads for liquid-cooled, air-cooled EFI, no-ECU and electric machines. Start with a CAN logging campaign: one machine per engine family. Until the Hustler deal closes, plan from public information only.</span></div>
     </div>
   </div>
@@ -137,8 +137,8 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
       <div><span class="who">Product line strategy</span><p class="pos">C1 now spans a $4.4 k Rambler to a $24 k Renegade Diesel, and Hustler adds a whole second ladder. One edge-AI brand, scaled by tier, sells to dealers better than four separate systems.</p><p class="push">Pushed back by cost: a 4.3-inch display cannot be put on a residential mower at that price.</p></div>
       <div><span class="who">Engine and J1939 integration</span><p class="pos">Only Kawasaki FX EFI is documented as J1939. Vanguard is close behind. We know nothing hard about Kohler EFI, Kawasaki EVO or the Perkins. Log one machine of each family before anyone writes a decoder.</p><p class="push">Pushed back by schedule: logging takes a season. Answer: a two-week bench campaign at dealers, not a season.</p></div>
       <div><span class="who">Edge-AI and data science</span><p class="pos">A single model trained on liquid-cooled data will misfire on air-cooled engines. Use canonical features with availability masks, one shared backbone and a head per signal family. Extend the synthetic generator to each family before any real data arrives.</p><p class="push">Pushed back by firmware: a separate model per family is too many binaries. Answer: one binary that loads the head chosen by the machine profile.</p></div>
-      <div><span class="who">Firmware platform</span><p class="pos">Add a machine profile layer between the J1939 decoder and the services: which signals exist, their source (SPN, analog input, derived) and their quality. Same PAL, same maxAI hardware, a profile per model and engine.</p><p class="push">No objection. Cost: about one sprint, plus tests per profile.</p></div>
-      <div><span class="who">Hardware and cost</span><p class="pos">Tier the hardware: maxAI 430 on flagships, maxAI 280 or a headless edge box on commercial carbureted machines, and a low-cost BLE health tag on residential. The tag uses an IMU, the ignition pulse and battery voltage, and the phone shows the data.</p><p class="push">Pushed back by AI: the tag can't run the J1939 model. Answer: it runs a vibration model instead, which is better for blade wear anyway.</p></div>
+      <div><span class="who">Firmware platform</span><p class="pos">Add a machine profile layer between the J1939 decoder and the services: which signals exist, their source (SPN, analog input, derived) and their quality. Same PAL, same M1 hardware, a profile per model and engine.</p><p class="push">No objection. Cost: about one sprint, plus tests per profile.</p></div>
+      <div><span class="who">Hardware and cost</span><p class="pos">Tier the hardware: M1 on flagships, M1 280 or a headless edge box on commercial carbureted machines, and a low-cost BLE health tag on residential. The tag uses an IMU, the ignition pulse and battery voltage, and the phone shows the data.</p><p class="push">Pushed back by AI: the tag can't run the J1939 model. Answer: it runs a vibration model instead, which is better for blade wear anyway.</p></div>
       <div><span class="who">Hustler integration</span><p class="pos">Hustler commercial units use Kawasaki FX EFI and Vanguard EFI, the same families as C1's commercial line. That reuse is the fast win after close. Their panels show an hour meter and a malfunction light, so a retrofit display kit is a real product.</p><p class="push">Pushed back by legal: nothing with Excel happens before the deal closes.</p></div>
       <div><span class="who">Legal, CRA and cybersecurity</span><p class="pos">Until closing, C1 and Excel must not exchange non-public product or pricing data (gun-jumping rules). After closing, every tier with Bluetooth is a connected product under the CRA. The BLE tag needs secure pairing and signed updates from day one.</p><p class="push">Accepted by all teams as a constraint.</p></div>
       <div><span class="who">Dealer and service</span><p class="pos">Dealers already own Kawasaki and Vanguard diagnostic tools. The AI should name faults the way those tools do: P-codes and SPN/FMI. On carbureted machines, the value to the dealer is service reminders and hours, not diagnostics.</p><p class="push">Accepted. Show DM1 SPN/FMI text on Tier 1 screens.</p></div>
@@ -158,9 +158,9 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
   <div class="body">
     <h2>Four hardware tiers, one platform</h2>
     <div class="tiers">
-      <div><span class="tn">T1</span><h3>ECU flagships</h3><span class="hw">maxAI 430 / 430v · H743 · ST Edge AI</span>
+      <div><span class="tn">T1</span><h3>ECU flagships</h3><span class="hw">M1 / M1v · H743 · ST Edge AI</span>
         <ul><li>Renegade, Rogue EFI, Revolt EFI, Rebel EFI, Maverick HD EFI</li><li>Hustler Super Z EFI, HyperDrive (after close)</li><li>J1939 decoding, DM1 SPN/FMI, CNN plus rules, fuel and runtime estimates</li></ul></div>
-      <div><span class="tn">T2</span><h3>Commercial, no ECU</h3><span class="hw">maxAI 280 or headless edge box</span>
+      <div><span class="tn">T2</span><h3>Commercial, no ECU</h3><span class="hw">M1 280 or headless edge box</span>
         <ul><li>Rogue, Rebel and Revolt with carbureted engines; ZT Elite; FasTrak; X-ONE</li><li>Analog inputs build J1939-style signals locally</li><li>Rules plus a no-ECU model, hours and service reminders</li></ul></div>
       <div><span class="tn">T3</span><h3>Residential</h3><span class="hw">BLE health tag · IMU · phone app</span>
         <ul><li>MZ Rambler and Magnum, ZT Avenger, Hustler Raptor</li><li>Vibration model for blade imbalance and wear, run hours</li><li>No screen on the mower</li></ul></div>
@@ -169,7 +169,7 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
     </div>
     <h3>Firmware layers</h3>
     <div class="layers">
-      <div><span class="ln">Signal sources</span><span>J1939 decoder (exists); analog and pulse inputs on the maxAI's 5 inputs and 4–20 mA input; IMU on the tag; battery bridge</span></div>
+      <div><span class="ln">Signal sources</span><span>J1939 decoder (exists); analog and pulse inputs on the M1's 5 inputs and 4–20 mA input; IMU on the tag; battery bridge</span></div>
       <div><span class="ln">Machine profile (new)</span><span>Per model and engine: which canonical signals exist, their source, scaling and confidence. Loaded from configuration, selected from the engine's address claim (NAME) or by the dealer at install</span></div>
       <div><span class="ln">Canonical signals</span><span>The existing <code>vehicle_data</code> store, extended with engine temperature, intake temperature and barometric pressure, each with a valid flag</span></div>
       <div><span class="ln">Edge AI</span><span><code>ai_health</code> with an availability mask; shared backbone plus four heads; rules switch per profile (for example, a clog rule on engine temperature for air-cooled engines)</span></div>
@@ -183,10 +183,10 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
   <div class="body">
     <h2>Phases</h2>
     <ol class="phases">
-      <li><span class="pn">Phase 0</span><span><b>Facts.</b> Get the maxAI 430 fitment list from C1 engineering. Run a two-week bench CAN log of one machine per engine family (7 logs) and decode the real PGN/SPN inventory. Replace every "verify" in <code>fleet_profiles.json</code>.</span></li>
+      <li><span class="pn">Phase 0</span><span><b>Facts.</b> Get the M1 fitment list from C1 engineering. Run a two-week bench CAN log of one machine per engine family (7 logs) and decode the real PGN/SPN inventory. Replace every "verify" in <code>fleet_profiles.json</code>.</span></li>
       <li><span class="pn">Phase 1</span><span><b>Platform.</b> Add the machine profile layer and the extended canonical signals in the firmware. Add engine-family profiles to the synthetic generator: air-cooled EFI, carbureted analog, Perkins diesel, 80 V electric.</span></li>
       <li><span class="pn">Phase 2</span><span><b>AI.</b> Retrain with availability masks and four heads, and build them with ST Edge AI Core. Validate each head on its family's synthetic data, then on the Phase 0 logs.</span></li>
-      <li><span class="pn">Phase 3</span><span><b>Tier 1 rollout</b> on C1 maxAI 430 machines. Design the Tier 3 BLE health tag hardware.</span></li>
+      <li><span class="pn">Phase 3</span><span><b>Tier 1 rollout</b> on C1 M1 machines. Design the Tier 3 BLE health tag hardware.</span></li>
       <li><span class="pn">Phase 4</span><span><b>Hustler,</b> after the deal closes. Map Super Z and HyperDrive to the Tier 1 profiles they share with C1 (Kawasaki FX EFI, Vanguard EFI), and scope a retrofit display kit.</span></li>
     </ol>
   </div>
@@ -206,7 +206,7 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
       <li><a href="https://www.vanguardpower.com/en-gb/engines/vertical-shaft-engines/v-twin-engines/vanguard-20-9-gross-kw-efi-engine" target="_blank" rel="noopener">Vanguard: 810 cc EFI/ETC, speed control over 0–5 V or CAN</a></li>
       <li><a href="https://www.hendersonmowers.com.au/products/ride-on-mowers-lawn-tractors-grass-mower/display/44570-vanguard-37hp-v-twin-efi-horizontal-shaft-engine" target="_blank" rel="noopener">Retailer listing: Vanguard 37 HP EFI with CAN J1939</a></li>
       <li><a href="https://www.greenindustrypros.com/mowing-maintenance/engines-parts-shop-equipment/article/12021371/2015-commercial-engine-preview-efi-engines-gaining-market-share" target="_blank" rel="noopener">Green Industry Pros: Vanguard EFI diagnostics options</a></li>
-      <li><a href="https://www.maximatecc.com/wp-content/uploads/2023/11/mm_maxAI_430_SS_updates_111523.pdf" target="_blank" rel="noopener">maximatecc: maxAI 430 sell sheet</a></li>
+      <li><a href="https://www.maximatecc.com/wp-content/uploads/2023/11/mm_maxAI_430_SS_updates_111523.pdf" target="_blank" rel="noopener">maximatecc: M1 sell sheet</a></li>
     </ul>
   </div>
 </section>
@@ -214,7 +214,7 @@ a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-of
 
 <script>
 const D = {
-  "_about": "C1 + Hustler fleet: models, engine families and which J1939 signals each family can give the maxAI edge-AI. Built from public sources on 2026-11-26. confidence: confirmed = stated by a manufacturer source; inferred = follows from sources; verify = must be checked by logging a real machine.",
+  "_about": "C1 + Hustler fleet: models, engine families and which J1939 signals each family can give the M1 edge-AI. Built from public sources on 2026-11-26. confidence: confirmed = stated by a manufacturer source; inferred = follows from sources; verify = must be checked by logging a real machine.",
   "canonical_signals": [
     {"id": "rpm",          "name": "Engine speed",            "spn": 190, "pgn": "61444 EEC1"},
     {"id": "load_pct",     "name": "Engine load at speed",    "spn": 92,  "pgn": "61443 EEC2"},
@@ -261,7 +261,7 @@ const D = {
     {"brand":"C1","model":"Rebel","segment":"commercial","engines":["CARB","KAW_EVO_EFI","VAN_EFI_ETC"],"engine_detail":"Kawasaki FX850, EVO820 EFI, FX1000; Vanguard EFI 37 HP (Rebel X)","display":"verify"},
     {"brand":"C1","model":"Rogue","segment":"commercial","engines":["CARB","KAW_FX_EFI","VAN_EFI_ETC","KOH_EFI"],"engine_detail":"Kawasaki FX1000 35 HP, FX1000 EFI 38.5 HP, Vanguard EFI 40 HP, Kohler EFI 38.5 HP","display":"verify"},
     {"brand":"C1","model":"Revolt (stand-on)","segment":"commercial","engines":["CARB","KAW_EVO_EFI","KAW_FX_EFI","VAN_EFI_ETC"],"engine_detail":"Kawasaki FS600, EVO781 EFI, FX1000 EFI; Vanguard EFI 40 HP","display":"verify"},
-    {"brand":"C1","model":"Outlaw Renegade (gas)","segment":"commercial flagship","engines":["verify"],"engine_detail":"'high-torque gas', model not published","display":"digital display with diagnostics and cut-time vs run-time (C1 feature page); likely maxAI 430 candidate (verify)"},
+    {"brand":"C1","model":"Outlaw Renegade (gas)","segment":"commercial flagship","engines":["verify"],"engine_detail":"'high-torque gas', model not published","display":"digital display with diagnostics and cut-time vs run-time (C1 feature page); likely M1 candidate (verify)"},
     {"brand":"C1","model":"Outlaw Renegade Diesel","segment":"commercial flagship","engines":["PERKINS_1100"],"engine_detail":"Perkins 1100 cc 24.7 hp, 13 gal tank","display":"verify whether the digital display is fitted"},
     {"brand":"Hustler","model":"Raptor X / XL / XD","segment":"residential","engines":["CARB"],"engine_detail":"Kawasaki 18-23 HP","display":"hour meter (verify)"},
     {"brand":"Hustler","model":"X-ONE","segment":"commercial entry","engines":["CARB","KAW_FX_EFI"],"engine_detail":"Kawasaki 27-29.5 HP, carbureted or fuel-injected","display":"verify"},

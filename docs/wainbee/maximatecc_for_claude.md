@@ -1,10 +1,10 @@
-# maxAI display SDK: working guide for Claude Code
+# M1 display SDK: working guide for Claude Code
 
-This file tells Claude Code how to work safely and efficiently in a maximatecc maxAI display project. It applies to any machine or application built on a maxAI display. It contains no application-specific requirements; put those in your own project notes.
+This file tells Claude Code how to work safely and efficiently in a maximatecc M1 display project. It applies to any machine or application built on a M1 display. It contains no application-specific requirements; put those in your own project notes.
 
 ## How to use this file
 
-- Put this file in the root of your maxAI project.
+- Put this file in the root of your M1 project.
 - Claude Code automatically reads `CLAUDE.md`. Either rename this file to `CLAUDE.md`, or add this line to your existing `CLAUDE.md`:
 
   ```
@@ -13,23 +13,23 @@ This file tells Claude Code how to work safely and efficiently in a maximatecc m
 
 - Fill in every item marked **VERIFY** (collected in the last section) against your SDK release before relying on this guide. Until then, Claude must treat those items as unknown and ask rather than assume.
 - Keep application specifics (machine type, signal list, screen designs, customer requirements) in a separate file such as `PROJECT.md`, and import it the same way.
-- The file has two parts. **Part 1** is the working rules for any maxAI project. **Part 2** describes the long-term partnership maximatecc wants with Wainbee and the toolkit built for it. Claude treats Part 2 as context and templates; where Part 2 and Part 1 seem to disagree, Part 1 wins.
+- The file has two parts. **Part 1** is the working rules for any M1 project. **Part 2** describes the long-term partnership maximatecc wants with Wainbee and the toolkit built for it. Claude treats Part 2 as context and templates; where Part 2 and Part 1 seem to disagree, Part 1 wins.
 
-# Part 1: Working rules for any maxAI project
+# Part 1: Working rules for any M1 project
 
 ## Scope
 
 | In scope | Out of scope |
 |---|---|
-| maxAI 280 SDK v1.0: ST-SDK (TouchGFX) and Qt-SDK (Qt for MCUs) | maxAI 130 and 200: configured with the maxAI Configurator, no SDK |
-| maxAI 430, once maximatecc releases its SDK (see the 430 notes below) | Bootloader, MCAL and low-level drivers (see "What Claude must not change") |
+| M1 280 SDK v1.0: ST-SDK (TouchGFX) and Qt-SDK (Qt for MCUs) | M1 130 and 200: configured with the M1 Configurator, no SDK |
+| M1, once maximatecc releases its SDK (see the M1 notes below) | Bootloader, MCAL and low-level drivers (see "What Claude must not change") |
 | Non-safety screens, data-layer fields, CAN signal decoding, tests, documentation | Safety functions and safety-relevant warnings, unless a named engineer asks and reviews |
 
 ## Hardware facts
 
 From maximatecc product pages and the 280 SDK manual. Treat these as the budget to stay within.
 
-| | maxAI 280 / 280b | maxAI 430 / 430v / 430i / 430iv |
+| | M1 280 / 280b | M1 / M1v / M1i / M1iv |
 |---|---|---|
 | MCU | STM32H743II, Arm Cortex-M7 | Arm Cortex-M7 (part number not published: **VERIFY**) |
 | Internal RAM / flash | 1 MB / 2 MB | 1 MB / 2 MB |
@@ -37,7 +37,7 @@ From maximatecc product pages and the 280 SDK manual. Treat these as the budget 
 | Display | 2.8", 240 × 320, 18-bit colour, IPS | 4.3", 480 × 272, 24-bit colour |
 | CAN | 1 × CAN, J1939 (bit rate: **VERIFY**; the product page shows "5Mbps", while J1939 uses 250 or 500 kbit/s) | 2 × CAN, J1939, 250 or 500 kbit/s |
 | Inputs / outputs | 280: 2 in, 1 out; 280b: 5 in, 4 out | 5 configurable inputs, one 4–20 mA input, 1 output |
-| Other | 4 keys, amber/red LED telltales; Bluetooth on 280b (configuration) | 4 keys; camera input (PAL/NTSC); Bluetooth 4.2 on 430v / 430iv |
+| Other | 4 keys, amber/red LED telltales; Bluetooth on 280b (configuration) | 4 keys; camera input (PAL/NTSC); Bluetooth 4.2 on M1v / M1iv |
 | OS | FreeRTOS | FreeRTOS |
 
 ## SDK architecture and ownership
@@ -231,12 +231,12 @@ These show the expected level of detail. Adapt them to your machine and signal l
 - "Import these signals from `machine.dbc`: hydraulic oil temperature and boom angle. Create data-layer fields and decoders with host tests. Do not add them to any screen yet."
 - "Review the memory use of the last five commits and list the three largest flash contributors."
 
-## maxAI 430 notes
+## M1 notes
 
-- maximatecc has announced Qt for MCUs compatibility for the 430 but has not published a 430 SDK manual. Until it does:
-  - do not assume 280 SDK file names, task names or pin mappings apply to the 430
-  - the 430 has 2 MB external SDRAM and a camera input, so its memory map and display driver differ from the 280
-- When the 430 SDK is released, fill in its rows in the hardware table and its toolchain versions here.
+- maximatecc has announced Qt for MCUs compatibility for the M1 but has not published a M1 SDK manual. Until it does:
+  - do not assume 280 SDK file names, task names or pin mappings apply to the M1
+  - the M1 has 2 MB external SDRAM and a camera input, so its memory map and display driver differ from the 280
+- When the M1 SDK is released, fill in its rows in the hardware table and its toolchain versions here.
 
 ## Items to fill in (VERIFY)
 
@@ -247,15 +247,15 @@ These show the expected level of detail. Adapt them to your machine and signal l
 | Whether data-layer access is ISR-safe | SDK documentation, platform services section |
 | Location of the SDK configuration interface for task rates and priorities | SDK manual, platform services section |
 | How the SDK sends J1939 requests (for on-request PGNs) | SDK manual, CAN section |
-| maxAI 280 CAN bit rate (product page says "5Mbps") | maximatecc |
-| maxAI 430 MCU part number and SDK release | maximatecc |
+| M1 280 CAN bit rate (product page says "5Mbps") | maximatecc |
+| M1 MCU part number and SDK release | maximatecc |
 | Project name, workspace path and build configuration for the headless build | Your project |
 | Output file name and any external-flash loader for GUI assets | Your project and the SDK manual |
 | Whether TouchGFX assets are stored in external flash | SDK manual and the TouchGFX project settings |
 
 # Part 2: maximatecc × Wainbee long-term partnership
 
-This part is written from Wainbee's side: what its product manager and its engineering team in Quebec are trying to get done, and how maxAI plus Claude Code can help them win more projects, faster. Everything here is a **proposal** from maximatecc. Items need agreement from both companies before they become commitments.
+This part is written from Wainbee's side: what its product manager and its engineering team in Quebec are trying to get done, and how M1 plus Claude Code can help them win more projects, faster. Everything here is a **proposal** from maximatecc. Items need agreement from both companies before they become commitments.
 
 None of this is tied to one machine type. Wainbee serves many industries (mobile hydraulics, automation, mining, forestry, construction and more), so every feature below is meant to work across different OEM customers and machines.
 
@@ -267,7 +267,7 @@ None of this is tied to one machine type. Wainbee serves many industries (mobile
 - Quote quickly and accurately, then deliver on that quote
 - Reuse engineering work across customers to protect margin
 - Keep customers for the life of their machines, through service and updates
-- Show OEMs something different from the CrossControl and other lines Wainbee also carries: maxAI as the fastest display to customise with AI
+- Show OEMs something different from the CrossControl and other lines Wainbee also carries: M1 as the fastest display to customise with AI
 
 **The engineering team** builds and supports the displays. Goals:
 
@@ -294,7 +294,7 @@ None of this is tied to one machine type. Wainbee serves many industries (mobile
 
 ### 1. 48-hour demo kit
 
-From an OEM's DBC file (or a PGN/SPN list) and a photo or sketch of their current gauges, produce a working demo on a maxAI 280 within two working days.
+From an OEM's DBC file (or a PGN/SPN list) and a photo or sketch of their current gauges, produce a working demo on a M1 280 within two working days.
 
 - Claude reads the signal list, proposes three screen layouts sized for 240 × 320, and builds the chosen one using Part 1 rules
 - Signals without a real source in the demo are fed from a recorded or synthetic CAN log, clearly marked "DEMO DATA" on screen
@@ -313,7 +313,7 @@ Turn a customer's signal list and screen sketches into an effort estimate and a 
 
 A library of reusable, tested building blocks owned by Wainbee:
 
-- Gauges and bar indicators sized for the 280 and 430
+- Gauges and bar indicators sized for the 280 and M1
 - Active-fault list (DM1) with SPN/FMI lookup text
 - Service-interval reminder and hour meter
 - Settings screen (units, language, brightness)
@@ -344,7 +344,7 @@ customers/<oem-b>/      ...
 
 ### 6. Cold-climate design kit
 
-The maxAI 280 and 430 are specified for operation from −20 °C (storage from −30 °C). Quebec winters regularly go colder, and machines may sit outside overnight.
+The M1 280 and M1 are specified for operation from −20 °C (storage from −30 °C). Quebec winters regularly go colder, and machines may sit outside overnight.
 
 - Raise this with maximatecc for each project: extended-temperature variant, cab installation, or a warm-up strategy (**VERIFY** options with maximatecc)
 - Screen design for cold: LCD response slows in the cold, so avoid fast animations and thin moving needles; prefer large digits and solid bars
@@ -358,7 +358,7 @@ Help Wainbee support machines far from the office:
 
 - **Service screen** behind a key combination: software version, serial number, CAN bus load, last value and age for each key signal, active faults
 - **QR code on the service screen** encoding version, serial number and active fault codes. A technician scans it with a phone and Wainbee's support desk gets the facts without a long call. (Use a small MIT-licensed QR library; check flash cost first.)
-- **On 430v / 430iv:** use Bluetooth to pull logs to a phone (**VERIFY** what the Bluetooth link supports today)
+- **On M1v / M1iv:** use Bluetooth to pull logs to a phone (**VERIFY** what the Bluetooth link supports today)
 - Customer-specific troubleshooting notes stored in the customer folder, so Claude can help a Wainbee engineer diagnose a ticket from the QR data
 
 ### 8. CAN replay and regression tests
@@ -414,7 +414,7 @@ A five-day format the Wainbee team can run with a new OEM customer. Claude helps
 
 Custom commands live in `.claude/commands/` as Markdown files; Claude Code runs them as `/name`, and `$ARGUMENTS` is replaced by whatever follows the command. Suggested starting set:
 
-**`.claude/commands/maxai-demo.md`**
+**`.claude/commands/m1-demo.md`**
 
 ```markdown
 Build a 48-hour demo for customer folder $ARGUMENTS.
@@ -425,7 +425,7 @@ Build a 48-hour demo for customer folder $ARGUMENTS.
 5. Report files changed, build result, flash and RAM use, and a French + English summary.
 ```
 
-**`.claude/commands/maxai-signal.md`**
+**`.claude/commands/m1-signal.md`**
 
 ```markdown
 Add the signal described in "$ARGUMENTS" to the current customer project.
@@ -434,7 +434,7 @@ source message is unclear. Add host tests for normal, boundary, error and
 not-available values. Add fr-CA and en-CA labels. Report as Part 1 requires.
 ```
 
-**`.claude/commands/maxai-fat.md`**
+**`.claude/commands/m1-fat.md`**
 
 ```markdown
 Draft a bilingual factory acceptance test for customer folder $ARGUMENTS from
@@ -442,7 +442,7 @@ PROJECT.md and the current screens: one row per signal with source, test value,
 expected display and a pass/fail box. Save it in that customer folder.
 ```
 
-**`.claude/commands/maxai-quote.md`**
+**`.claude/commands/m1-quote.md`**
 
 ```markdown
 Estimate effort for the signal list and screens in $ARGUMENTS using
@@ -455,7 +455,7 @@ questions for the customer, and draft a statement of work for an engineer to che
 | Stage | Timing | Focus | maximatecc offers | Wainbee offers |
 |---|---|---|---|---|
 | 1. Pilot | First 6 weeks | Prove the Claude Code workflow on one real application | This guide, data-layer rules, signal generator, PC test harness, weekly check-in | One application, signal list, two engineers, honest feedback |
-| 2. Integrator programme | Months 2–12 | Make maxAI Wainbee's fastest display offer | Early access to new SDK releases (430 first), training for Wainbee engineers, joint demos for OEM prospects | Catalogue built and shared back where generic, two to three OEM projects on maxAI, quarterly feature requests |
+| 2. Integrator programme | Months 2–12 | Make M1 Wainbee's fastest display offer | Early access to new SDK releases (M1 first), training for Wainbee engineers, joint demos for OEM prospects | Catalogue built and shared back where generic, two to three OEM projects on M1, quarterly feature requests |
 | 3. Co-development | Year 2 onward | Shape the product together | Wainbee input on the SDK roadmap, co-branded case studies, priority engineering support | Reference customers, market insight from Quebec and Canadian OEMs, field data on reliability |
 
 **Ways of working (proposed)**
@@ -466,14 +466,14 @@ questions for the customer, and draft a statement of work for an engineer to che
   - days from first OEM meeting to first demo screen
   - hours to add a proprietary signal
   - defects found on the PC before hardware
-  - OEM projects won with maxAI
+  - OEM projects won with M1
   - support tickets solved without a site visit
 - Wainbee owns its catalogue, customer folders and rates; maximatecc owns the SDK. Generic improvements Wainbee chooses to share can flow back into the SDK for all customers, by written agreement
 
 ## Sources
 
-- maximatecc maxAI software solutions: https://www.maximatecc.com/maxai-software-solutions/
-- maxAI 280 SDK manual: https://maximatecc.com/280-instrument-displays-SDK-manual/
-- maxAI 280 product page: https://www.maximatecc.com/maxai-280/
-- maxAI 430 product page: https://www.maximatecc.com/maxai-430/
+- maximatecc M1 software solutions: https://www.maximatecc.com/maxai-software-solutions/
+- M1 280 SDK manual: https://maximatecc.com/280-instrument-displays-SDK-manual/
+- M1 280 product page: https://www.maximatecc.com/maxai-280/
+- M1 product page: https://www.maximatecc.com/maxai-430/
 - SAE J1939-71 (application layer) and J1939-73 (diagnostics); CiA 301 (CANopen application layer)

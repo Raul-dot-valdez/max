@@ -1,6 +1,6 @@
 # Synthetic mower J1939 dataset generator
 
-A physics-informed, deterministic generator of J1939 data for a commercial zero-turn mower: what a maxAI 430-class display would receive, plus hidden ground truth for faults and clock behaviour. Read **DESIGN.md** for the expert debate behind every choice.
+A physics-informed, deterministic generator of J1939 data for a commercial zero-turn mower: what a M1-class display would receive, plus hidden ground truth for faults and clock behaviour. Read **DESIGN.md** for the expert debate behind every choice.
 
 ## Run
 

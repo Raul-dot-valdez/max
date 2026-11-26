@@ -1,4 +1,4 @@
-"""Worst-case graphics + AI resource budget for a maxAI 430-class display (STM32H743 path).
+"""Worst-case graphics + AI resource budget for a M1-class display (STM32H743 path).
 
 First-principles model, not a measurement. Every input is in PLATFORM / WORKLOADS below and is
 tagged with its source or with VERIFY. Change a number, rerun, and the tables follow:
@@ -13,13 +13,13 @@ MB = 1e6
 PLATFORM = {
     "cpu_hz_nominal": 480e6,          # STM32H743 rev V, VOS0
     "cpu_hz_plan": 400e6,             # planning clock: 480 MHz is limited to a lower junction temp (VERIFY for the grade used)
-    "sdram_bytes": 2 * 1024 * 1024,   # maxAI 430 datasheet: 2 MB SDRAM (ISSI, 16-bit class)
-    "sdram_bus_bytes": 2,             # 16-bit data bus (VERIFY on the 430 board)
+    "sdram_bytes": 2 * 1024 * 1024,   # M1 datasheet: 2 MB SDRAM (ISSI, 16-bit class)
+    "sdram_bus_bytes": 2,             # 16-bit data bus (VERIFY on the M1 board)
     "sdram_clk_hz": 100e6,            # FMC SDCLK = HCLK/2 with HCLK 200 MHz
     "sdram_efficiency": 0.55,         # mixed masters, row misses, refresh: 50-65 % of peak is typical
     "qspi_peak_bps": 50 * MB,         # quad SDR at 100 MHz
     "qspi_efficiency": 0.70,
-    "panel_w": 480, "panel_h": 272, "refresh_hz": 60,   # maxAI 430 datasheet: 4.3 in, 480x272, 24-bit
+    "panel_w": 480, "panel_h": 272, "refresh_hz": 60,   # M1 datasheet: 4.3 in, 480x272, 24-bit
     "internal_ram_kb": {"DTCM": 128, "AXI_SRAM": 512, "SRAM1-3": 288, "SRAM4": 64, "ITCM": 64},
     "can_frames_per_s_100pct_250k": 1613,  # 29-bit ID, 8 data bytes, worst-case bit stuffing
     "can_isr_us": 3.0,                # ISR + J1939 decode + vd_put at 400 MHz (estimate)
@@ -83,7 +83,7 @@ def scenarios(fmt):
         ai_burst_ms=cnn_burst_ms,
         notes="SDRAM is the limit, not the CPU. One 0.66 ms AI burst costs at most part of one frame if AI runs below the GUI priority."))
 
-    # S3: rear camera (430i / 430iv) full screen with guide lines while reversing
+    # S3: rear camera (M1i / M1iv) full screen with guide lines while reversing
     cam_w, cam_h, cam_fps = 360, 240, 30       # DCMI 2:1 decimation of a 720x480 decoder stream
     conv_cyc = px * cam_fps * 14               # YUV422 -> panel format + scale on the CPU, ~14 cycles/px
     out.append(dict(
@@ -96,7 +96,7 @@ def scenarios(fmt):
         cpu={"RTOS + app services": 3.0, "CAN ISR (2 buses, 40 % load)": can(0.4, 2),
              "TouchGFX framework": 1.0e-3 * 30 * 100, "YUV to RGB + scale (CPU)": conv_cyc / hz * 100},
         ai_burst_ms=cnn_burst_ms,
-        notes="The colour conversion is the hidden CPU cost: the H743 DMA2D does not take raster YUV422 (VERIFY against the 430i camera path)."))
+        notes="The colour conversion is the hidden CPU cost: the H743 DMA2D does not take raster YUV422 (VERIFY against the M1i camera path)."))
 
     # S4: fault storm
     out.append(dict(
@@ -112,7 +112,7 @@ def scenarios(fmt):
     # S5: everything at once
     out.append(dict(
         id="S5", name="Worst of worst",
-        what="Camera view + alarm fade + fault storm + LSTM instead of CNN + Bluetooth log download (430v / 430iv) + hot cabin (400 MHz plan clock).",
+        what="Camera view + alarm fade + fault storm + LSTM instead of CNN + Bluetooth log download (M1v / M1iv) + hot cabin (400 MHz plan clock).",
         sdram={"LTDC scan-out": scan, "Camera DCMI writes": cam_w * cam_h * 2 * cam_fps / MB,
                "Convert: read camera": cam_w * cam_h * 2 * cam_fps / MB, "Convert: write frame": s * cam_fps / MB,
                "Fade + dim (60 fps)": 2 * s * 60 / MB},

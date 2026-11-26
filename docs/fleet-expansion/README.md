@@ -1,4 +1,4 @@
-# Fleet expansion: maxAI edge AI on every C1 and Hustler mower
+# Fleet expansion: M1 edge AI on every C1 and Hustler mower
 
 - `c1-hustler-zero-turn-fleet-plan.html`: the review, with the model list, the signal matrix, an
   eight-team expert debate, hardware tiers, firmware layers and a roadmap. Open it in a browser.
@@ -13,5 +13,5 @@ Key findings:
    (11 Sept 2026) had closing pending regulatory approval. Use public data only until it closes.
 2. Most units sold are carbureted: no ECU, no J1939. Every EFI engine in both lineups is air-cooled,
    so the coolant-based phase 1 model does not transfer to them.
-3. Plan: four hardware tiers (maxAI 430, maxAI 280 or headless box, BLE health tag, electric bridge),
+3. Plan: four hardware tiers (M1, M1 280 or headless box, BLE health tag, electric bridge),
    one firmware platform with a machine profile layer, and edge-AI heads per signal family.

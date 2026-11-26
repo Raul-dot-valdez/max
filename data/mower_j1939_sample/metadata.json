@@ -209,7 +209,7 @@
   ],
   "timestamps": {
     "t_true_utc": "ground-truth UTC (simulation clock); use for labels and joins",
-    "t_rtc": "what the maxAI display's real-time clock reported (drift, resets, syncs)",
+    "t_rtc": "what the M1 display's real-time clock reported (drift, resets, syncs)",
     "uptime_s": "seconds since this power-up; resets at every key-on (boot_id increments)",
     "can logs": "candump timestamps are a reference logger's clock (true UTC)"
   },

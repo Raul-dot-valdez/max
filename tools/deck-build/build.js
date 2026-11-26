@@ -1,4 +1,4 @@
-// maxAI graphics framework strategy deck (structured pptxgenjs build)
+// M1 graphics framework strategy deck (structured pptxgenjs build)
 const pptxgen = require("pptxgenjs");
 const { applyTheme } = require(process.env.APPLY_THEME || "./apply_theme.js") /* theme helper from the pptx skill; not stored in this repo */;
 
@@ -17,14 +17,14 @@ const HEX = { rule: "CDD5DB", soft: "F1F4F6", graphite: "0F1418", amber: "FF7A1A
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.33 x 7.5
-pres.title = "maxAI Graphics Framework Strategy";
+pres.title = "M1 Graphics Framework Strategy";
 pres.author = "AI Terra";
 pres.subject = "Off-highway HMI graphics strategy for maximatecc";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 const C = pres.SchemeColor;
 
 const W = 13.333, M = 0.6, CW = W - 2 * M;
-const FOOT = "AI Terra · maxAI graphics framework strategy · November 2026";
+const FOOT = "AI Terra · M1 graphics framework strategy · November 2026";
 
 // ---------- layouts ----------
 pres.defineSlideMaster({
@@ -108,7 +108,7 @@ function circleNum(s, n, x, y, d = 0.6, fill = C.accent1) {
 pres.addSection({ title: "Opening" });
 {
   const s = pres.addSlide({ masterName: "TITLE_DARK", sectionTitle: "Opening" });
-  s.addText("Graphics framework strategy for the maximatecc maxAI roadmap", { placeholder: "title" });
+  s.addText("Graphics framework strategy for the maximatecc M1 roadmap", { placeholder: "title" });
   s.addText("Market evidence, jobs to be done, OEM-tier segmentation, SDK SWOT, an expert-panel debate and five scenarios for hardware and firmware planning. Prepared November 2026 from public sources.", { placeholder: "body" });
   s.addNotes("Pre-read deck. Every claim carries a label: EVIDENCE (stated in a cited public source), JUDGMENT (expert-panel assessment, not measured), VERIFY (check before it drives a decision). Sources are listed at the end of the deck.");
 }
@@ -122,7 +122,7 @@ pres.addSection({ title: "Opening" });
      "OEMs will pay for what surrounds the framework: machine signals ready to bind, safety-certified rendering, fast simulators, update and cyber compliance, and an AI-ready toolchain"],
     { kicker: "MARKET", size: 15 });
   card(s, M + 6.2, 1.35, 5.9, 5.3, "What maximatecc should do",
-    ["Position maxAI as a framework-neutral HMI platform",
+    ["Position M1 as a framework-neutral HMI platform",
      "One signal layer, one safety island, one build/simulation/OTA pipeline",
      "Three supported runtimes: Qt 6, LVGL 9, CODESYS Visualization",
      "An agent interface so Claude Code and similar tools build on it safely",
@@ -206,8 +206,8 @@ pres.addSection({ title: "Market evidence" });
     ["VI", "—", "3.5\"", "Compact display"],
   ], [2.2, 2.6, 1.4, 5.9], 1.4, { fontSize: 13 });
   tag(s, "EVIDENCE", 11.58, 1.03);
-  card(s, M, 4.15, 5.9, 2.6, "Data Engine: seed of a neutral signal layer", "The Data Engine already exchanges signals between a CODESYS project and a Qt application. Extending it to LVGL and to a typed, exportable signal model is the core of the maxAI SDK.", { size: 14, kicker: "ASSET", headH: 0.45 });
-  card(s, M + 6.2, 4.15, 5.9, 2.6, "Open questions", ["Maxima, Turotest and CrossControl merged as maximatecc in 2012; CrossControl later moved to the Scanreco group (public dates conflict)", "maximatecc.com could not be read from this session; details come from crosscontrol.com and resellers", "No public reference to \"maxAI\": treated as your internal roadmap name"], { size: 13, kicker: "VERIFY", kickerColor: C.accent5, headH: 0.4 });
+  card(s, M, 4.15, 5.9, 2.6, "Data Engine: seed of a neutral signal layer", "The Data Engine already exchanges signals between a CODESYS project and a Qt application. Extending it to LVGL and to a typed, exportable signal model is the core of the M1 SDK.", { size: 14, kicker: "ASSET", headH: 0.45 });
+  card(s, M + 6.2, 4.15, 5.9, 2.6, "Open questions", ["Maxima, Turotest and CrossControl merged as maximatecc in 2012; CrossControl later moved to the Scanreco group (public dates conflict)", "maximatecc.com could not be read from this session; details come from crosscontrol.com and resellers", "No public reference to \"M1\": treated as your internal roadmap name"], { size: 13, kicker: "VERIFY", kickerColor: C.accent5, headH: 0.4 });
 }
 {
   const s = content("Market evidence", "Is Claude Code changing embedded graphics? Yes, early");
@@ -314,10 +314,10 @@ const SCEN = [
     ["MCU smart-display tier: i.MX RT1170, STM32H7/U5 or RA8D1 class, no Linux", "MPU entry tier: i.MX 93 class with NPU"],
     ["Commercial LVGL support: LTS branch, CVE patches, SBOM", "Join LVGL Pro partner programme; contribute off-highway widgets (gauges, telltales, soft keys)", "Qt 5 → LVGL or Qt 6 migration service"]],
   ["AI-native HMI engineering", 0.75, "High", 0.9, "Very high",
-    "Agents such as Claude Code write most HMI code from specs, Figma and signal databases. The framework matters less; the platform's guardrails, simulator, tests and machine-readable models decide the vendor. Biggest chance for maxAI to stand out.",
+    "Agents such as Claude Code write most HMI code from specs, Figma and signal databases. The framework matters less; the platform's guardrails, simulator, tests and machine-readable models decide the vendor. Biggest chance for M1 to stand out.",
     ["OEM job ads ask for AI-assisted HMI development", "Framework vendors ship MCP servers and agent skills (Qt has started)", "RFQs ask for days-to-first-screen"],
     ["Debug and agent port on every unit: MCP server on device exposing signals, screenshots, logs, safe test hooks", "RAM and flash headroom for on-device test agents"],
-    ["maxAI SDK: CLI, desktop simulator, golden-image tests, DBC → widget binding", "Agent skills and guardrails: memory budget, frame time, safety-zone rules, licence checks", "Works with cloud and on-premise models"]],
+    ["M1 SDK: CLI, desktop simulator, golden-image tests, DBC → widget binding", "Agent skills and guardrails: memory budget, frame time, safety-zone rules, licence checks", "Works with cloud and on-premise models"]],
   ["Controls engineers own the screen", 0.5, "Medium", 0.55, "Medium",
     "In mid-size OEMs without HMI teams, CODESYS Visualization becomes good enough. The display is bought as a CODESYS target with I/O; WebVisu covers phones and service laptops.",
     ["CODESYS HMI and Visu releases close the UX gap", "More requests for displays that also run machine control", "Combined display-and-controller ECUs win tenders"],
@@ -353,7 +353,7 @@ SCEN.forEach((sc, i) => {
   s.addText([{ text: "LIKELIHOOD", options: { bold: true, color: C.accent6, fontSize: 10, breakLine: true } }, { text: sc[2], options: { bold: true, color: C.text1, fontSize: 14, breakLine: true } }, { text: "IMPACT", options: { bold: true, color: C.accent6, fontSize: 10, breakLine: true } }, { text: sc[4], options: { bold: true, color: C.accent2, fontSize: 14 } }],
     { x: 10.0, y: 1.25, w: 2.75, h: 1.2, margin: 8, valign: "middle", fill: { color: C.background2 }, isTextBox: true });
   const cw = (CW - 2 * 0.3) / 3;
-  [["Signposts to watch", sc[6]], ["Hardware implications", sc[7]], ["Firmware and maxAI moves", sc[8]]].forEach(([h, b], k) => {
+  [["Signposts to watch", sc[6]], ["Hardware implications", sc[7]], ["Firmware and M1 moves", sc[8]]].forEach(([h, b], k) => {
     card(s, M + k * (cw + 0.3), 2.75, cw, 3.6, h, b, { size: 14, fill: k === 2 ? "FFF1E6" : undefined });
   });
 });
@@ -386,7 +386,7 @@ pres.addSection({ title: "Where to play" });
     ["Buys from a display supplier", "Hardware to spec (ODM), BSP, safety and environmental qualification", "Hardware + platform + SDK + support: a finished base", "Ready product with screens configured, via distributors"],
     ["Volume per platform", "High (10k–100k+ / year)", "Medium (1k–10k)", "Low (<1k)"],
     ["Price sensitivity / cycle", "High on hardware; 2–4 years, global sourcing", "Medium, values time-to-market; 12–24 months", "High, values simplicity; 3–12 months"],
-    [{ text: "Fit for a maxAI SDK", bold: true }, "Low as SDK, medium as hardware/BSP partner", { text: "High", bold: true, color: C.accent2, fill: "FFF1E6" }, "Medium, if packaged as templates and agent-built screens"],
+    [{ text: "Fit for a M1 SDK", bold: true }, "Low as SDK, medium as hardware/BSP partner", { text: "High", bold: true, color: C.accent2, fill: "FFF1E6" }, "Medium, if packaged as templates and agent-built screens"],
   ], [2.3, 3.3, 3.3, 3.2], 1.35, { fontSize: 12 });
   tag(s, "JUDGMENT", 11.58, 1.03);
 }
@@ -410,7 +410,7 @@ pres.addSection({ title: "Where to play" });
 {
   const s = content("Where to play", "Verdict: primary in the mid-to-high band");
   const V = [
-    ["PRIMARY", "Mid-to-high", "Upper-mid OEMs and the second tier of large OEMs (global ranks ~10–50). Sell maxAI as an SDV-lite platform: 1–3 displays, OTA, telematics, safety island, multi-framework SDK.", "FFF1E6"],
+    ["PRIMARY", "Mid-to-high", "Upper-mid OEMs and the second tier of large OEMs (global ranks ~10–50). Sell M1 as an SDV-lite platform: 1–3 displays, OTA, telematics, safety island, multi-framework SDK.", "FFF1E6"],
     ["SELECTIVE", "High end", "Bid for large-OEM programmes as hardware, BSP and safety-island partner where the OEM brings its own software. No full cockpit computer until Scenario 5 signposts move.", undefined],
     ["CHANNEL", "Low end", "CODESYS-ready display with templates and agent-built screens, sold by distributors. No custom engineering.", undefined],
   ];
@@ -425,10 +425,10 @@ pres.addSection({ title: "SDK SWOT" });
 {
   const s = pres.addSlide({ masterName: "SECTION_DARK", sectionTitle: "SDK SWOT" });
   s.addText("SWOT: maximatecc SDK strategy", { placeholder: "title" });
-  s.addText("The recommended framework-neutral maxAI SDK, four alternative strategies, and moves that combine the quadrants", { placeholder: "body" });
+  s.addText("The recommended framework-neutral M1 SDK, four alternative strategies, and moves that combine the quadrants", { placeholder: "body" });
 }
 {
-  const s = content("SDK SWOT", "SWOT of the framework-neutral maxAI SDK");
+  const s = content("SDK SWOT", "SWOT of the framework-neutral M1 SDK");
   const Q = [
     ["S", "Strengths", C.accent3, ["Installed CCpilot base with Qt and CODESYS already supported", "Data Engine already bridges CODESYS and Qt", "Rugged off-highway hardware know-how, long lifecycles", "i.MX 8 family from 7\" to 12\" shares one software base"]],
     ["W", "Weaknesses", C.accent4, ["Small software org vs Qt Group, CODESYS, Tier-1s", "Three runtimes multiply validation and support", "No published safety-island / certified rendering offer", "Unclear brand: maximatecc, CrossControl, Scanreco", "Thin cloud, telematics and AI tooling today"]],
@@ -449,7 +449,7 @@ pres.addSection({ title: "SDK SWOT" });
   const s = content("SDK SWOT", "Four SDK strategies compared");
   table(s, ["Strategy", "Strength", "Weakness", "Opportunity", "Threat"], [
     ["A · Qt-centric SDK", "Continuity for today's customers; premium UX; Qt Safe Renderer path", "Royalty cost stays in the BOM; depends on Qt pricing", "Qt 5 → Qt 6 migrations; Qt partner co-selling", "Customers moving to LVGL or Slint on cost; Qt selling direct"],
-    [{ text: "B · Framework-neutral maxAI SDK (recommended)", bold: true, fill: "FFF1E6" }, { text: "Wins whatever the customer picks; value in signal model, safety, tooling", fill: "FFF1E6" }, { text: "Highest engineering and support load", fill: "FFF1E6" }, { text: "AI-native engineering; mid-tier SDV-lite demand", fill: "FFF1E6" }, { text: "Spread too thin; partner frictions", fill: "FFF1E6" }],
+    [{ text: "B · Framework-neutral M1 SDK (recommended)", bold: true, fill: "FFF1E6" }, { text: "Wins whatever the customer picks; value in signal model, safety, tooling", fill: "FFF1E6" }, { text: "Highest engineering and support load", fill: "FFF1E6" }, { text: "AI-native engineering; mid-tier SDV-lite demand", fill: "FFF1E6" }, { text: "Spread too thin; partner frictions", fill: "FFF1E6" }],
     ["C · CODESYS-first SDK", "Matches how small and mid OEMs work; one tool for logic and screens", "Weak at premium UX; hard to stand out", "Display-plus-controller products; SIL2 path", "Crowded: ifm, Intercontrol, OpenView, TTControl"],
     ["D · LVGL open-core SDK", "No runtime royalty; MCU-to-MPU portability; community", "Thin safety story; fewer HMI designers", "Cost-down programmes; LTS, CVE, SBOM as paid service", "MCU vendors bundle LVGL free (GUI Guider)"],
   ], [2.5, 2.45, 2.3, 2.45, 2.4], 1.4, { fontSize: 13 });
@@ -457,10 +457,10 @@ pres.addSection({ title: "SDK SWOT" });
 {
   const s = content("SDK SWOT", "Combining the quadrants into moves");
   const T = [
-    ["Strengths × Opportunities", ["Package the Qt 5 exit as a programme: assess, migrate to Qt 6 or LVGL on one signal layer, deliver on CCpilot hardware", "Grow Data Engine into the maxAI signal model with DBC import and agent skills"]],
+    ["Strengths × Opportunities", ["Package the Qt 5 exit as a programme: assess, migrate to Qt 6 or LVGL on one signal layer, deliver on CCpilot hardware", "Grow Data Engine into the M1 signal model with DBC import and agent skills"]],
     ["Weaknesses × Opportunities", ["Partner rather than build: Qt Safe Renderer or a silicon safety domain for telltales; LVGL Pro for the editor", "Use AI agents internally to multiply a small team, gated by the same tests sold to customers"]],
     ["Strengths × Threats", ["Against insourcing, sell large OEMs rugged hardware, BSP and safety qualification they don't want to build", "Against CODESYS-first rivals, offer CODESYS parity plus a Qt or LVGL upgrade path on the same hardware"]],
-    ["Weaknesses × Threats", ["Limit validated combinations (3 runtimes × 2 SoC families, LTS only)", "Publish rules for AI-generated code: review gates, test evidence, liability terms", "Settle the brand story before launching maxAI publicly"]],
+    ["Weaknesses × Threats", ["Limit validated combinations (3 runtimes × 2 SoC families, LTS only)", "Publish rules for AI-generated code: review gates, test evidence, liability terms", "Settle the brand story before launching M1 publicly"]],
   ];
   const cw = (CW - 0.25) / 2, ch = 2.62;
   T.forEach((t, i) => card(s, M + (i % 2) * (cw + 0.25), 1.35 + Math.floor(i / 2) * (ch + 0.2), cw, ch, t[0], t[1], { size: 14 }));
@@ -470,14 +470,14 @@ pres.addSection({ title: "SDK SWOT" });
 pres.addSection({ title: "Roadmap" });
 {
   const s = pres.addSlide({ masterName: "SECTION_DARK", sectionTitle: "Roadmap" });
-  s.addText("maxAI roadmap moves", { placeholder: "title" });
+  s.addText("M1 roadmap moves", { placeholder: "title" });
   s.addText("No-regret moves that pay off in every scenario come first; scenario bets follow once signposts move", { placeholder: "body" });
 }
 {
   const s = content("Roadmap", "Roadmap: from validation to platform");
   const R = [
     ["Next 90 days", ["Win/loss review of the last 30 design-ins by framework", "Buy independent framework share data", "15 jobs-to-be-done interviews: HMI, controls, safety, dealer", "Build the 48-hour HMI prototype on CCpilot"]],
-    ["12 months", ["maxAI SDK 1.0: signal model, simulator, CLI, screenshot tests", "Qt 6 LTS and LVGL 9 validated on i.MX 8/9", "Published agent skills and guardrails", "SBOM, CVE and signed OTA service"]],
+    ["12 months", ["M1 SDK 1.0: signal model, simulator, CLI, screenshot tests", "Qt 6 LTS and LVGL 9 validated on i.MX 8/9", "Published agent skills and guardrails", "SBOM, CVE and signed OTA service"]],
     ["24 months", ["Safety island with telltale rendering and CRC checking", "MCU smart-display tier on the same SDK", "MCP server on the device", "CODESYS device package at parity with Qt"]],
     ["36 months +", ["Cockpit computer for multiple displays, if Scenario 5 signposts move", "Edge-AI assist (diagnostics, operator guidance) on the NPU", "Fleet data products with OEM revenue share"]],
   ];
@@ -549,7 +549,7 @@ const SRC = [
 });
 
 (async () => {
-  const out = require("path").join(__dirname, "../../docs/strategy/maxAI-graphics-strategy.pptx");
+  const out = require("path").join(__dirname, "../../docs/strategy/M1-graphics-strategy.pptx");
   await pres.writeFile({ fileName: out });
   await applyTheme(out, THEME);
   console.log("wrote", out);

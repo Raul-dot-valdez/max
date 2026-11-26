@@ -141,8 +141,8 @@ diagnostics.
 
 | Tier | Hardware | Profiles | What runs |
 |---|---|---|---|
-| T1 | maxAI 430 / 430v | ECU families | everything above, liquid or air-cooled head |
-| T2 | maxAI 280 or a box with no screen | `CARB` on commercial models | analog inputs, no-ECU head, hours and service, BLE |
+| T1 | M1 / M1v | ECU families | everything above, liquid or air-cooled head |
+| T2 | M1 280 or a box with no screen | `CARB` on commercial models | analog inputs, no-ECU head, hours and service, BLE |
 | T3 | BLE health tag (new hardware) | `CARB` residential | separate small firmware: IMU vibration model, pulses, battery |
 | T4 | tag or pack bridge | `EV_80V` | pack state, runtime |
 
@@ -151,8 +151,8 @@ diagnostics.
 | Item | Owner | Blocks |
 |---|---|---|
 | Bench CAN logs, one per family (7) | integration | replacing `verify` in profiles and JSON |
-| maxAI 430 fitment list from C1 | product | Tier 1 rollout |
-| `pal_analog_sample()` in the STM32H7 port, pin map on the 430 inputs | firmware | Tier 2 on hardware |
+| M1 fitment list from C1 | product | Tier 1 rollout |
+| `pal_analog_sample()` in the STM32H7 port, pin map on the M1 inputs | firmware | Tier 2 on hardware |
 | Pulses per revolution per carb engine | integration | analog rpm accuracy |
 | Train air-cooled and no-ECU heads on `config_fleet.json` with masks | data science | AI beyond rules on those families |
 | Map J1939 NAME manufacturer codes to families | integration | auto-detect naming the make |
