@@ -1,0 +1,227 @@
+{
+  "dataset": "Synthetic commercial zero-turn mower J1939 dataset",
+  "generator_version": "0.1.0",
+  "config_hash": "177e02bb2a8c",
+  "config": {
+    "seed": 7,
+    "machines": 1,
+    "days": 4,
+    "start_date": "2027-06-01",
+    "utc_offset_hours": -4,
+    "climate": "temperate_continental",
+    "work_days": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "rain_day_prob": 0.15,
+    "heat_wave_day_prob": 0.12,
+    "heat_wave_extra_c": 9,
+    "machine": {
+      "profile": "commercial zero-turn mower, liquid-cooled diesel, hydrostatic drive, 60 in deck",
+      "rated_kw": 18.6,
+      "idle_rpm": 1400,
+      "work_rpm": 3000,
+      "tank_l": 45
+    },
+    "faults": {
+      "clog_rate_per_mow_hour": 0.12,
+      "screen_clean_prob_lunch": 0.55,
+      "screen_clean_prob_end_of_day": 0.6,
+      "dull_rate_per_mow_hour": 0.012,
+      "sharpen_prob": 0.5,
+      "air_rate_per_mow_hour": 0.004,
+      "strike_rate_per_mow_hour": 1.5,
+      "theft_per_night_prob": 0.01,
+      "oil_leak_machine_prob": 0.5,
+      "oil_leak_rate_per_run_hour": 0.04,
+      "sender_fault_machine_prob": 0.4,
+      "hyd_fan_fault_machine_prob": 0.6,
+      "guarantee_coverage": true
+    },
+    "rtc": {
+      "modes": [
+        "battery",
+        "supercap",
+        "none"
+      ],
+      "supercap_backup_days": 7,
+      "initial_storage_days": 150,
+      "phone_sync_prob_per_session": 0.15,
+      "td_source_on_bus": false
+    },
+    "can_log": {
+      "sessions_per_machine": 1,
+      "max_minutes": 10,
+      "eec1_period_ms": 20
+    }
+  },
+  "rows": 82140,
+  "sessions": 27,
+  "labels": 26,
+  "windows": {
+    "count": 2672,
+    "shape": [
+      2672,
+      60,
+      9
+    ],
+    "class_counts": {
+      "normal": 2118,
+      "screen_clog": 0,
+      "low_oil": 0,
+      "hyd_overheat": 516,
+      "dull_blades": 38
+    }
+  },
+  "can_logs": [
+    {
+      "file": "can/MWR-001_session0001.log",
+      "frames": 64882,
+      "machine": "MWR-001",
+      "session": 1
+    }
+  ],
+  "signal_dictionary": [
+    {
+      "column": "rpm",
+      "message": "EEC1",
+      "pgn": 61444,
+      "spn": 190,
+      "scaling": "0.125 rpm/bit",
+      "unit": "rpm"
+    },
+    {
+      "column": "load_pct",
+      "message": "EEC2",
+      "pgn": 61443,
+      "spn": 92,
+      "scaling": "1 %/bit",
+      "unit": "%"
+    },
+    {
+      "column": "coolant_c",
+      "message": "ET1",
+      "pgn": 65262,
+      "spn": 110,
+      "scaling": "1 \u00b0C/bit, -40",
+      "unit": "\u00b0C"
+    },
+    {
+      "column": "oil_temp_c",
+      "message": "ET1",
+      "pgn": 65262,
+      "spn": 175,
+      "scaling": "0.03125 \u00b0C/bit, -273",
+      "unit": "\u00b0C"
+    },
+    {
+      "column": "oil_press_kpa",
+      "message": "EFL/P1",
+      "pgn": 65263,
+      "spn": 100,
+      "scaling": "4 kPa/bit",
+      "unit": "kPa"
+    },
+    {
+      "column": "fuel_rate_lph",
+      "message": "LFE1",
+      "pgn": 65266,
+      "spn": 183,
+      "scaling": "0.05 L/h per bit",
+      "unit": "L/h"
+    },
+    {
+      "column": "fuel_level_pct",
+      "message": "DD1",
+      "pgn": 65276,
+      "spn": 96,
+      "scaling": "0.4 %/bit",
+      "unit": "%"
+    },
+    {
+      "column": "battery_v",
+      "message": "VEP1",
+      "pgn": 65271,
+      "spn": 168,
+      "scaling": "0.05 V/bit",
+      "unit": "V"
+    },
+    {
+      "column": "wheel_speed_kmh",
+      "message": "CCVS1",
+      "pgn": 65265,
+      "spn": 84,
+      "scaling": "1/256 km/h per bit",
+      "unit": "km/h"
+    },
+    {
+      "column": "hyd_oil_c",
+      "message": "VF",
+      "pgn": 65128,
+      "spn": 1638,
+      "scaling": "1 \u00b0C/bit, -40",
+      "unit": "\u00b0C"
+    },
+    {
+      "column": "ambient_c",
+      "message": "AMB",
+      "pgn": 65269,
+      "spn": 171,
+      "scaling": "0.03125 \u00b0C/bit, -273",
+      "unit": "\u00b0C"
+    },
+    {
+      "column": "engine_hours",
+      "message": "HOURS",
+      "pgn": 65253,
+      "spn": 247,
+      "scaling": "0.05 h/bit (on request)",
+      "unit": "h"
+    },
+    {
+      "column": "blade_engaged",
+      "message": "Proprietary B (placeholder)",
+      "pgn": 65296,
+      "spn": null,
+      "scaling": "byte 1 bits 0-1",
+      "unit": "0/1"
+    },
+    {
+      "column": "deck_height_mm",
+      "message": "Proprietary B (placeholder)",
+      "pgn": 65296,
+      "spn": null,
+      "scaling": "byte 2, 2 mm/bit",
+      "unit": "mm"
+    },
+    {
+      "column": "dtcs",
+      "message": "DM1",
+      "pgn": 65226,
+      "spn": null,
+      "scaling": "SPN/FMI/OC; BAM when more than one",
+      "unit": ""
+    }
+  ],
+  "timestamps": {
+    "t_true_utc": "ground-truth UTC (simulation clock); use for labels and joins",
+    "t_rtc": "what the maxAI display's real-time clock reported (drift, resets, syncs)",
+    "uptime_s": "seconds since this power-up; resets at every key-on (boot_id increments)",
+    "can logs": "candump timestamps are a reference logger's clock (true UTC)"
+  },
+  "ground_truth_columns": [
+    "gt_grass_load",
+    "gt_slope_deg",
+    "gt_screen_clog",
+    "gt_blade_dullness",
+    "gt_air_filter",
+    "gt_oil_loss",
+    "gt_fuel_true_pct",
+    "gt_blade_strike"
+  ],
+  "note": "Synthetic data. Proprietary B layout for blade and deck is a placeholder until the OEM defines it."
+}

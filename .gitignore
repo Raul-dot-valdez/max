@@ -1,0 +1,8 @@
+node_modules/
+__pycache__/
+*.pyc
+out/
+build/
+firmware/mower-hmi/tests/test_runner
+firmware/mower-hmi/tests/replay_candump
+firmware/mower-hmi/tools/mower_j1939_synth/out/

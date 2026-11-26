@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>maxAI Edge AI Architecture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: left-aligned engineering sheet; one wide system diagram, then mapping tables and the PoC plan. */
+:root {
+  --bg: #F3F5F6; --panel: #FFFFFF; --ink: #0F1418; --muted: #56636E; --rule: #CDD5DB;
+  --accent: #C85A0A; --accent-soft: rgba(200, 90, 10, 0.10); --poc: #C85A0A;
+  --ok: #2F7D4F; --warn: #8E6200; --risk: #9A3B2C; --cool: #E8EEF2;
+  --display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1418; --panel: #161C21; --ink: #E8EDF0; --muted: #8B98A3; --rule: #2A343C;
+    --accent: #FF7A1A; --accent-soft: rgba(255, 122, 26, 0.14); --poc: #FF7A1A;
+    --ok: #5FBF85; --warn: #E2B04A; --risk: #E07A66; --cool: #1E262D; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1418; --panel: #161C21; --ink: #E8EDF0; --muted: #8B98A3; --rule: #2A343C;
+  --accent: #FF7A1A; --accent-soft: rgba(255, 122, 26, 0.14); --poc: #FF7A1A;
+  --ok: #5FBF85; --warn: #E2B04A; --risk: #E07A66; --cool: #1E262D; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 1160px; display: grid; gap: 44px; }
+header { display: grid; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 24px; }
+.eyebrow { font: 500 12px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 600 clamp(28px, 4vw, 40px)/1.1 var(--display); margin: 0; text-wrap: balance; max-width: 28ch; }
+h2 { font: 600 22px/1.2 var(--display); margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 72ch; }
+.lede { color: var(--muted); }
+section { display: grid; gap: 16px; min-width: 0; }
+.tag { font: 500 11px/1 var(--mono); letter-spacing: 0.04em; padding: 4px 6px; border: 1px solid currentColor; border-radius: 2px; white-space: nowrap; display: inline-block; }
+.tag.e { color: var(--ok); } .tag.j { color: var(--warn); } .tag.v { color: var(--risk); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.swatch { width: 26px; height: 14px; border: 2.5px solid var(--poc); background: var(--accent-soft); display: inline-block; }
+.swatch.plain { border: 1.2px solid var(--ink); background: var(--panel); }
+.bottomline { background: var(--panel); border: 1px solid var(--rule); border-left: 4px solid var(--accent); padding: 18px 20px; display: grid; gap: 10px; }
+.scroll { overflow-x: auto; border: 1px solid var(--rule); background: var(--panel); }
+svg { display: block; min-width: 1000px; width: 100%; height: auto; }
+svg text { font-family: var(--body); fill: var(--ink); }
+svg .h { font-family: var(--display); font-weight: 600; font-size: 14px; }
+svg .t { font-size: 12px; fill: var(--muted); }
+svg .lab { font-family: var(--mono); font-size: 11px; fill: var(--muted); letter-spacing: 0.06em; }
+svg .box { fill: var(--panel); stroke: var(--ink); stroke-width: 1.1; }
+svg .zone { fill: var(--bg); stroke: var(--rule); stroke-width: 1.2; }
+svg .layer { fill: var(--cool); stroke: var(--rule); stroke-width: 1.1; }
+svg .poc { fill: var(--accent-soft); stroke: var(--poc); stroke-width: 2.5; }
+svg .ln { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+svg .dash { stroke: var(--accent); stroke-width: 1.8; fill: none; stroke-dasharray: 6 4; }
+svg .flow { stroke: var(--accent); stroke-width: 2.2; fill: none; }
+svg .arrow { fill: var(--muted); }
+svg .arrowA { fill: var(--accent); }
+svg .pin { fill: var(--poc); }
+svg .pint { font-family: var(--mono); font-size: 10px; font-weight: 500; fill: var(--panel); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); }
+table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 13.5px; background: var(--panel); }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+th { font: 500 11px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+td:first-child { font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+tr.hi td { background: var(--accent-soft); }
+.chip { font: 500 11px/1 var(--mono); padding: 4px 7px; border-radius: 2px; white-space: nowrap; display: inline-block; color: var(--panel); }
+.chip.p1 { background: var(--accent); } .chip.p2 { background: var(--warn); } .chip.p3 { background: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.cell { background: var(--panel); padding: 16px 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.cell h3 { font: 600 16px/1.3 var(--display); margin: 0; display: flex; gap: 10px; align-items: baseline; }
+.cell .wk { font: 500 12px/1 var(--mono); color: var(--accent); }
+.cell ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; display: grid; gap: 4px; }
+.cell .exit { font-size: 13.5px; border-top: 1px dashed var(--rule); padding-top: 8px; }
+.cell .exit b { font: 500 11px/1 var(--mono); letter-spacing: 0.06em; color: var(--ok); }
+.flows { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.flowcard { background: var(--panel); border: 1px solid var(--rule); padding: 16px 18px; display: grid; gap: 8px; }
+.flowcard ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+.sources { font-size: 13px; color: var(--muted); display: grid; gap: 4px; padding-left: 18px; margin: 0; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code { font: 13px var(--mono); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">maxAI · edge AI · firmware architecture and proof of concept</div>
+    <h1>maxAI edge AI: fleet, mower runtime and a GD32 proof of concept</h1>
+    <p class="lede">The maxAI display runs the mower runtime, adds an on-device AI layer that turns J1939 signals (and optionally sound and camera images) into health scores and events, and syncs them to a fleet manager. The proof of concept uses GigaDevice's GD32 Embedded AI tool to quantize and deploy models on a GD32H759 Cortex-M7.</p>
+    <div class="legend" aria-label="Legend">
+      <span><span class="swatch"></span> In proof-of-concept scope</span>
+      <span><span class="swatch plain"></span> Existing or later</span>
+      <span><span class="tag e">EVIDENCE</span> from your screenshot or a cited source</span>
+      <span><span class="tag j">JUDGMENT</span> engineering assessment</span>
+      <span><span class="tag v">VERIFY</span> confirm before deciding</span>
+    </div>
+  </header>
+
+  <div class="bottomline">
+    <h2>Bottom line</h2>
+    <p>Start the proof of concept with the model that fits the data the display already has: an <strong>LSTM health model on J1939 time series</strong> (engine and hydraulic temperatures, oil pressure, fuel rate, load). It needs no new hardware, runs comfortably on a Cortex-M7, and has a built-in benchmark: the self-learning anomaly baseline already in the AI Terra mower firmware. Sound and camera models come second, because they need a microphone or the 430's camera input and more memory.</p>
+    <p>The GD32H759 gives a second silicon source with three CAN-FD channels. The main open question is integration: the tool generates Keil and IAR projects, while the maxAI SDK builds with STM32CubeIDE and GCC.</p>
+  </div>
+
+  <section aria-labelledby="arch-h">
+    <h2 id="arch-h">System architecture</h2>
+    <div class="scroll">
+      <svg viewBox="0 0 1120 800" role="img" aria-label="Architecture: offline toolchain with GD32 Embedded AI on the left, maxAI display firmware in the middle with GUI, fleet sync, mower runtime, AI advisories, edge AI layer, data layer, CAN, audio and camera inputs, PAL and MCU; fleet manager, phone app and machine ECUs on the right.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker>
+          <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowA"/></marker>
+        </defs>
+
+        <!-- LEFT: offline toolchain -->
+        <text class="lab" x="20" y="32">OFFLINE TOOLCHAIN</text>
+        <rect class="poc" x="20" y="45" width="230" height="80"/>
+        <text class="h" x="32" y="67">1 · Collect data</text>
+        <text class="t" x="32" y="87">Recorded J1939 logs from machines;</text>
+        <text class="t" x="32" y="103">audio and camera clips where used</text>
+        <path class="ln" d="M135 125 V140" marker-end="url(#ar)"/>
+        <rect class="poc" x="20" y="140" width="230" height="80"/>
+        <text class="h" x="32" y="162">2 · Train</text>
+        <text class="t" x="32" y="182">Keras / TensorFlow / PyTorch</text>
+        <text class="t" x="32" y="198">→ H5, SavedModel, TFLite or ONNX</text>
+        <path class="ln" d="M135 220 V235" marker-end="url(#ar)"/>
+        <rect class="poc" x="20" y="235" width="230" height="200"/>
+        <text class="h" x="32" y="257">3 · GD32 Embedded AI v1.3</text>
+        <text class="t" x="32" y="279">Model analysis: layers, weights</text>
+        <text class="t" x="32" y="299">Post-training int8 quantization</text>
+        <text class="t" x="32" y="315">with NPZ calibration data</text>
+        <text class="t" x="32" y="335">Single or multi-branch inference</text>
+        <text class="t" x="32" y="355">Generates Keil / IAR projects</text>
+        <text class="t" x="32" y="375">Benchmark + analysis report</text>
+        <text class="lab" x="32" y="415">TOOL 1.3.0.40586</text>
+        <path class="ln" d="M135 435 V450" marker-end="url(#ar)"/>
+        <rect class="poc" x="20" y="450" width="230" height="80"/>
+        <text class="h" x="32" y="472">4 · Integrate in maxAI</text>
+        <text class="t" x="32" y="492">Runtime + model into maxAI</text>
+        <text class="t" x="32" y="508">firmware; PC tests on CAN logs</text>
+        <path class="ln" d="M135 530 V545" marker-end="url(#ar)"/>
+        <rect class="box" x="20" y="545" width="230" height="80"/>
+        <text class="h" x="32" y="567">5 · Sign and release</text>
+        <text class="t" x="32" y="587">Signed model package, SBOM,</text>
+        <text class="t" x="32" y="603">published to the fleet manager</text>
+
+        <!-- CENTER: device -->
+        <rect class="zone" x="280" y="20" width="540" height="760"/>
+        <text class="lab" x="296" y="44">MAXAI DISPLAY · FIRMWARE</text>
+
+        <rect class="box" x="300" y="58" width="245" height="62"/>
+        <text class="h" x="312" y="80">GUI</text>
+        <text class="t" x="312" y="100">TouchGFX or Qt for MCUs · runtime left,</text>
+        <text class="t" x="312" y="114">alerts, AI advisories</text>
+        <rect class="box" x="560" y="58" width="240" height="62"/>
+        <text class="h" x="572" y="80">Fleet sync service</text>
+        <text class="t" x="572" y="100">Log ring · BLE (430v / iv)</text>
+        <text class="t" x="572" y="114">model-update intake</text>
+
+        <rect class="box" x="300" y="135" width="245" height="120"/>
+        <text class="h" x="312" y="157">Mower runtime</text>
+        <text class="t" x="312" y="178">Engine, key and blade hours</text>
+        <text class="t" x="312" y="196">Fuel left and runtime left</text>
+        <text class="t" x="312" y="214">Service due · coverage area</text>
+        <text class="t" x="312" y="232">Blade-strike, fuel-drop events</text>
+        <rect class="poc" x="560" y="135" width="240" height="120"/>
+        <text class="h" x="572" y="157">AI advisories</text>
+        <text class="t" x="572" y="178">Health score per subsystem</text>
+        <text class="t" x="572" y="196">Events: anomaly, strike, noise</text>
+        <text class="t" x="572" y="214">Confidence + model version</text>
+        <text class="t" x="572" y="232">Advisory only: drives nothing</text>
+        <path class="ln" d="M680 135 V122" marker-end="url(#ar)"/>
+
+        <rect class="layer" x="290" y="268" width="520" height="190"/>
+        <text class="lab" x="302" y="288">MAXAI EDGE AI LAYER</text>
+        <rect class="poc" x="300" y="300" width="112" height="145"/>
+        <text class="h" x="310" y="322">Features</text>
+        <text class="t" x="310" y="342">Windows of</text>
+        <text class="t" x="310" y="358">signals, scaling,</text>
+        <text class="t" x="310" y="374">FFT / MFCC for</text>
+        <text class="t" x="310" y="390">audio</text>
+        <rect class="poc" x="420" y="300" width="122" height="145"/>
+        <text class="h" x="430" y="322">Inference</text>
+        <text class="t" x="430" y="342">GD32 Embedded AI</text>
+        <text class="t" x="430" y="358">generated code,</text>
+        <text class="t" x="430" y="374">int8 weights</text>
+        <text class="t" x="430" y="390">in flash</text>
+        <rect class="poc" x="550" y="300" width="122" height="145"/>
+        <text class="h" x="560" y="322">Model slots</text>
+        <text class="t" x="560" y="342">M1 LSTM health</text>
+        <text class="t" x="560" y="362">M2 sound events</text>
+        <text class="t" x="560" y="382">M3 person nearby</text>
+        <text class="t" x="560" y="402">(M2, M3 later)</text>
+        <rect class="box" x="680" y="300" width="120" height="145"/>
+        <text class="h" x="690" y="322">Model manager</text>
+        <text class="t" x="690" y="342">Signature check</text>
+        <text class="t" x="690" y="358">A/B slot,</text>
+        <text class="t" x="690" y="374">rollback,</text>
+        <text class="t" x="690" y="390">version report</text>
+        <path class="ln" d="M412 372 H420" marker-end="url(#ar)"/>
+        <path class="ln" d="M542 372 H550" marker-end="url(#ar)"/>
+        <path class="ln" d="M610 300 V257" marker-end="url(#ar)"/>
+
+        <rect class="poc" x="300" y="475" width="500" height="48"/>
+        <text class="h" x="312" y="496">Data layer · GET_DL / SET_DL</text>
+        <text class="t" x="312" y="514">Machine signals in · AI scores and events out</text>
+        <path class="ln" d="M356 475 V447" marker-end="url(#ar)"/>
+        <path class="ln" d="M610 447 V475" marker-end="url(#ar)"/>
+
+        <rect class="poc" x="300" y="538" width="160" height="70"/>
+        <text class="h" x="312" y="560">J1939 / CAN FD</text>
+        <text class="t" x="312" y="580">J1939 decode, DM1,</text>
+        <text class="t" x="312" y="596">replay for tests</text>
+        <rect class="box" x="470" y="538" width="160" height="70"/>
+        <text class="h" x="482" y="560">Audio input</text>
+        <text class="t" x="482" y="580">I2S MEMS mic</text>
+        <text class="t" x="482" y="596">(hardware option)</text>
+        <rect class="box" x="640" y="538" width="160" height="70"/>
+        <text class="h" x="652" y="560">Camera input</text>
+        <text class="t" x="652" y="580">430 analog video</text>
+        <text class="t" x="652" y="596">(rear camera)</text>
+
+        <rect class="box" x="300" y="623" width="500" height="40"/>
+        <text class="h" x="312" y="648">PAL + FreeRTOS · secure boot · watchdog</text>
+
+        <rect class="box" x="300" y="678" width="245" height="86"/>
+        <text class="h" x="312" y="700">maxAI today</text>
+        <text class="t" x="312" y="720">STM32H743-class Cortex-M7</text>
+        <text class="t" x="312" y="738">1 MB RAM · 2 MB flash</text>
+        <text class="t" x="312" y="754">STM32CubeIDE / GCC</text>
+        <rect class="poc" x="555" y="678" width="245" height="86"/>
+        <text class="h" x="567" y="700">PoC: GigaDevice GD32H759</text>
+        <text class="t" x="567" y="720">Cortex-M7 600 MHz · 1 MB SRAM</text>
+        <text class="t" x="567" y="738">up to 3.75 MB flash · 3× CAN FD</text>
+        <text class="t" x="567" y="754">Keil or IAR (tool output)</text>
+
+        <!-- RIGHT -->
+        <text class="lab" x="850" y="32">FLEET</text>
+        <rect class="box" x="850" y="45" width="250" height="125"/>
+        <text class="h" x="862" y="67">Fleet manager (cloud)</text>
+        <text class="t" x="862" y="88">Health dashboard per machine</text>
+        <text class="t" x="862" y="106">Anomaly trends, service planning</text>
+        <text class="t" x="862" y="124">Model version per unit</text>
+        <text class="t" x="862" y="142">Labelled data for retraining</text>
+        <rect class="box" x="850" y="205" width="250" height="80"/>
+        <text class="h" x="862" y="227">Phone app</text>
+        <text class="t" x="862" y="247">Syncs logs and events over BLE;</text>
+        <text class="t" x="862" y="263">delivers signed model updates</text>
+        <path class="ln" d="M975 170 V205" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <text class="t" x="982" y="192">internet</text>
+        <path class="ln" d="M850 245 H830 V89 H800" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <text class="t" x="834" y="160" transform="rotate(-90 834 160)">BLE</text>
+        <path class="dash" d="M812 120 V372 H800" marker-end="url(#arA)"/>
+
+        <text class="lab" x="850" y="460">MACHINE</text>
+        <rect class="box" x="850" y="473" width="250" height="290"/>
+        <text class="h" x="862" y="495">ECUs on J1939 / CAN FD</text>
+        <text class="t" x="862" y="520">Engine ECU (EEC1, ET1, LFE1, DM1)</text>
+        <text class="t" x="862" y="542">Drive / hydrostatic controller</text>
+        <text class="t" x="862" y="564">Deck and blade clutch</text>
+        <text class="t" x="862" y="586">Battery BMS (electric models)</text>
+        <text class="t" x="862" y="608">Sensors: oil, hydraulic temp,</text>
+        <text class="t" x="862" y="624">fuel level, vibration (option)</text>
+        <path class="ln" d="M850 600 H835 V615 H380 V608" marker-end="url(#ar)"/>
+        <text class="t" x="862" y="660">← CAN bus to the display</text>
+
+        <!-- deploy path from tool to inference -->
+        <path class="flow" d="M250 335 H266 V292 H480 V300" marker-end="url(#arA)"/>
+        <text class="t" x="330" y="262" style="fill: var(--accent)">deploy int8 model</text>
+
+        <!-- PoC pins -->
+        <circle class="pin" cx="242" cy="243" r="9"/><text class="pint" x="238" y="247">P</text>
+        <circle class="pin" cx="792" cy="686" r="9"/><text class="pint" x="788" y="690">P</text>
+      </svg>
+    </div>
+    <p class="lede">Dashed orange: signed model update from the fleet manager, via the phone and BLE, into the model manager. Solid orange: deployment from the GD32 tool. Grey arrows: data flow.</p>
+  </section>
+
+  <section aria-labelledby="tool-h">
+    <h2 id="tool-h">What the GD32 Embedded AI tool does in the PoC <span class="tag e">EVIDENCE</span></h2>
+    <p class="lede">Features from the GigaDevice download entry you shared (version 1.3.0.40586, dated 2026-06-23), mapped to PoC steps.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Tool feature</th><th>PoC use</th><th>Output we keep</th></tr></thead>
+        <tbody>
+          <tr><td>H5, TFLite, ONNX and SavedModel input</td><td>Train in Keras or PyTorch; export to whichever format converts cleanly</td><td>Source model under version control</td></tr>
+          <tr><td>Model analysis (weights, network structure)</td><td>Check layer support and parameter count before tuning</td><td>Analysis report per model version</td></tr>
+          <tr><td>Post-training quantization, NPZ datasets</td><td>int8 quantization calibrated on real J1939 windows stored as NPZ</td><td>Calibration set and accuracy before / after</td></tr>
+          <tr><td>Single or multi-branch forward inference</td><td>M1 can use one branch for engine and one for hydraulic signals</td><td>Inference code</td></tr>
+          <tr><td>Keil and IAR project generation</td><td>First run on the GD32H759 board as generated, before any porting</td><td>Reference project that compiles and runs</td></tr>
+          <tr><td>Automatic benchmarking and analysis reports</td><td>Latency, RAM and flash per model; compare candidates</td><td>Benchmark report per candidate model</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="zoo-h">
+    <h2 id="zoo-h">Model zoo mapped to off-highway and mower use cases <span class="tag j">JUDGMENT</span></h2>
+    <p class="lede">Model families from the model-zoo slide you shared. "Fit" is an estimate for a Cortex-M7 with about 1 MB RAM; confirm with the tool's benchmark reports.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Model family (zoo)</th><th>Use case on the machine</th><th>Input</th><th>Fit on Cortex-M7, 1 MB</th><th>PoC phase</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="hi"><td>RNN time series: uni / bidirectional LSTM</td><td>Engine and hydraulic health score; early warning of overheating, oil-pressure loss, abnormal fuel burn; fuel-runtime prediction</td><td>J1939 signals already on the display</td><td>Good: small model, low rate (1 Hz windows)</td><td><span class="chip p1">PHASE 1</span></td><td>Benchmark against the existing self-learning baseline (<code>services/anomaly.c</code>)</td></tr>
+          <tr><td>Acoustic: AED, AEC, RNNoise</td><td>Blade strike, bearing or belt noise, spindle wear by sound</td><td>MEMS microphone (new hardware)</td><td>Good for AED on short spectrogram windows</td><td><span class="chip p2">PHASE 2</span></td><td>Needs a mic and acoustic data from real machines</td></tr>
+          <tr><td>Keyword detection: DS-CNN; ARM micro-speech</td><td>Hands-free commands (next screen, lights, acknowledge alarm)</td><td>Microphone</td><td>Good; engine noise is the challenge</td><td><span class="chip p3">LATER</span></td><td>Combine with RNNoise; only for non-critical commands</td></tr>
+          <tr><td>Person detection, Visual Wake Words, TinyNAS-MCUNet</td><td>Person near the machine on the rear camera: advisory warning</td><td>430 camera input (analog video)</td><td>Possible at low resolution (around 96×96) and low frame rate; uses SDRAM</td><td><span class="chip p2">PHASE 2</span></td><td>Advisory only; not a safety function under ISO 13849 or ISO 25119</td></tr>
+          <tr><td>YOLO: YoloFastestV2, YOLOv10-t</td><td>Obstacle and object detection</td><td>Camera</td><td>Heavy for this class; expect low frame rate</td><td><span class="chip p3">LATER</span></td><td>Better on a vision coprocessor or an MPU with NPU</td></tr>
+          <tr><td>MobileNet v1 (96, 192, 224)</td><td>Terrain or grass-condition classification for mowing advice</td><td>Camera</td><td>MobileNet-v1-96 only</td><td><span class="chip p3">LATER</span></td><td>Needs labelled field images</td></tr>
+          <tr><td>SSCMA: face detection, gesture</td><td>Operator presence or gesture input</td><td>Cab camera</td><td>Possible</td><td><span class="chip p3">LATER</span></td><td>Limited value outdoors with gloves; privacy review needed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="poc-h">
+    <h2 id="poc-h">Proof of concept with the GD32 tool: eight weeks</h2>
+    <div class="grid">
+      <div class="cell"><h3><span class="wk">WK 1–2</span> Data and baseline</h3><ul><li>GD32H759 evaluation board with CAN-FD transceiver; replay recorded mower J1939 logs</li><li>Export labelled 60 s windows (normal / abnormal) as NPZ</li><li>Run the existing anomaly baseline on the same logs</li></ul><p class="exit"><b>EXIT</b> Dataset and baseline scores agreed</p></div>
+      <div class="cell"><h3><span class="wk">WK 3–4</span> Train and quantize M1</h3><ul><li>Train a small LSTM; export H5 or ONNX</li><li>GD32 tool: analysis, int8 quantization with NPZ calibration, benchmark report</li><li>Compare two or three model sizes</li></ul><p class="exit"><b>EXIT</b> int8 model within budget, accuracy loss under 2 points</p></div>
+      <div class="cell"><h3><span class="wk">WK 5–6</span> Run on target</h3><ul><li>Generated Keil or IAR project runs on the board</li><li>Feed live replayed CAN through the J1939 stack and data layer</li><li>Show score and events on a test screen</li></ul><p class="exit"><b>EXIT</b> End-to-end on hardware, measured latency and memory</p></div>
+      <div class="cell"><h3><span class="wk">WK 7–8</span> Fleet loop and decision</h3><ul><li>Log events and model version; sync to a phone and a mock fleet manager</li><li>Signed model update into a second slot, with rollback</li><li>Decide: port into the maxAI build, and STM32 vs GD32</li></ul><p class="exit"><b>EXIT</b> Go / no-go report for product integration</p></div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Success measure</th><th>Target (proposal)</th><th>Measured with</th></tr></thead>
+        <tbody>
+          <tr><td>Detection on held-out logs</td><td>Better than the existing baseline at the same false-alarm rate</td><td>Offline evaluation on labelled windows</td></tr>
+          <tr><td>False alarms</td><td>Fewer than 1 per 100 engine hours on normal data</td><td>Replay of long normal logs</td></tr>
+          <tr><td>Inference time</td><td>Under 50 ms per window</td><td>GD32 benchmark report and on-target timer</td></tr>
+          <tr><td>RAM / flash for the AI layer</td><td>Under 128 KB RAM and 512 KB flash, leaving room for GUI and CAN</td><td>Benchmark report and linker map</td></tr>
+          <tr><td>Display responsiveness</td><td>No missed frames or CAN overruns while inferring</td><td>FreeRTOS trace on target</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="flow-h">
+    <h2 id="flow-h">Fleet manager loop</h2>
+    <div class="flows">
+      <div class="flowcard"><h3>Up: machine to fleet</h3><ol><li>The display computes scores and events on the machine</li><li>Events, scores, model version and engine hours go into the log ring</li><li>Phone app syncs the log over BLE (430v / 430iv)</li><li>Fleet manager shows health per machine and schedules service</li><li>Confirmed faults become labels for retraining</li></ol></div>
+      <div class="flowcard"><h3>Down: fleet to machine</h3><ol><li>A new model is trained, quantized with the GD32 tool and tested</li><li>The model package is signed and listed in the SBOM</li><li>The fleet manager targets units by model and firmware version</li><li>Phone app delivers it over BLE to the model manager</li><li>The display checks the signature, loads it into the spare slot and rolls back if self-tests fail</li></ol></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="risk-h">
+    <h2 id="risk-h">Risks and open questions</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Topic</th><th>Issue</th><th>Next step</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Toolchain fit</td><td>The tool generates Keil and IAR projects; maxAI 280 SDK uses STM32CubeIDE and GCC</td><td>Check whether the generated inference code is plain C that builds with GCC, or a prebuilt library tied to Keil / IAR</td><td><span class="tag v">VERIFY</span></td></tr>
+          <tr><td>Silicon</td><td>The tool targets GD32 MCUs; maxAI displays use an STM32H7-class Cortex-M7 today</td><td>Run the PoC on GD32H759; decide later between a GD32 port behind the platform layer or a coprocessor</td><td><span class="tag j">JUDGMENT</span></td></tr>
+          <tr><td>Licence</td><td>Runtime licence terms for use on production products</td><td>Read the tool and runtime licence; confirm redistribution in maxAI firmware</td><td><span class="tag v">VERIFY</span></td></tr>
+          <tr><td>Safety scope</td><td>AI outputs are advisory; person detection must not be presented as a safety function</td><td>State in manuals and on screen; keep safety warnings on their reviewed path</td><td><span class="tag j">JUDGMENT</span></td></tr>
+          <tr><td>CRA</td><td>Models and runtime are software in the product: Annex I (2)(c) and (2)(f) apply to model updates</td><td>Models in the SBOM; signed model packages; version reporting</td><td><span class="tag j">JUDGMENT</span></td></tr>
+          <tr><td>Data rights</td><td>Fleet data from OEM machines used for training</td><td>Agree data ownership and use with OEMs before collecting</td><td><span class="tag v">VERIFY</span></td></tr>
+          <tr><td>GD32H759 figures</td><td>Memory and CAN-FD figures from GigaDevice product pages</td><td>Check against datasheet Rev2.3 for the chosen order code</td><td><span class="tag v">VERIFY</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <h2 id="src-h">Sources</h2>
+    <ul class="sources">
+      <li>GigaDevice GD32 Embedded AI download entry (screenshot provided by you): version 1.3.0.40586, 2026-06-23</li>
+      <li>Embedded AI model zoo slide (provided by you)</li>
+      <li><a href="https://www.gigadevice.com/product/mcu/high-performance-mcus/gd32h7xx-series/gd32h759" target="_blank" rel="noopener">GigaDevice GD32H759 product page</a></li>
+      <li><a href="https://gigadevice.com/product/mcu/high-performance-mcus/gd32h7xx-series" target="_blank" rel="noopener">GigaDevice GD32H7xx series</a></li>
+      <li><a href="https://download.gigadevice.com/Datasheet/GD32H759xx%20Datasheet_Rev2.3.pdf" target="_blank" rel="noopener">GD32H759xx datasheet Rev2.3</a></li>
+      <li><a href="https://gigadevice.com/about/news-and-event/news/mcu-gd32h7" target="_blank" rel="noopener">GigaDevice GD32H7 launch news</a></li>
+      <li><a href="https://www.maximatecc.com/maxai-430/" target="_blank" rel="noopener">maximatecc maxAI 430</a> · <a href="https://maximatecc.com/280-instrument-displays-SDK-manual/" target="_blank" rel="noopener">maxAI 280 SDK manual</a></li>
+    </ul>
+  </section>
+</div>
+
+</body></html>

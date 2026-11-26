@@ -1,0 +1,27 @@
+machine,type,start,end,severity,note
+MWR-001,blade_strike,2027-06-01T11:28:53Z,2027-06-01T11:28:54Z,medium,session 1
+MWR-001,screen_cleaned,2027-06-01T14:47:57Z,,info,operator cleaned radiator screen
+MWR-001,rtc_sync,2027-06-01T15:58:31Z,,info,phone app over BLE
+MWR-001,blade_strike,2027-06-01T18:03:03Z,2027-06-01T18:03:04Z,medium,session 5
+MWR-001,refuel,2027-06-02T11:07:18Z,,info,25% -> full
+MWR-001,blade_strike,2027-06-02T12:02:01Z,2027-06-02T12:02:02Z,medium,session 8
+MWR-001,blade_strike,2027-06-02T12:03:41Z,2027-06-02T12:03:42Z,medium,session 8
+MWR-001,blade_strike,2027-06-02T12:25:56Z,2027-06-02T12:25:57Z,medium,session 8
+MWR-001,screen_cleaned,2027-06-02T15:39:59Z,,info,operator cleaned radiator screen
+MWR-001,blade_strike,2027-06-02T16:42:22Z,2027-06-02T16:42:23Z,medium,session 12
+MWR-001,blade_strike,2027-06-02T17:44:03Z,2027-06-02T17:44:04Z,medium,session 12
+MWR-001,blade_strike,2027-06-02T17:45:53Z,2027-06-02T17:45:54Z,medium,session 12
+MWR-001,blade_strike,2027-06-02T19:39:38Z,2027-06-02T19:39:39Z,medium,session 14
+MWR-001,fuel_sender_fault,2027-06-03T10:00:00Z,2027-06-05T03:59:00Z,medium,"intermittent fuel level sender: DD1 sends 'not available', DM1 SPN 96 FMI 2"
+MWR-001,blade_strike,2027-06-03T11:10:48Z,2027-06-03T11:10:49Z,medium,session 15
+MWR-001,blade_strike,2027-06-03T14:58:52Z,2027-06-03T14:58:53Z,medium,session 18
+MWR-001,blade_strike,2027-06-03T15:01:45Z,2027-06-03T15:01:46Z,medium,session 18
+MWR-001,blade_strike,2027-06-03T15:01:49Z,2027-06-03T15:01:50Z,medium,session 18
+MWR-001,refuel,2027-06-03T17:06:54Z,,info,16% -> full
+MWR-001,oil_leak,2027-06-04T11:00:00Z,2027-06-04T19:46:33Z,high,engine oil loss ramps over following running hours
+MWR-001,hyd_cooler_fan_fault,2027-06-04T10:00:00Z,2027-06-05T03:59:00Z,high,hydraulic oil cooler fan inoperative for the day
+MWR-001,rtc_sync,2027-06-04T11:10:30Z,,info,phone app over BLE
+MWR-001,blade_strike,2027-06-04T13:49:18Z,2027-06-04T13:49:19Z,medium,session 23
+MWR-001,blade_strike,2027-06-04T14:18:43Z,2027-06-04T14:18:44Z,medium,session 24
+MWR-001,screen_cleaned,2027-06-04T15:11:11Z,,info,operator cleaned radiator screen
+MWR-001,blade_strike,2027-06-04T17:47:12Z,2027-06-04T17:47:13Z,medium,session 26

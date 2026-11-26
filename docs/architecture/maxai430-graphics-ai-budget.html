@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>maxAI 430 Graphics and AI Budget</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: left-aligned spec sheet on a hairline grid; a numbered rule margin on wide screens. */
+:root{
+  --bg:#0F1418; --panel:#161C21; --ink:#E8EDF0; --muted:#8B98A3; --rule:#2A343C; --accent:#FF7A1A;
+  --s888:#5B8FD0; --s565:#E8690F;
+  --ok:#3FB27F; --tight:#E2B53A; --over:#E5484D;
+  --f-head:"Space Grotesk",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F4F6F7; --panel:#FFFFFF; --ink:#11181D; --muted:#56636E; --rule:#D3DAE0; --accent:#C9580A;
+  --s888:#3A6DB0; --s565:#D9600A; --ok:#1F8A5B; --tight:#A57B05; --over:#C4282E; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#F4F6F7; --panel:#FFFFFF; --ink:#11181D; --muted:#56636E; --rule:#D3DAE0; --accent:#C9580A;
+  --s888:#3A6DB0; --s565:#D9600A; --ok:#1F8A5B; --tight:#A57B05; --over:#C4282E; color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body);margin:0}
+.wrap{max-width:1080px;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.1;font-weight:700}
+h2{font-size:24px;font-weight:600}
+h3{font-size:17px;font-weight:600}
+p{margin:0;max-width:68ch}
+.mono,code,td.n,th.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+code{font-size:.9em;color:var(--ink)}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.accent{color:var(--accent)}
+header{display:grid;gap:14px;border-bottom:1px solid var(--rule);padding-bottom:28px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 28px;font:13px var(--f-mono);color:var(--muted)}
+.meta b{color:var(--ink);font-weight:500}
+section{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;border-bottom:1px solid var(--rule);padding-block:36px}
+section>.tag{font:500 12px var(--f-mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding-top:6px}
+section>.body{display:grid;gap:18px;min-width:0}
+@media (max-width:760px){section{grid-template-columns:minmax(0,1fr);gap:10px}}
+.verdict{display:grid;gap:0;border-top:1px solid var(--rule)}
+.verdict>div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.verdict .k{font:500 13px var(--f-mono);color:var(--accent)}
+@media (max-width:560px){.verdict>div{grid-template-columns:minmax(0,1fr);gap:2px}}
+.tbl{overflow-x:auto;border:1px solid var(--rule);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:500 12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;white-space:nowrap}
+.verify{font:500 11px var(--f-mono);color:var(--accent);border:1px solid var(--accent);padding:0 4px;margin-left:4px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font:500 12px var(--f-mono);white-space:nowrap}
+.pill::before{content:"";width:9px;height:9px;background:currentColor}
+.pill.green{color:var(--ok)} .pill.green::after{content:"OK"}
+.pill.amber{color:var(--tight)} .pill.amber::after{content:"TIGHT"} .pill.amber::before{clip-path:polygon(50% 0,100% 100%,0 100%)}
+.pill.red{color:var(--over)} .pill.red::after{content:"OVER"} .pill.red::before{transform:rotate(45deg) scale(.8)}
+.chart{border:1px solid var(--rule);background:var(--panel);padding:16px;position:relative}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font:13px var(--f-mono);color:var(--muted);margin-bottom:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;display:inline-block}
+svg text{font-family:var(--f-mono);fill:var(--muted);font-size:12px}
+svg .lbl{fill:var(--ink)}
+.tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--rule);padding:8px 10px;font:12px/1.5 var(--f-mono);color:var(--ink);max-width:280px;z-index:2}
+.cap{font-size:13px;color:var(--muted);max-width:80ch}
+.scn{display:grid;gap:0;border-top:1px solid var(--rule)}
+.scn article{display:grid;grid-template-columns:64px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid var(--rule)}
+.scn .sid{font:600 22px var(--f-head);color:var(--accent)}
+.scn .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px 28px;margin-top:10px}
+.bars{display:grid;gap:5px;font:12px var(--f-mono)}
+.bars .row{display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:8px;align-items:center}
+.bars .row .t{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bars .row .v{text-align:right;color:var(--ink)}
+.bars .track{grid-column:1/-1;height:4px;background:var(--rule)}
+.bars .track i{display:block;height:100%;background:var(--muted)}
+.fix{border-left:2px solid var(--accent);padding-left:12px;font-size:14px}
+.debate{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.debate div{padding:16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);display:grid;gap:6px;align-content:start}
+.debate .who{font:500 12px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+.debate q{quotes:none;font-size:14px}
+ol.rules{margin:0;padding:0;list-style:none;display:grid;border-top:1px solid var(--rule)}
+ol.rules li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)}
+ol.rules .rid{font:500 13px var(--f-mono);color:var(--accent)}
+.small{font-size:13px;color:var(--muted)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">AI Terra · architecture review · ST path</div>
+  <h1>maxAI 430: graphics and AI <span class="accent">under worst-case load</span></h1>
+  <p>Can a 4.3-inch maxAI 430-class display run TouchGFX graphics, a camera view and on-device AI at the same time on an STM32H743 with 2 MB of SDRAM? Six mower scenarios, the numbers behind them, an expert debate and the design rules that follow.</p>
+  <div class="meta">
+    <span>Date <b>2026-11-26</b></span>
+    <span>MCU <b>STM32H743 class</b></span>
+    <span>Plan clock <b>400 MHz</b></span>
+    <span>Panel <b>480×272 @ 60 Hz</b></span>
+    <span>Model <b>budget.py</b> (estimates, not measured)</span>
+  </div>
+</header>
+
+<section>
+  <div class="tag">Verdict</div>
+  <div class="body">
+    <p>The AI is not the bottleneck. On this hardware, the SDRAM bus and the shared external flash are. Get those two right and today's AI and graphics fit together with margin. Camera-based AI does not fit, and belongs on the next-generation MCU.</p>
+    <div class="verdict">
+      <div><span class="k">AI cost</span><span>The phase 1 CNN takes 0.33–0.65 ms every 30 s, which is 0.002 % of the CPU. The LSTM candidate takes 3.8 ms at most. Running at a lower priority than the GUI, either fits in the gaps between frames.</span></div>
+      <div><span class="k">Real limit</span><span>With 24-bit frame buffers, the worst-of-worst scenario uses 84 % of the SDRAM bandwidth available. The risk is the display controller running short of pixels, which shows up as flicker. With 16-bit (RGB565) frame buffers it drops to 59 %. The 24-bit panel still gets a dithered image.</span></div>
+      <div><span class="k">Hidden risk</span><span>Erasing a sector of the external flash blocks reads for up to 400 ms. If the alarm screens load their images from the same chip, an alarm can freeze on screen just when the engine faults.</span></div>
+      <div><span class="k">Out of reach</span><span>Person or obstacle detection on the camera needs 225–375 ms per frame, which gives about 2–3.5 fps. That is too slow to be useful, and it is not a safety function. This workload belongs on the STM32N6 and its NPU.</span></div>
+      <div><span class="k">ST path</span><span>Generate the models with ST Edge AI Core. Benchmark them on real H7 silicon in ST Edge AI Developer Cloud before the 430 hardware arrives. Build TouchGFX and X-CUBE-AI in one STM32CubeMX project, and use NanoEdge AI for the per-machine blade-wear trend.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Platform</div>
+  <div class="body">
+    <p>The maxAI 430 datasheet gives the memory and display figures. maximatecc publishes no MCU part number, so this review assumes an STM32H743-class part, the same as the maxAI 280. Confirm it with maximatecc before using these numbers for a decision.</p>
+    <div class="tbl"><table>
+      <tr><th>Item</th><th>Value used</th><th>Source</th></tr>
+      <tr><td>MCU</td><td class="mono">Cortex-M7, STM32H743 class</td><td>Assumed <span class="verify">VERIFY</span></td></tr>
+      <tr><td>Clock</td><td class="mono">400 MHz plan (480 MHz nominal)</td><td>480 MHz needs VOS0 and a limited junction temperature. A mower cab in the sun is the wrong place to plan at the maximum. <span class="verify">VERIFY</span> for the temperature grade</td></tr>
+      <tr><td>Internal RAM / flash</td><td class="mono">1 MB / 2 MB</td><td>maxAI 430 datasheet</td></tr>
+      <tr><td>SDRAM</td><td class="mono">2 MB, 16-bit, 100 MHz</td><td>2 MB from the datasheet; bus width and clock assumed <span class="verify">VERIFY</span></td></tr>
+      <tr><td>SDRAM bandwidth</td><td class="mono">200 MB/s peak, 110 MB/s usable</td><td>55 % efficiency with several bus masters, row misses and refresh</td></tr>
+      <tr><td>External flash</td><td class="mono">16 MB QSPI, 35 MB/s usable</td><td>Datasheet size; Winbond W25Q-class timing</td></tr>
+      <tr><td>Display</td><td class="mono">4.3 in, 480×272, 24-bit, 60 Hz</td><td>maxAI 430 datasheet</td></tr>
+      <tr><td>Camera (430i / 430iv)</td><td class="mono">Analog → decoder → DCMI, 2:1 decimated to 360×240 YUV422</td><td>Camera path not published <span class="verify">VERIFY</span></td></tr>
+      <tr><td>CAN</td><td class="mono">2 × J1939, 250 kbit/s</td><td>Datasheet; up to 1,613 frames/s per bus at 100 % load</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Scenarios</div>
+  <div class="body">
+    <h2>SDRAM bandwidth use, 24-bit vs 16-bit frame buffers</h2>
+    <p class="small">Percent of the usable 110 MB/s. Above 50 % is tight; above 70 % puts the display controller at risk of running short of pixels. CPU is at the 400 MHz plan clock. Hover a bar for its breakdown.</p>
+    <div class="chart" id="bw">
+      <div class="legend"><span><i style="background:var(--s888)"></i>RGB888 frame buffers (24-bit)</span><span><i style="background:var(--s565)"></i>RGB565 frame buffers (16-bit)</span></div>
+      <svg id="bwsvg" role="img" aria-label="SDRAM utilisation per scenario" width="100%"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="tbl"><table id="sumtbl">
+      <tr><th>Scenario</th><th class="n">SDRAM RGB888</th><th class="n">SDRAM RGB565</th><th class="n">CPU %</th><th class="n">QSPI %</th><th class="n">AI burst</th><th>Status (RGB565)</th></tr>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Detail</div>
+  <div class="body">
+    <h2>Each scenario, its load and its fix</h2>
+    <div class="scn" id="scn"></div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">One frame</div>
+  <div class="body">
+    <h2>S2 inside one 16.7 ms frame</h2>
+    <p>Full-screen slide at 60 fps while the CNN fires. The DMA2D copy has to share the SDRAM with the display controller's scan-out. Its time is the bytes it moves divided by the bandwidth left over: 783 KB / 86.5 MB/s = 9.1 ms with 24-bit buffers, and 522 KB / 94.3 MB/s = 5.5 ms with 16-bit buffers. The AI runs in whatever CPU time is free.</p>
+    <div class="chart"><svg id="frame" role="img" aria-label="Timeline of one frame" width="100%"></svg></div>
+    <p class="cap">CPU work for the GUI is 1.5 ms of framework plus 1.3 ms of widgets per frame. CAN interrupts are 3 µs each, about 54 per frame at 40 % load on two buses. The AI task has the lowest priority above idle, so a frame is never late because of the AI.</p>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Memory</div>
+  <div class="body">
+    <h2>Where everything lives</h2>
+    <div class="tbl"><table id="mmtbl"><tr><th>SDRAM, 2 MB</th><th class="n">RGB888</th><th class="n">RGB565</th></tr></table></div>
+    <p class="small">A full-resolution 720×480 camera frame pair (1,350 KB) does not fit next to 24-bit frame buffers. Decimate in the DCMI, or use 16-bit buffers.</p>
+    <div class="tbl"><table>
+      <tr><th>Internal RAM</th><th class="n">Size</th><th>Holds</th></tr>
+      <tr><td>DTCM</td><td class="n">128 KB</td><td>AI activations and in/out buffers (ST Edge AI <code>.dtcm_bss</code>), ISR stacks, J1939 state. Zero wait states, and the GUI DMA never touches it.</td></tr>
+      <tr><td>AXI SRAM</td><td class="n">512 KB</td><td>FreeRTOS heap, TouchGFX working memory, data-log buffers. Later, the activations of a mid-size model (up to about 300 KB).</td></tr>
+      <tr><td>SRAM1–3</td><td class="n">288 KB</td><td>DMA buffers: CAN, UART to the BLE module, DCMI line buffers</td></tr>
+      <tr><td>SRAM4</td><td class="n">64 KB</td><td>Backup-domain data and the last crash record</td></tr>
+      <tr><td>Internal flash</td><td class="n">2 MB</td><td>Code, AI weights (9 KB CNN, 24 KB LSTM) and alarm / telltale assets duplicated from QSPI</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">AI loads</div>
+  <div class="body">
+    <h2>What each model costs on this CPU</h2>
+    <div class="tbl"><table id="aitbl"><tr><th>Model</th><th class="n">MACs</th><th class="n">ms per run</th><th class="n">Average CPU</th><th class="n">RAM KB</th><th class="n">Flash KB</th><th>Note</th></tr></table></div>
+    <p class="small">The cycles-per-MAC ranges are typical of CMSIS-NN-class int8 kernels on a Cortex-M7. Small layers carry more overhead than large ones. ST Edge AI Core reports the exact MACC, flash and RAM, and Developer Cloud measures the time on real silicon.</p>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Debate</div>
+  <div class="body">
+    <h2>Six views around the table</h2>
+    <div class="debate">
+      <div><span class="who">ST edge-AI application engineer</span><q>Stay inside the ST flow. Run ST Edge AI Core analyze and validate on both phase 1 models today. Get real Cortex-M7 cycle counts from Developer Cloud this week. Put X-CUBE-AI next to TouchGFX in one CubeMX project, so one linker script owns the memory map.</q></div>
+      <div><span class="who">Graphics lead (TouchGFX)</span><q>Half a millisecond of AI every 30 seconds is nothing to me. 24-bit frame buffers on a 16-bit SDRAM are. I want RGB565 with LTDC dithering, transitions capped while the camera is on, and the needle images kept small for the texture mapper.</q></div>
+      <div><span class="who">Memory and bus architect</span><q>Budget against 110 MB/s, never the 200 MB/s on the datasheet. The display controller is the one master that cannot wait, so give it priority on the bus. Keep the AI out of SDRAM and QSPI: activations in DTCM, weights in internal flash.</q></div>
+      <div><span class="who">Mower system architect</span><q>On a zero-turn, the operator needs the alarm readable at once and the camera clear when reversing. Slide animations are nice to have. Dealers will ask for person detection. On this display it can only be advisory, and at 2–3 fps it is not worth shipping.</q></div>
+      <div><span class="who">Functional safety and CRA lead</span><q>The AI stays advisory, with no machine control. Telltales and alarms must never depend on the external flash or on the AI task. Under CRA Annex I, model updates are firmware: signed, versioned and covered by secure boot, and each AI alert is logged.</q></div>
+      <div><span class="who">Sourcing and portability skeptic</span><q>ST's tools are strong, but they ship a closed runtime library. Keep the <code>ai_backend_t</code> interface, keep a TFLM reference build in CI and keep the GD32 path alive. Going with ST should be a choice we keep making, not one we can't undo.</q></div>
+    </div>
+    <div class="fix"><b>Resolution.</b> ST Edge AI Core is the production path on the H743. TFLM stays as the open reference build, and the two must agree on the test set. The graphics rules below are mandatory. Camera AI moves to an STM32N6 generation. Nobody disagreed that the AI cost is negligible today. The argument was about bandwidth and flash.</div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Rules</div>
+  <div class="body">
+    <h2>Design rules that follow</h2>
+    <ol class="rules">
+      <li><span class="rid">R1</span><span>Use RGB565 double frame buffers in SDRAM, with LTDC dithering on. This saves 255 KB and a third of the scan-out traffic.</span></li>
+      <li><span class="rid">R2</span><span>Give the LTDC priority on the AXI bus. Count FIFO underrun interrupts and log them as a field health metric.</span></li>
+      <li><span class="rid">R3</span><span>Run AI in a dedicated task at the lowest priority above idle. Put activations in DTCM and weights in internal flash, never in QSPI flash or SDRAM.</span></li>
+      <li><span class="rid">R4</span><span>Keep alarm and telltale assets in internal flash or cache them in SDRAM at boot. Never let them depend on QSPI being readable.</span></li>
+      <li><span class="rid">R5</span><span>The data log uses W25Q erase-suspend, or pre-erases sectors while idle, or writes to internal flash bank 2. No erase starts while an alarm is being drawn.</span></li>
+      <li><span class="rid">R6</span><span>No full-screen 60 fps fades or slides while the camera view is shown. Use instant switches or 30 fps covers.</span></li>
+      <li><span class="rid">R7</span><span>Decimate the camera 2:1 in the DCMI and convert colour in a task below the GUI. Check first whether the 430i camera path has a hardware converter.</span></li>
+      <li><span class="rid">R8</span><span>Decode DM1 multi-packet messages at task level. The CAN interrupt only queues frames.</span></li>
+      <li><span class="rid">R9</span><span>Plan every budget at 400 MHz. Treat 480 MHz as headroom, not capacity.</span></li>
+      <li><span class="rid">R10</span><span>All AI output is advisory and logged as <code>EV_AI_HEALTH</code>. No camera AI on the H743 generation.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="tag">ST tools</div>
+  <div class="body">
+    <h2>The ST toolchain mapped to this product</h2>
+    <div class="tbl"><table>
+      <tr><th>Tool</th><th>Use here</th><th>When</th></tr>
+      <tr><td>ST Edge AI Core (<code>stedgeai</code>, X-CUBE-AI)</td><td>Analyze, validate and generate the CNN and LSTM for STM32H7. Wired in as <code>-DAI_BACKEND=stedgeai</code>.</td><td>Now</td></tr>
+      <tr><td>ST Edge AI Developer Cloud</td><td>Measured inference time on real H7 boards before maxAI 430 hardware is on the bench</td><td>This week <span class="verify">VERIFY board list</span></td></tr>
+      <tr><td>STM32CubeMX + X-CUBE-TOUCHGFX + X-CUBE-AI</td><td>One project and one memory map for the GUI and the AI</td><td>Bring-up</td></tr>
+      <tr><td>NanoEdge AI Studio</td><td>Per-machine anomaly and trend library with on-device learning: blade wear, bearing drift</td><td>Phase 2 <span class="verify">VERIFY licence</span></td></tr>
+      <tr><td>STM32 model zoo</td><td>Pre-trained vision models and training scripts for camera detection</td><td>Phase 3, on N6</td></tr>
+      <tr><td>STM32N6 (Neural-ART NPU)</td><td>Next-generation camera display: 800 MHz Cortex-M55, NPU, MIPI CSI-2 and ISP, NeoChrom GPU</td><td>Next product generation</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Gates</div>
+  <div class="body">
+    <h2>What to measure on the first board</h2>
+    <div class="tbl"><table>
+      <tr><th>Gate</th><th>Measure</th><th>Pass</th></tr>
+      <tr><td class="mono">G1</td><td>LTDC FIFO underruns during a one-hour scripted S5 soak</td><td class="mono">0</td></tr>
+      <tr><td class="mono">G2</td><td>TouchGFX render time per frame (RENDER_TIME GPIO on a scope)</td><td class="mono">&lt; 12 ms; ≥ 30 fps in S5</td></tr>
+      <tr><td class="mono">G3</td><td>AI <code>infer()</code> time with DWT, measured inside the running GUI</td><td class="mono">CNN &lt; 1 ms, LSTM &lt; 5 ms</td></tr>
+      <tr><td class="mono">G4</td><td>Time from DM1 received to alarm on screen, during a flash erase</td><td class="mono">&lt; 250 ms</td></tr>
+      <tr><td class="mono">G5</td><td>CPU idle time in S5 (FreeRTOS run-time stats)</td><td class="mono">≥ 40 %</td></tr>
+      <tr><td class="mono">G6</td><td>G1–G5 repeated at 70 °C ambient with the backlight at 1000 nit</td><td class="mono">All hold</td></tr>
+      <tr><td class="mono">G7</td><td><code>stedgeai validate --mode target</code> vs the host result</td><td class="mono">Macro-F1 within 0.01</td></tr>
+    </table></div>
+    <p class="small">The model behind every number on this page is <code>firmware/mower-hmi/tools/resource_budget/budget.py</code>. Each input is tagged with its source or VERIFY. Replace the estimates with the gate measurements as they come in, and rerun it.</p>
+  </div>
+</section>
+</div>
+
+<script>
+const D = {"sc": [{"id": "S1", "name": "Mowing dashboard, steady", "what": "Gauges, needles and numbers update at 30 fps (about 20 % of the screen per frame). CNN runs every 30 s.", "notes": "Comfortable. The AI is invisible at this level.", "s888": 25.6, "s565": 17.1, "mb888": 28.2, "mb565": 18.8, "st888": "green", "st565": "green", "cpu": 12.9, "qspi888": 6.7, "ai": 0.65, "sd": {"LTDC scan-out": 23.5, "Render (write + blend read)": 4.7}, "sd565": {"LTDC scan-out": 15.7, "Render (write + blend read)": 3.1}, "cpub": {"RTOS + app services": 3.0, "CAN ISR (2 buses, 40 % load)": 0.4, "TouchGFX framework": 3.0, "Needles (texture mapper)": 6.5}, "fps": null}, {"id": "S2", "name": "Screen transition + AI inference", "what": "Operator swipes to the trip page: full-screen slide at 60 fps (snapshot read + new screen write every frame). The CNN fires mid-animation.", "notes": "SDRAM is the limit, not the CPU. One 0.66 ms AI burst costs at most part of one frame if AI runs below the GUI priority.", "s888": 64.1, "s565": 42.7, "mb888": 70.5, "mb565": 47.0, "st888": "amber", "st565": "green", "cpu": 20.4, "qspi888": 33.6, "ai": 0.65, "sd": {"LTDC scan-out": 23.5, "Slide (snapshot read + write)": 47.0}, "sd565": {"LTDC scan-out": 15.7, "Slide (snapshot read + write)": 31.3}, "cpub": {"RTOS + app services": 3.0, "CAN ISR (2 buses, 40 % load)": 0.4, "TouchGFX framework": 9.0, "Widgets on new screen": 8.0}, "fps": null}, {"id": "S3", "name": "Reversing camera + overlays", "what": "ZTR reversing: camera at 30 fps full screen, guide-line overlay, warning banner. CNN keeps running.", "notes": "The colour conversion is the hidden CPU cost: the H743 DMA2D does not take raster YUV422 (VERIFY against the 430i camera path).", "s888": 44.7, "s565": 32.9, "mb888": 49.1, "mb565": 36.2, "st888": "green", "st565": "green", "cpu": 20.1, "qspi888": 1.7, "ai": 0.65, "sd": {"LTDC scan-out": 23.5, "Camera DCMI writes": 5.2, "Convert: read camera": 5.2, "Convert: write frame": 11.8, "Overlay blend (15 %)": 3.5}, "sd565": {"LTDC scan-out": 15.7, "Camera DCMI writes": 5.2, "Convert: read camera": 5.2, "Convert: write frame": 7.8, "Overlay blend (15 %)": 2.4}, "cpub": {"RTOS + app services": 3.0, "CAN ISR (2 buses, 40 % load)": 0.4, "TouchGFX framework": 3.0, "YUV to RGB + scale (CPU)": 13.7}, "fps": null}, {"id": "S4", "name": "Fault storm", "what": "Engine fault: DM1 with 20 DTCs over TP on both buses at 70 % load, alarm pop-up fading in over a dimmed screen, events logged (flash sector erase starts), AI alert at the same moment.", "notes": "Bandwidth is fine. The real risk is the flash: a W25Q sector erase blocks memory-mapped reads for 45 ms typical, 400 ms max. If GUI assets live on the same chip, the alarm screen freezes.", "s888": 64.1, "s565": 42.7, "mb888": 70.5, "mb565": 47.0, "st888": "amber", "st565": "green", "cpu": 17.7, "qspi888": 20.1, "ai": 0.65, "sd": {"LTDC scan-out": 23.5, "Fade + dim (full-screen blend, 60 fps)": 47.0}, "sd565": {"LTDC scan-out": 15.7, "Fade + dim (full-screen blend, 60 fps)": 31.3}, "cpub": {"RTOS + app services": 4.0, "CAN ISR (2 buses, 70 % load)": 0.7, "TouchGFX framework": 9.0, "Alarm widgets": 4.0}, "fps": null}, {"id": "S5", "name": "Worst of worst", "what": "Camera view + alarm fade + fault storm + LSTM instead of CNN + Bluetooth log download (430v / 430iv) + hot cabin (400 MHz plan clock).", "notes": "Only reachable with design rules: no 60 fps fades while the camera is shown, RGB565 frame buffers, LTDC given bus priority.", "s888": 84.2, "s565": 59.3, "mb888": 92.6, "mb565": 65.2, "st888": "red", "st565": "amber", "cpu": 32.1, "qspi888": 20.4, "ai": 3.81, "sd": {"LTDC scan-out": 23.5, "Camera DCMI writes": 5.2, "Convert: read camera": 5.2, "Convert: write frame": 11.8, "Fade + dim (60 fps)": 47.0}, "sd565": {"LTDC scan-out": 15.7, "Camera DCMI writes": 5.2, "Convert: read camera": 5.2, "Convert: write frame": 7.8, "Fade + dim (60 fps)": 31.3}, "cpub": {"RTOS + app services": 4.0, "CAN ISR (2 buses, 70 % load)": 0.7, "TouchGFX framework": 9.0, "YUV to RGB + scale (CPU)": 13.7, "Alarm widgets": 4.0, "BLE dump (CRC + software AES)": 0.8}, "fps": null}, {"id": "S6", "name": "Camera AI on the H743 (roadmap)", "what": "Person / obstacle detection on the camera feed while the camera view and dashboard run.", "notes": "One detection takes 225-375 ms of CPU. With the spare CPU left, the detector reaches about 2-3.5 fps. Too slow and not a safety function. This is the case for the STM32N6 NPU.", "s888": 42.0, "s565": 31.3, "mb888": 46.2, "mb565": 34.4, "st888": "red", "st565": "red", "cpu": 20.1, "qspi888": 1.7, "ai": 375.0, "sd": {"LTDC scan-out": 23.5, "Camera DCMI writes": 5.2, "Convert: read camera": 5.2, "Convert: write frame": 11.8, "Detector input crop (192x192)": 0.6}, "sd565": {"LTDC scan-out": 15.7, "Camera DCMI writes": 5.2, "Convert: read camera": 5.2, "Convert: write frame": 7.8, "Detector input crop (192x192)": 0.6}, "cpub": {"RTOS + app services": 3.0, "CAN ISR (2 buses, 40 % load)": 0.4, "TouchGFX framework": 3.0, "YUV to RGB + scale (CPU)": 13.7}, "fps": [2.1307754666666665, 3.551292444444444]}], "mm": {"RGB888": {"Frame buffers (2)": 765, "Transition snapshot": 382, "Camera buffers (2, 360x240 YUV422)": 338, "Asset cache (alarm screens + fonts)": 300, "Free": 263}, "RGB565": {"Frame buffers (2)": 510, "Transition snapshot": 255, "Camera buffers (2, 360x240 YUV422)": 338, "Asset cache (alarm screens + fonts)": 300, "Free": 646}}, "ai": [{"model": "phase1_cnn_int8", "macs": 43664, "ms": [0.32748, 0.65496], "avg_cpu_pct": 0.0021832, "ram_kb": 16, "rom_kb": 9, "note": "deployed model; small layers carry high fixed overhead"}, {"model": "phase1_lstm", "macs": 190528, "ms": [1.90528, 3.81056], "avg_cpu_pct": 0.012701866666666669, "ram_kb": 24, "rom_kb": 24, "note": "candidate; float or int8 via ST Edge AI Core"}, {"model": "nanoedge_anomaly", "macs": 20000, "ms": [0.2, 0.4], "avg_cpu_pct": 0.04, "ram_kb": 8, "rom_kb": 16, "note": "trend / dull blades with on-device learning; size from the generated lib (VERIFY)"}, {"model": "camera_detector", "macs": 60000000, "ms": [225.0, 375.0], "avg_cpu_pct": null, "ram_kb": 450, "rom_kb": 900, "note": "person/obstacle detector, 192x192 int8 class model; order of magnitude (VERIFY in ST model zoo benchmarks)"}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ns = "http://www.w3.org/2000/svg";
+const el = (t, a, p) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const fmt = (v, d=1) => Number(v).toFixed(d);
+
+// summary table
+const st = document.getElementById("sumtbl");
+D.sc.forEach(s => { const tr = st.insertRow(); tr.innerHTML =
+  `<td>${s.id} ${s.name}</td><td class="n">${fmt(s.s888,0)} %</td><td class="n">${fmt(s.s565,0)} %</td><td class="n">${fmt(s.cpu)}</td><td class="n">${fmt(s.qspi888,0)}</td><td class="n">${s.ai >= 10 ? fmt(s.ai,0) : fmt(s.ai,2)} ms</td><td><span class="pill ${s.st565}"></span></td>`; });
+
+// bandwidth chart
+const SHORT = {S1:"Dashboard",S2:"Transition + AI",S3:"Reversing camera",S4:"Fault storm",S5:"Worst of worst",S6:"Camera AI"};
+function drawBW(){
+  const svg = document.getElementById("bwsvg"); svg.innerHTML = "";
+  const W = svg.clientWidth || 700, narrow = W < 520, L = narrow ? 34 : 170, R = 44, bh = 12, gap = 2, grp = 2*bh + gap + 18, T = 8, H = T + D.sc.length*grp + 26;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H);
+  const x = v => L + (W - L - R) * Math.min(v,100) / 100;
+  [0,25,50,70,100].forEach(t => { el("line",{x1:x(t),x2:x(t),y1:T,y2:H-22,stroke:css(t===50||t===70?"--muted":"--rule"),"stroke-dasharray":t===50||t===70?"3 3":"","stroke-width":1},svg);
+    const tx = el("text",{x:x(t),y:H-6,"text-anchor":"middle"},svg); tx.textContent = t + (t===100?" %":""); });
+  const tip = document.getElementById("tip"), box = document.getElementById("bw");
+  D.sc.forEach((s,i) => {
+    const y0 = T + i*grp;
+    const lab = el("text",{x:0,y:y0+bh+4,class:"lbl"},svg); lab.textContent = narrow ? s.id : `${s.id} ${SHORT[s.id]}`;
+    [["s888","--s888","RGB888",s.sd,s.mb888],["s565","--s565","RGB565",s.sd565,s.mb565]].forEach(([k,c,name,br,mb],j) => {
+      const y = y0 + j*(bh+gap), w = Math.max(2, x(s[k]) - L);
+      const r = el("rect",{x:L,y,width:w,height:bh,fill:css(c),rx:2},svg);
+      const v = el("text",{x:L+w+6,y:y+bh-2},svg); v.textContent = fmt(s[k],0)+" %";
+      const hit = el("rect",{x:L,y:y-1,width:W-L,height:bh+2,fill:"transparent",tabindex:0},svg);
+      const show = ev => { tip.hidden=false; tip.innerHTML = `<b>${s.id} · ${name}</b><br>${fmt(mb)} MB/s of 110 usable<br>` +
+          Object.entries(br).map(([a,b])=>`${a}: ${fmt(b)}`).join("<br>");
+        const bb = box.getBoundingClientRect(); const px = (ev.clientX||bb.left+L+w) - bb.left, py = (ev.clientY||bb.top+y) - bb.top;
+        tip.style.left = Math.min(px+12, bb.width-290)+"px"; tip.style.top = (py+14)+"px"; r.setAttribute("opacity",".8"); };
+      const hide = () => { tip.hidden = true; r.setAttribute("opacity","1"); };
+      hit.addEventListener("mousemove",show); hit.addEventListener("focus",show); hit.addEventListener("mouseleave",hide); hit.addEventListener("blur",hide);
+    });
+  });
+}
+
+// scenario detail
+const sc = document.getElementById("scn");
+const FIX = {
+  S1: "Nothing needed. Keep each texture-mapped needle inside a 120×120 px bounding box.",
+  S2: "R1 (RGB565) brings this from 64 % to 43 %. R3 keeps the AI burst inside free CPU time. Optionally cap transitions at 30 fps.",
+  S3: "R7: decimate in the DCMI and convert colour in a task below the GUI. If the 430i has a hardware converter, the 13.7 % CPU goes away.",
+  S4: "R4 and R5: alarm assets never wait on QSPI, and no erase starts while an alarm is drawn. R8: decode DM1 at task level.",
+  S5: "R1 + R2 + R6 together. With RGB565 and no fades while the camera is on, this stays below 50 %.",
+  S6: "Do not ship this on the H743. Keep camera AI for an STM32N6 generation, and as advisory only."
+};
+D.sc.forEach(s => {
+  const a = document.createElement("article");
+  const bars = (o, unit, max) => `<div class="bars">` + Object.entries(o).map(([k,v]) =>
+    `<div class="row"><span class="t" title="${k}">${k}</span><span class="v">${fmt(v)}${unit}</span><span class="track"><i style="width:${Math.min(100,100*v/max)}%"></i></span></div>`).join("") + `</div>`;
+  a.innerHTML = `<div class="sid">${s.id}</div><div style="display:grid;gap:8px;min-width:0">
+    <h3>${s.name} <span class="pill ${s.st888}" title="RGB888"></span> <span class="small">RGB888</span> <span class="pill ${s.st565}"></span> <span class="small">RGB565</span></h3>
+    <p>${s.what}</p>
+    <div class="grid2"><div><div class="eyebrow">SDRAM MB/s (RGB888)</div>${bars(s.sd," ",50)}</div>
+    <div><div class="eyebrow">CPU % at 400 MHz</div>${bars(s.cpub," %",20)}</div></div>
+    <p class="small">${s.notes}${s.fps ? ` Detector rate with the spare CPU: ${fmt(s.fps[0])}–${fmt(s.fps[1])} fps.` : ""}</p>
+    <div class="fix">${FIX[s.id]}</div></div>`;
+  sc.appendChild(a);
+});
+
+// frame timeline
+function drawFrame(){
+  const svg = document.getElementById("frame"); svg.innerHTML = "";
+  const W = svg.clientWidth || 700, narrow = W < 520, L = narrow ? 92 : 170, R = 12, rh = 16, rows = [
+    ["LTDC scan-out", [[0,16.67,"--muted"]]],
+    ["DMA2D · RGB888", [[0.3,9.4,"--s888"]]],
+    ["DMA2D · RGB565", [[0.3,5.8,"--s565"]]],
+    ["CPU · GUI", [[0,1.5,"--ink"],[9.4,10.7,"--ink"]]],
+    ["CPU · AI (CNN)", [[1.5,2.15,"--accent"]]],
+  ];
+  const T = 6, H = T + rows.length*(rh+12) + 28;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`); svg.setAttribute("height",H);
+  const x = t => L + (W-L-R) * t / 16.67;
+  [0,4,8,12,16.67].forEach(t => { el("line",{x1:x(t),x2:x(t),y1:T,y2:H-22,stroke:css("--rule")},svg);
+    const tx = el("text",{x:x(t),y:H-6,"text-anchor":t===0?"start":t>16?"end":"middle"},svg); tx.textContent = (t>16?"16.7":t)+" ms"; });
+  rows.forEach(([name,segs],i) => { const y = T + i*(rh+12);
+    const lb = el("text",{x:0,y:y+rh-3,class:"lbl"},svg); lb.textContent = name;
+    segs.forEach(([a,b,c]) => el("rect",{x:x(a),y,width:Math.max(2,x(b)-x(a)),height:rh,fill:css(c),opacity:c==="--muted"?.45:1,rx:2},svg));
+    if (i===3) for (let k=0;k<54;k++){ const t = k*16.67/54; el("rect",{x:x(t),y:y+rh+2,width:1.5,height:4,fill:css("--muted")},svg); }
+  });
+}
+
+// memory table
+const mt = document.getElementById("mmtbl");
+Object.keys(D.mm.RGB888).forEach(k => { const tr = mt.insertRow();
+  tr.innerHTML = `<td>${k}</td><td class="n">${D.mm.RGB888[k]} KB</td><td class="n">${D.mm.RGB565[k]} KB</td>`; });
+
+// ai table
+const at = document.getElementById("aitbl");
+const NAMES = {phase1_cnn_int8:"Phase 1 CNN, int8 (deployed)", phase1_lstm:"Phase 1 LSTM", nanoedge_anomaly:"NanoEdge AI trend library", camera_detector:"Camera person / obstacle detector"};
+D.ai.forEach(r => { const tr = at.insertRow();
+  tr.innerHTML = `<td>${NAMES[r.model]||r.model}</td><td class="n">${r.macs.toLocaleString("en-US")}</td><td class="n">${fmt(r.ms[0],2)}–${fmt(r.ms[1],2)}</td><td class="n">${r.avg_cpu_pct==null?"saturates":fmt(r.avg_cpu_pct,3)+" %"}</td><td class="n">${r.ram_kb}</td><td class="n">${r.rom_kb}</td><td class="small">${r.note}</td>`; });
+
+const redraw = () => { drawBW(); drawFrame(); };
+redraw(); addEventListener("resize", redraw);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redraw);
+new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+</script>
+
+</body></html>

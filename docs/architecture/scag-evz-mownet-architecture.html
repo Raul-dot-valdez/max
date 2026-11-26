@@ -1,0 +1,344 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Scag EVZ MowNet Architecture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: left-aligned spec sheet on a hairline grid; one wide schematic, then reference tables. */
+:root {
+  --bg: #F3F5F6; --panel: #FFFFFF; --ink: #0F1418; --muted: #5B6873; --rule: #CDD5DB;
+  --accent: #D9620B; --accent-soft: rgba(217, 98, 11, 0.10);
+  --ok: #2F7D4F; --warn: #9A6A00; --assume: #8A3B2E;
+  --display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1418; --panel: #161C21; --ink: #E8EDF0; --muted: #8B98A3; --rule: #2A343C;
+    --accent: #FF7A1A; --accent-soft: rgba(255, 122, 26, 0.12);
+    --ok: #5FBF85; --warn: #E2B04A; --assume: #E07A66; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1418; --panel: #161C21; --ink: #E8EDF0; --muted: #8B98A3; --rule: #2A343C;
+  --accent: #FF7A1A; --accent-soft: rgba(255, 122, 26, 0.12);
+  --ok: #5FBF85; --warn: #E2B04A; --assume: #E07A66; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 1080px; display: grid; gap: 40px; }
+header { display: grid; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 24px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 600 clamp(28px, 4vw, 40px)/1.1 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 600 22px/1.2 var(--display); margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); }
+section { display: grid; gap: 16px; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.tag { font: 500 11px/1 var(--mono); letter-spacing: 0.04em; padding: 4px 6px; border: 1px solid currentColor; border-radius: 2px; white-space: nowrap; }
+.tag.c { color: var(--ok); } .tag.i { color: var(--warn); } .tag.a { color: var(--assume); }
+.scroll { overflow-x: auto; border: 1px solid var(--rule); background: var(--panel); }
+svg { display: block; min-width: 920px; width: 100%; height: auto; }
+svg text { font-family: var(--body); fill: var(--ink); }
+svg .mono { font-family: var(--mono); fill: var(--muted); font-size: 11.5px; }
+svg .ttl { font-family: var(--display); font-weight: 600; font-size: 14px; }
+svg .role { fill: var(--muted); font-size: 12px; }
+svg .node { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
+svg .node.inf { stroke-dasharray: 5 4; }
+svg .ext { fill: var(--bg); stroke: var(--rule); stroke-width: 1.2; }
+svg .bus { stroke: var(--accent); stroke-width: 5; }
+svg .drop { stroke: var(--accent); stroke-width: 2; }
+svg .wire { stroke: var(--muted); stroke-width: 1.4; fill: none; }
+svg .rf { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 2 4; fill: none; }
+svg .term { fill: var(--panel); stroke: var(--accent); stroke-width: 2; }
+svg .buslabel { font-family: var(--mono); font-size: 12px; fill: var(--accent); }
+svg .pc { fill: var(--ok); } svg .pi { fill: var(--warn); } svg .pa { fill: var(--assume); }
+svg .pilltxt { font-family: var(--mono); font-size: 10px; fill: var(--panel); font-weight: 500; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13.5px; background: var(--panel); }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+th { font: 500 11px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+td.num, td code { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+tr:last-child td { border-bottom: 0; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.cell { background: var(--panel); padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.cell h3 { font: 600 15px/1.3 var(--display); margin: 0; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.cell ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; display: grid; gap: 3px; }
+.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 14px; font-size: 14px; max-width: 80ch; }
+ol.flow { margin: 0; padding-left: 22px; display: grid; gap: 6px; max-width: 80ch; }
+.sources { font-size: 13px; color: var(--muted); display: grid; gap: 4px; padding-left: 18px; margin: 0; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">AI Terra · competitive teardown · public sources only</div>
+    <h1>Scag EVZ electrical and firmware architecture on the MowNet bus</h1>
+    <p class="lede">Reconstruction of the Scag EVZ electric zero-turn network from published parts lists, Hydro-Gear Smartec material and trademark and certification records. Scag and Hydro-Gear have not published MowNet's message set, so the PGN list separates standard J1939 messages from proprietary traffic whose contents are unknown.</p>
+    <div class="legend" aria-label="Confidence legend">
+      <span><span class="tag c">CONFIRMED</span> stated in a public source</span>
+      <span><span class="tag i">INFERRED</span> follows from sources, not stated for the EVZ</span>
+      <span><span class="tag a">ASSUMED</span> engineering placeholder, verify on a machine</span>
+    </div>
+  </header>
+
+  <section aria-labelledby="diagram-h">
+    <h2 id="diagram-h">Network schematic</h2>
+    <p class="lede">Solid outline: the component is confirmed on the EVZ. Dashed outline: present on Smartec systems, but its exact part on the EVZ is inferred. The 48 V power rail is left out so the data paths stay readable.</p>
+    <div class="scroll">
+      <svg viewBox="0 0 1000 600" role="img" aria-label="MowNet CAN bus with Bluetooth module 487051, operator display, interface module 487054 and battery BMS above the bus; traction controllers, deck motor controller and service port below; motors at the bottom; phone apps link to the Bluetooth module over BLE.">
+        <!-- external: phone apps -->
+        <rect class="ext" x="40" y="30" width="200" height="118"/>
+        <text class="ttl" x="54" y="54">Phone apps</text>
+        <text class="role" x="54" y="76">Smartec MyMow · owner</text>
+        <text class="role" x="54" y="94">Smartec Connect · dealer</text>
+        <text class="role" x="54" y="112">Smartec Install · OEM</text>
+        <text class="mono" x="54" y="134">iOS / Android</text>
+        <path class="rf" d="M140 148 V200"/>
+        <text class="mono" x="148" y="180">BLE</text>
+
+        <!-- external: operator switches -->
+        <rect class="ext" x="520" y="30" width="200" height="118"/>
+        <text class="ttl" x="534" y="54">Operator inputs</text>
+        <text class="role" x="534" y="76">Key · PTO · E-stop</text>
+        <text class="role" x="534" y="94">Light switch</text>
+        <text class="role" x="534" y="112">Seat · park brake</text>
+        <text class="mono" x="534" y="134">discrete / analog</text>
+        <path class="wire" d="M620 148 V200"/>
+
+        <!-- external: charger -->
+        <rect class="ext" x="760" y="30" width="200" height="118"/>
+        <text class="ttl" x="774" y="54">Charger</text>
+        <text class="role" x="774" y="76">Charge port, 120/240 V AC</text>
+        <text class="role" x="774" y="94">BMS-controlled charge</text>
+        <text class="mono" x="774" y="134">location unverified</text>
+        <path class="wire" d="M860 148 V200"/>
+
+        <!-- bus -->
+        <line class="bus" x1="30" y1="320" x2="970" y2="320"/>
+        <rect class="term" x="18" y="308" width="16" height="24"/>
+        <rect class="term" x="966" y="308" width="16" height="24"/>
+        <text class="buslabel" x="18" y="350">120 Ω</text>
+        <text class="buslabel" x="944" y="350">120 Ω</text>
+        <text class="buslabel" x="380" y="350">MowNet · CAN 2.0B 29-bit · J1939-based</text>
+
+        <!-- upper nodes -->
+        <g>
+          <rect class="node" x="40" y="200" width="200" height="90"/>
+          <text class="ttl" x="54" y="224">Bluetooth module</text>
+          <text class="mono" x="54" y="244">Scag 487051 · Smart Tec</text>
+          <text class="role" x="54" y="264">MowNet ↔ BLE bridge</text>
+          <text class="mono" x="54" y="280">HG 2810-1001?</text>
+          <rect class="pc" x="196" y="206" width="38" height="16" rx="2"/><text class="pilltxt" x="200" y="218">CONF</text>
+          <line class="drop" x1="140" y1="290" x2="140" y2="320"/>
+        </g>
+        <g>
+          <rect class="node inf" x="280" y="200" width="200" height="90"/>
+          <text class="ttl" x="294" y="224">Operator display</text>
+          <text class="mono" x="294" y="244">part no. not found</text>
+          <text class="role" x="294" y="264">SoC, hours, diagnostics</text>
+          <rect class="pi" x="436" y="206" width="38" height="16" rx="2"/><text class="pilltxt" x="441" y="218">INF</text>
+          <line class="drop" x1="380" y1="290" x2="380" y2="320"/>
+        </g>
+        <g>
+          <rect class="node" x="520" y="200" width="200" height="90"/>
+          <text class="ttl" x="534" y="224">Interface module</text>
+          <text class="mono" x="534" y="244">Scag 487054 · "eVIM"</text>
+          <text class="role" x="534" y="264">I/O, interlocks, key state</text>
+          <rect class="pc" x="676" y="206" width="38" height="16" rx="2"/><text class="pilltxt" x="680" y="218">CONF</text>
+          <line class="drop" x1="620" y1="290" x2="620" y2="320"/>
+        </g>
+        <g>
+          <rect class="node" x="760" y="200" width="200" height="90"/>
+          <text class="ttl" x="774" y="224">Battery + BMS</text>
+          <text class="mono" x="774" y="244">Vanguard 48 V 5 kWh Li-ion</text>
+          <text class="role" x="774" y="264">SoC, limits, contactor</text>
+          <rect class="pc" x="916" y="206" width="38" height="16" rx="2"/><text class="pilltxt" x="920" y="218">CONF</text>
+          <line class="drop" x1="860" y1="290" x2="860" y2="320"/>
+        </g>
+
+        <!-- lower nodes -->
+        <g>
+          <line class="drop" x1="140" y1="320" x2="140" y2="370"/>
+          <rect class="node inf" x="40" y="370" width="200" height="90"/>
+          <text class="ttl" x="54" y="394">Traction ctrl LH</text>
+          <text class="mono" x="54" y="414">Smartec TC-2200?</text>
+          <text class="role" x="54" y="434">Lap-bar input, speed loop</text>
+          <rect class="pi" x="196" y="376" width="38" height="16" rx="2"/><text class="pilltxt" x="201" y="388">INF</text>
+        </g>
+        <g>
+          <line class="drop" x1="380" y1="320" x2="380" y2="370"/>
+          <rect class="node inf" x="280" y="370" width="200" height="90"/>
+          <text class="ttl" x="294" y="394">Traction ctrl RH</text>
+          <text class="mono" x="294" y="414">Smartec TC-2200?</text>
+          <text class="role" x="294" y="434">Lap-bar input, speed loop</text>
+          <rect class="pi" x="436" y="376" width="38" height="16" rx="2"/><text class="pilltxt" x="441" y="388">INF</text>
+        </g>
+        <g>
+          <line class="drop" x1="620" y1="320" x2="620" y2="370"/>
+          <rect class="node inf" x="520" y="370" width="200" height="90"/>
+          <text class="ttl" x="534" y="394">Deck motor ctrl</text>
+          <text class="mono" x="534" y="414">Smartec DC-2200?</text>
+          <text class="role" x="534" y="434">Blade speed, load sensing</text>
+          <rect class="pi" x="676" y="376" width="38" height="16" rx="2"/><text class="pilltxt" x="681" y="388">INF</text>
+        </g>
+        <g>
+          <line class="drop" x1="860" y1="320" x2="860" y2="370"/>
+          <rect class="node inf" x="760" y="370" width="200" height="90"/>
+          <text class="ttl" x="774" y="394">Service connector</text>
+          <text class="mono" x="774" y="414">dealer / OEM tool</text>
+          <text class="role" x="774" y="434">Wired diagnostics, flashing</text>
+          <rect class="pa" x="916" y="376" width="38" height="16" rx="2"/><text class="pilltxt" x="920" y="388">ASM</text>
+        </g>
+
+        <!-- motors -->
+        <path class="wire" d="M140 460 V500"/>
+        <path class="wire" d="M380 460 V500"/>
+        <path class="wire" d="M620 460 V500"/>
+        <rect class="ext" x="40" y="500" width="200" height="66"/>
+        <text class="ttl" x="54" y="524">ZT-2800e LH</text>
+        <text class="role" x="54" y="544">brushless DC transaxle</text>
+        <rect class="ext" x="280" y="500" width="200" height="66"/>
+        <text class="ttl" x="294" y="524">ZT-2800e RH</text>
+        <text class="role" x="294" y="544">brushless DC transaxle</text>
+        <rect class="ext" x="520" y="500" width="200" height="66"/>
+        <text class="ttl" x="534" y="524">Smartec D2e motors</text>
+        <text class="role" x="534" y="544">52 in deck, one per blade</text>
+        <text class="mono" x="760" y="524">3-phase motor leads</text>
+        <text class="mono" x="760" y="544">48 V rail not drawn</text>
+      </svg>
+    </div>
+  </section>
+
+  <section aria-labelledby="units-h">
+    <h2 id="units-h">Controller units and their firmware</h2>
+    <p class="lede">Each node's likely firmware responsibilities. Function lists are inferred from what each component class does on Smartec and similar 48 V electric mowers.</p>
+    <div class="cols">
+      <div class="cell">
+        <h3>Bluetooth module 487051 <span class="tag c">CONFIRMED PART</span></h3>
+        <ul>
+          <li>Scag lists it as "Bluetooth, Smart Tec" in the EVZ electrical system</li>
+          <li>A device certification record lists Hydro-Gear 2810-1001 as a "MowNet bus to Bluetooth bridge". That it is the same unit is inferred</li>
+          <li>Firmware: CAN node + BLE GATT server, gateway between app requests and MowNet</li>
+          <li>Serves fleet and service data: hours, faults, SoC, configuration</li>
+          <li>Likely path for "on-demand upgradability" (OTA reflash of MowNet nodes)</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3>Interface module 487054 <span class="tag c">CONFIRMED PART</span></h3>
+        <ul>
+          <li>Sold as "eVIM"; role on the bus is inferred</li>
+          <li>Reads key, PTO, E-stop and light switches, plus operator-presence inputs</li>
+          <li>Runs the machine state machine: off, ready, drive, mow, fault</li>
+          <li>Enforces interlocks (seat, park brake, PTO) before enabling drive and deck</li>
+          <li>Bridges analog controls onto MowNet, as Hydro-Gear describes</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3>Battery + BMS <span class="tag c">CONFIRMED PACK</span></h3>
+        <ul>
+          <li>Vanguard 48 V 5 kWh lithium-ion</li>
+          <li>Vanguard packs have an integrated BMS and support J1939 (29-bit)</li>
+          <li>Firmware: cell monitoring, SoC/SoH, current limits, contactor control, charge control</li>
+          <li>Publishes SoC and limits that the display and controllers use (PowerSafe)</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3>Traction controllers ×2 <span class="tag i">INFERRED</span></h3>
+        <ul>
+          <li>Drive the Hydro-Gear ZT-2800e brushless transaxles (confirmed)</li>
+          <li>Hydro-Gear designs the ZT-2800e to pair with the TC-2200 controller</li>
+          <li>Firmware: motor commutation/FOC, speed and torque loops, lap-bar position input</li>
+          <li>Regenerative braking, slope hold, thermal and current derating</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3>Deck motor controller <span class="tag i">INFERRED</span></h3>
+        <ul>
+          <li>Drives Smartec D2e deck motors (confirmed on the EVZ)</li>
+          <li>Hydro-Gear lists the DC-2200 as "MowNet compatible (CAN)"</li>
+          <li>Firmware: blade speed control, soft start, blade-stop timing, load sensing</li>
+          <li>Load sensing feeds SmartMow, which adjusts power to cutting conditions</li>
+          <li>Number of controller channels for the 52 in deck is unconfirmed</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3>Operator display <span class="tag i">INFERRED NODE</span></h3>
+        <ul>
+          <li>Scag confirms an operator information display: battery charge, run hours, diagnostics</li>
+          <li>That it is a MowNet node, rather than wired to the eVIM, is inferred</li>
+          <li>Firmware: CAN listener, fault-code display, hour meters</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pgn-h">
+    <h2 id="pgn-h">CAN messages and PGNs</h2>
+    <div class="note">Hydro-Gear describes MowNet as its own software built on J1939, but has not published its message definitions. Rows 1–7 are standard J1939 services any compliant node needs. Rows 8–11 cover vehicle data the nodes must exchange; whether that traffic uses standard PGNs or proprietary ones is unknown. To get the real list, log the bus on a running machine.</div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>PGN</th><th>Name</th><th>Sent by</th><th>Purpose on the EVZ</th><th>Confidence</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num">1</td><td class="num">60928 · 0xEE00</td><td>Address Claimed</td><td>every node</td><td>Network management at power-up</td><td><span class="tag i">INFERRED</span></td></tr>
+          <tr><td class="num">2</td><td class="num">59904 · 0xEA00</td><td>Request</td><td>BT module, display, tools</td><td>Ask a node for on-request data (IDs, hours, DM2)</td><td><span class="tag i">INFERRED</span></td></tr>
+          <tr><td class="num">3</td><td class="num">59392 · 0xE800</td><td>Acknowledgment</td><td>any node</td><td>ACK/NACK of requests and commands</td><td><span class="tag i">INFERRED</span></td></tr>
+          <tr><td class="num">4</td><td class="num">60416 / 60160</td><td>TP.CM / TP.DT</td><td>any node</td><td>Multi-packet: long fault lists, software IDs, reflash blocks</td><td><span class="tag i">INFERRED</span></td></tr>
+          <tr><td class="num">5</td><td class="num">65226 · 0xFECA</td><td>DM1 active faults</td><td>BMS, controllers, eVIM</td><td>Faults shown on the display and in the dealer app</td><td><span class="tag i">INFERRED</span></td></tr>
+          <tr><td class="num">6</td><td class="num">65227 · 0xFECB</td><td>DM2 previous faults</td><td>BMS, controllers, eVIM</td><td>Fault history for service</td><td><span class="tag a">ASSUMED</span></td></tr>
+          <tr><td class="num">7</td><td class="num">65242 / 65249</td><td>Software ID / Component ID</td><td>every node</td><td>Version check before updates</td><td><span class="tag a">ASSUMED</span></td></tr>
+          <tr><td class="num">8</td><td class="num">61184 · 0xEF00</td><td>Proprietary A (peer-to-peer)</td><td>eVIM → controllers</td><td>Commands: drive enable, speed/torque setpoints, blade on/off and speed</td><td><span class="tag a">ASSUMED</span></td></tr>
+          <tr><td class="num">9</td><td class="num">65280–65535</td><td>Proprietary B (broadcast)</td><td>controllers, BMS, eVIM</td><td>Status: motor speed, current, temperature, lap-bar position, key/PTO/seat state, hour counters</td><td><span class="tag a">ASSUMED</span></td></tr>
+          <tr><td class="num">10</td><td class="num">BMS set</td><td>Battery status, limits</td><td>BMS</td><td>SoC, pack V/I, temperatures, charge/discharge limits. Vanguard J1939 support is confirmed; its PGN list is in Vanguard's integration documents</td><td><span class="tag i">INFERRED</span></td></tr>
+          <tr><td class="num">11</td><td class="num">proprietary</td><td>Bootloader / reflash</td><td>BT module ↔ target node</td><td>Over-the-air firmware updates through the app, likely carried on TP or proprietary PGNs</td><td><span class="tag a">ASSUMED</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="fleet-h">
+    <h2 id="fleet-h">Fleet management data path through 487051</h2>
+    <ol class="flow">
+      <li>Nodes broadcast status and DM1 faults on MowNet continuously while the key is on.</li>
+      <li>The 487051 module listens on the bus and keeps the latest values. On request it asks nodes for on-request data such as identifiers and fault history.</li>
+      <li>A phone connects over BLE. MyMow presents owner-level data: hours, charge, maintenance. Connect gives dealers diagnostics and adjustments. Install is the OEM's commissioning tool.</li>
+      <li>The app forwards data to its cloud service. Fleet views therefore depend on someone opening the app near the machine, since the module has no cellular link of its own (inferred from the BLE-only description).</li>
+      <li>Configuration changes and firmware updates travel the reverse path: app → BLE → 487051 → MowNet → target node.</li>
+    </ol>
+    <p class="lede">Gaps worth noting for an AI Terra product: no on-machine GNSS, no cellular backhaul, and no on-device analytics are described for this system.</p>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <h2 id="src-h">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://www.scagparts.com/scag-487051" target="_blank" rel="noopener">Scag Parts: 487051 Bluetooth, Smart Tec</a></li>
+      <li><a href="https://www.propartsdirect.net/487051-scag-bluetooth-smart-tec.aspx" target="_blank" rel="noopener">ProPartsDirect: 487051 Bluetooth, Smart Tec</a></li>
+      <li><a href="https://www.partstree.com/models/sevz-52h-scag-evz-52-zero-turn-mower-electric-sn-t4700001-t4799999/sevz-electrical-system-4/" target="_blank" rel="noopener">Partstree: SEVZ-52H electrical system (487051, 487054)</a></li>
+      <li><a href="https://www.scagpartsonline.com/Scag-part-487054/" target="_blank" rel="noopener">Scag Parts Online: 487054 eVIM</a></li>
+      <li><a href="https://www.scag.com/product/electric-mowers/evz/" target="_blank" rel="noopener">Scag: EVZ electric zero-turn</a></li>
+      <li><a href="https://www.scag.com/feature/evz-onboard-bluetooth" target="_blank" rel="noopener">Scag: EVZ onboard Bluetooth</a></li>
+      <li><a href="https://www.hydro-gear.com/outdoor-power-equipment/" target="_blank" rel="noopener">Hydro-Gear: Smartec and MowNet, PowerSafe, SmartMow</a></li>
+      <li><a href="https://www.hydro-gear.com/product/zt-2800e/" target="_blank" rel="noopener">Hydro-Gear: ZT-2800e</a></li>
+      <li><a href="https://www.hydro-gear.com/deck_controllers/" target="_blank" rel="noopener">Hydro-Gear: deck motor controllers</a></li>
+      <li><a href="https://www.hydro-gear.com/traction_controllers/" target="_blank" rel="noopener">Hydro-Gear: traction controllers</a></li>
+      <li><a href="https://www.hydro-gear.com/wp-content/uploads/2023/10/Smartec-STM-Brochure.pdf" target="_blank" rel="noopener">Hydro-Gear: Smartec STM brochure</a></li>
+      <li><a href="https://www.manualslib.com/manual/3406570/Hydro-Gear-Smartec.html" target="_blank" rel="noopener">Hydro-Gear Smartec manual (Bluetooth module, apps)</a></li>
+      <li><a href="https://device.report/hydro-gear" target="_blank" rel="noopener">Device database: Hydro-Gear 2810-1001 MowNet-to-Bluetooth bridge</a></li>
+      <li><a href="https://trademarks.justia.com/865/75/mownet-86575830.html" target="_blank" rel="noopener">Justia: MOWNET trademark, Hydro-Gear</a></li>
+      <li><a href="https://www.vanguardpower.com/en-us/products/48v-5kwh-commercial-battery" target="_blank" rel="noopener">Vanguard: 48 V 5 kWh commercial battery</a></li>
+      <li><a href="https://rurallifestyledealer.com/articles/print/6652-more-intelligent-performance-advances-coming-for-zero-turn-mowers" target="_blank" rel="noopener">Rural Lifestyle Dealer: MowNet plug-and-play bus</a></li>
+    </ul>
+  </section>
+</div>
+
+</body></html>

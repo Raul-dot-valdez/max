@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>maxAI Graphics Framework Strategy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: left-aligned strategy brief on a hairline grid; summary first, evidence, then debate and scenarios as comparable rows. */
+:root {
+  --bg: #F3F5F6; --panel: #FFFFFF; --ink: #0F1418; --muted: #56636E; --rule: #CDD5DB;
+  --accent: #C85A0A; --accent-soft: rgba(200, 90, 10, 0.09);
+  --ok: #2F7D4F; --warn: #8E6200; --risk: #9A3B2C;
+  --display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1418; --panel: #161C21; --ink: #E8EDF0; --muted: #8B98A3; --rule: #2A343C;
+    --accent: #FF7A1A; --accent-soft: rgba(255, 122, 26, 0.12);
+    --ok: #5FBF85; --warn: #E2B04A; --risk: #E07A66; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1418; --panel: #161C21; --ink: #E8EDF0; --muted: #8B98A3; --rule: #2A343C;
+  --accent: #FF7A1A; --accent-soft: rgba(255, 122, 26, 0.12);
+  --ok: #5FBF85; --warn: #E2B04A; --risk: #E07A66; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 72px;
+}
+.wrap { max-width: 1100px; display: grid; gap: 48px; }
+header { display: grid; gap: 12px; border-bottom: 1px solid var(--rule); padding-bottom: 28px; }
+.eyebrow { font: 500 12px/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 600 clamp(28px, 4.4vw, 42px)/1.1 var(--display); margin: 0; text-wrap: balance; max-width: 26ch; }
+h2 { font: 600 24px/1.2 var(--display); margin: 0; text-wrap: balance; }
+h3 { font: 600 16px/1.3 var(--display); margin: 0; }
+p { margin: 0; max-width: 72ch; }
+.lede { color: var(--muted); }
+section { display: grid; gap: 18px; min-width: 0; }
+ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 5px; max-width: 80ch; }
+.bottomline { background: var(--panel); border: 1px solid var(--rule); border-left: 4px solid var(--accent); padding: 20px 22px; display: grid; gap: 12px; }
+.bottomline h2 { font-size: 20px; }
+.tag { font: 500 11px/1 var(--mono); letter-spacing: 0.04em; padding: 4px 6px; border: 1px solid currentColor; border-radius: 2px; white-space: nowrap; display: inline-block; }
+.tag.e { color: var(--ok); } .tag.j { color: var(--warn); } .tag.r { color: var(--risk); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); }
+table { border-collapse: collapse; width: 100%; min-width: 820px; font-size: 13.5px; background: var(--panel); }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+th { font: 500 11px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+td:first-child { font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.cell { background: var(--panel); padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.cell .who { font: 500 12px/1.4 var(--mono); color: var(--muted); }
+.cell ul { font-size: 14px; color: var(--muted); }
+.pc { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13.5px; }
+.pc div { display: grid; gap: 4px; align-content: start; }
+.pc b { font: 500 11px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.pc .pro b { color: var(--ok); } .pc .con b { color: var(--risk); }
+.dissent { font-size: 13.5px; border-top: 1px dashed var(--rule); padding-top: 8px; color: var(--muted); }
+.scen { background: var(--panel); border: 1px solid var(--rule); display: grid; grid-template-columns: 220px 1fr; min-width: 0; }
+.scen > aside { border-right: 1px solid var(--rule); padding: 18px; display: grid; gap: 10px; align-content: start; background: var(--bg); }
+.scen > aside .num { font: 600 34px/1 var(--display); color: var(--accent); }
+.scen > aside h3 { font-size: 18px; text-wrap: balance; }
+.meter { display: grid; gap: 4px; font: 500 11px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.bar { height: 6px; background: var(--rule); position: relative; }
+.bar i { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
+.scen > div { padding: 18px 20px; display: grid; gap: 14px; min-width: 0; }
+.scen .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+.scen .cols h4 { font: 500 11px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.scen .cols ul { font-size: 13.5px; }
+.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 14px; font-size: 14px; max-width: 86ch; }
+.roadmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.roadmap .cell h3 { font: 500 12px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.sources { font-size: 13px; color: var(--muted); }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code { font: 12.5px var(--mono); }
+.swot { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.swot .cell { border-top: 3px solid var(--rule); }
+.swot .s { border-top-color: var(--ok); } .swot .w { border-top-color: var(--warn); }
+.swot .o { border-top-color: var(--accent); } .swot .t { border-top-color: var(--risk); }
+.bottomline ul { color: var(--ink); }
+@media (max-width: 640px) { .swot { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .scen { grid-template-columns: 1fr; }
+  .scen > aside { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .pc { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Strategy brief · off-highway cockpit HMI · prepared November 2026</div>
+    <h1>Graphics framework strategy for the maximatecc maxAI roadmap</h1>
+    <p class="lede">Where embedded HMI graphics is heading across agriculture, construction, forestry, mining, material handling and specialty vehicles, and what that means for maximatecc display hardware and firmware. Built from public sources, a jobs-to-be-done analysis and a structured debate between cross-functional expert panels.</p>
+    <div class="legend" aria-label="Evidence legend">
+      <span><span class="tag e">EVIDENCE</span> stated in a cited public source</span>
+      <span><span class="tag j">JUDGMENT</span> panel assessment, not measured</span>
+      <span><span class="tag r">VERIFY</span> check before it drives a decision</span>
+    </div>
+  </header>
+
+  <div class="bottomline">
+    <h2>Bottom line</h2>
+    <p>The framework war is ending in coexistence, and AI coding tools are making the framework itself less of a moat. Customers will keep choosing between Qt, CODESYS and LVGL, with MCU-vendor tools and Slint at the edges. What they will pay for is what surrounds the framework: machine signals ready to bind, safety-certified rendering, fast simulators, update and cyber compliance, and an AI-ready toolchain that turns a design or a spec into tested HMI firmware.</p>
+    <p><strong>Recommendation:</strong> position maxAI as a <em>framework-neutral HMI platform</em>. That means one signal layer, one safety island, one build, simulation and over-the-air pipeline, and three supported runtimes (Qt 6, LVGL 9, CODESYS Visualization), with an agent interface that lets Claude Code and similar tools build on it safely. Use tiered hardware so the same software stack runs from an MCU smart display up to a multi-screen cockpit computer.</p>
+  </div>
+
+  <section aria-labelledby="ev-h">
+    <h2 id="ev-h">What the evidence shows</h2>
+    <div class="note">No public source gives market share by graphics framework for off-highway displays. The shifts below come from vendor filings, partner programmes and product releases. To get real share numbers, buy a VDC Research or similar report and run a win/loss review of maximatecc's own design-ins.</div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Option</th><th>Where it stands in 2026</th><th>Strength off-highway</th><th>Weakness off-highway</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td>Qt 6 / Qt for MCUs</td>
+            <td>Still the reference for rich Linux HMIs. Qt Group reported flat sales in 2025 and expects distribution license revenue flat or slightly down in 2026. It is expanding into tooling (bought IAR in 2025) and MCU partnerships (Infineon, Nuvoton). Design Studio now has an MCP-based agentic AI assistant that works with Claude, Gemini or OpenAI keys.</td>
+            <td>Mature designer workflow. QML is text, so AI tools can read and edit it. Qt Safe Renderer's certification basis includes ISO 25119. Existing CCpilot customer base.</td>
+            <td>Per-developer and per-device cost becomes more visible as development costs fall. Qt 5 end of support is forcing migrations. Licensing terms are complex.</td>
+            <td><span class="tag e">EVIDENCE</span></td></tr>
+          <tr><td>CODESYS Visualization</td>
+            <td>TargetVisu, WebVisu and CODESYS HMI share largely the same functions. CODESYS markets itself as the number one development system for mobile-machine ECUs, with SIL2 certification for safety applications.</td>
+            <td>Controls engineers already own the logic in IEC 61131-3. One tool covers logic and screens. WebVisu gives browser access for service.</td>
+            <td>The visual ceiling is modest and modern UX patterns are hard. Ties the HMI to PLC release cycles.</td>
+            <td><span class="tag e">EVIDENCE</span></td></tr>
+          <tr><td>LVGL 9 + LVGL Pro</td>
+            <td>MIT-licensed. Official partner programmes with Renesas (LVGL Pro kits, Nov 2025), ST, TI and NXP, whose GUI Guider generates LVGL code. The LVGL Pro editor uses XML, live preview, Figma sync and a CLI.</td>
+            <td>No runtime royalty. Small footprint on MCUs and MPUs. The XML and CLI workflow suits CI pipelines and AI agents.</td>
+            <td>Thin safety-certification story. Smaller pool of HMI designers. Large multi-screen Linux apps are less proven.</td>
+            <td><span class="tag e">EVIDENCE</span></td></tr>
+          <tr><td>MCU vendor tools</td>
+            <td>ST TouchGFX (free, 4.26 in Sept 2025), NXP GUI Guider (LVGL-based), Microchip Harmony Graphics. Free on the vendor's own chips.</td>
+            <td>Zero license cost. Tuned to each chip's 2D accelerators.</td>
+            <td>Lock-in to one silicon vendor, the opposite of a multi-vendor display range.</td>
+            <td><span class="tag e">EVIDENCE</span></td></tr>
+          <tr><td>Slint</td>
+            <td>Rust-based declarative UI. Runtime fits in less than 300 KiB RAM. Targets Linux, QNX and MCUs. Used in two-wheeler clusters. Licensed GPLv3 or commercially. Actively courting Qt 5 migrations.</td>
+            <td>Memory safety fits the EU Cyber Resilience Act direction. The <code>.slint</code> markup is easy for AI tools to work with.</td>
+            <td>No off-highway references found. Small vendor.</td>
+            <td><span class="tag e">EVIDENCE</span></td></tr>
+          <tr><td>Commercial HMI suites</td>
+            <td>Crank Storyboard (now AMETEK), Kanzi (Rightware/ThunderSoft), Altia, Embedded Wizard. Strong in automotive and appliances.</td>
+            <td>Designer-led workflows and code generation.</td>
+            <td>Niche in off-highway. Ownership changes add roadmap risk.</td>
+            <td><span class="tag e">EVIDENCE</span></td></tr>
+          <tr><td>Market size</td>
+            <td>Embedded GUI development software was estimated at about US$240 M in 2024. Analysts forecast US$0.9–1.0 B by 2030, at 24–26 % CAGR. The broader HMI software market is US$7–13 B at 5–10 % CAGR.</td>
+            <td colspan="2">Tooling is the fast-growing slice; runtime royalties are under pressure. Treat analyst figures as directional: their scopes differ.</td>
+            <td><span class="tag r">VERIFY</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>maximatecc and CCpilot today</h3>
+    <ul>
+      <li>CCpilot display computers from the CrossControl lineage include the <strong>V1200</strong> (12.1", NXP i.MX 8QuadXPlus, Qt 5.15+ open source with Qt 6 support, CODESYS 3.5), the <strong>X900</strong> (Intel Atom x5-E3940, Qt 5.12+, CODESYS), the i.MX 8 family from 7" to 12", and the 3.5" <strong>VI</strong>. <span class="tag e">EVIDENCE</span></li>
+      <li>The <strong>Data Engine</strong> exchanges signals between a CODESYS project and a Qt application. This is already the seed of a framework-neutral signal layer. <span class="tag e">EVIDENCE</span></li>
+      <li>Corporate history: Maxima Technologies, Turotest and CrossControl merged as maximatecc in 2012. CrossControl later became part of the Scanreco group; public dates conflict. How the maximatecc brand and the CCpilot line relate today is unclear from public sources. <span class="tag r">VERIFY</span></li>
+      <li>maximatecc.com could not be read from this session (network access was refused), so current models and supported frameworks come from crosscontrol.com and reseller pages. I found no public reference to "maxAI", so this brief treats it as your internal roadmap name. <span class="tag r">VERIFY</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="ai-h">
+    <h2 id="ai-h">Is Claude Code changing embedded graphics?</h2>
+    <p>Yes, early and unevenly. The signals are real, but most are anecdotal.</p>
+    <ul>
+      <li><span class="tag e">EVIDENCE</span> The LVGL community has published an agent skill that lets Claude Code or Cursor generate SquareLine Studio projects as LVGL widget trees, with a validator. Engineers report feeding wireframes to AI tools for the first draft of a UI.</li>
+      <li><span class="tag e">EVIDENCE</span> Vendors are adapting to agents. Qt Design Studio's assistant is now agentic over MCP and turns Figma selections into QML. LVGL's editor exposes code generation, Figma sync, validation and tests through a CLI.</li>
+      <li><span class="tag e">EVIDENCE</span> Practitioners say AI-written LVGL code works but must be reviewed for memory use, and that general assistants can invent hardware register details.</li>
+      <li><span class="tag j">JUDGMENT</span> The effect is a shift in where value sits. When an agent writes screens in hours, nobody pays for familiarity with a framework's API. Value moves to four things agents cannot invent: correct machine signals (CAN/J1939 databases bound to widgets), a fast simulator and tests that catch what the agent got wrong, safety and cyber evidence, and clear licensing.</li>
+      <li><span class="tag j">JUDGMENT</span> Text-based UI formats (QML, LVGL XML, <code>.slint</code>) gain; binary or proprietary project files lose. Per-device royalties come under more pressure, because they become the largest remaining cost of an HMI.</li>
+    </ul>
+    <p>The same pattern already shows in this repository. The AI Terra mower HMI firmware was written with Claude Code behind a GUI bridge with interchangeable TouchGFX and Qt for MCUs backends, plus 1,458 host tests. That is the kind of agent-built, framework-neutral, test-gated work maxAI should make routine.</p>
+  </section>
+
+  <section aria-labelledby="jtbd-h">
+    <h2 id="jtbd-h">Jobs to be done</h2>
+    <p class="lede">Each job is written as "when … I want … so I can …". The innovation column is where maximatecc can win, regardless of which framework the customer prefers.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Who</th><th>Job</th><th>Pain today</th><th>Innovation that does the job</th></tr></thead>
+        <tbody>
+          <tr><td>OEM HMI engineer</td><td>When a new machine variant is defined, I want its screens running on the real display within days, so I can test with operators before the design freezes.</td><td>Board bring-up, framework porting and signal wiring eat weeks before the first screen appears.</td><td>Pre-integrated runtimes with a desktop simulator that matches the target; agent skills that generate screens from a spec or Figma; signals bound from the DBC file.</td></tr>
+          <tr><td>OEM controls engineer</td><td>When I change machine logic in CODESYS, I want the display to follow automatically, so I can avoid keeping two code bases in sync.</td><td>Hand-maintained interfaces between PLC variables and the GUI.</td><td>A signal layer that exports one typed model to CODESYS, Qt and LVGL (Data Engine, extended).</td></tr>
+          <tr><td>Product manager</td><td>When I plan a 10-year platform, I want to avoid lock-in to one framework or chip vendor, so I can protect margin and keep supply options.</td><td>Royalties, end-of-life notices, single-source silicon.</td><td>Framework-neutral application layer; tiered hardware sharing one SDK; licensing bundled into the display price.</td></tr>
+          <tr><td>Safety assessor</td><td>When the display shows warnings and machine status, I want evidence that safety-relevant items render correctly, so I can sign off under ISO 25119 or ISO 13849.</td><td>The GUI stack is too big to certify. Telltales get duplicated in separate hardware.</td><td>A safety island (separate core or MCU) that draws and checks telltales with CRC, independent of the main UI framework.</td></tr>
+          <tr><td>Operator</td><td>When I work a 12-hour shift in dust, sun and vibration, I want critical information at a glance and controls I can hit with gloves, so I can work safely without hunting through menus.</td><td>Four separate displays in one cab, glare, touch that fails with gloves, clutter.</td><td>Cockpit-level UX across displays; sunlight and glove-tuned hardware; context-aware screens driven by on-device AI.</td></tr>
+          <tr><td>Dealer technician</td><td>When a machine is down in the field, I want faults explained and fixes guided, so I can repair it on the first visit.</td><td>Raw fault codes, laptop tools, no history.</td><td>On-display diagnostics assistant; WebVisu or phone access; fault history that survives power-off.</td></tr>
+          <tr><td>Fleet manager</td><td>When I run a mixed fleet, I want usage, health and location data, so I can plan service and bill jobs.</td><td>Data stuck on each machine; separate telematics boxes.</td><td>Display acts as the edge gateway: logging, OTA and cloud connector, with a clear data-ownership model.</td></tr>
+          <tr><td>OEM compliance lead</td><td>When the EU Machinery Regulation and the Cyber Resilience Act apply, I want SBOMs, vulnerability handling and secure updates, so I can keep selling in Europe.</td><td>Open-source stacks without a maintained SBOM; no secure update path.</td><td>A maintained Yocto/Zephyr base with SBOM, CVE monitoring, secure boot and signed OTA as a service.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Design-thinking framing</h3>
+    <div class="grid">
+      <div class="cell"><h3>Empathize</h3><ul><li>Ride-alongs with operators across 3 industries: in-cab video, glove and glare tests.</li><li>Shadow OEM HMI and controls teams through one variant release.</li><li>Interview dealers about the last 10 field failures.</li></ul></div>
+      <div class="cell"><h3>Define</h3><ul><li>Point of view: OEMs do not buy a framework; they buy time to a validated screen on a certified machine.</li><li>The deciding owner is often the controls team, not the HMI team.</li></ul></div>
+      <div class="cell"><h3>Ideate (how might we)</h3><ul><li>…make the first screen appear on real hardware on day one?</li><li>…let CODESYS, Qt and LVGL teams share one signal model?</li><li>…certify telltales without certifying the GUI framework?</li><li>…let an AI agent build screens without breaking safety or memory budgets?</li></ul></div>
+      <div class="cell"><h3>Prototype and test</h3><ul><li>A "48-hour HMI" kit: DBC file + Figma frame + agent skill → running screen on a CCpilot unit, scored by OEM engineers.</li><li>A/B test a cockpit layout with operators, measuring task time and errors.</li><li>A safety-island demo with deliberately corrupted GUI output.</li></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="panel-h">
+    <h2 id="panel-h">Expert panel debate</h2>
+    <p class="lede">Six cross-functional panels argued the question from their own discipline. Each card gives the panel's position, the pros and cons it weighed, and the strongest dissent raised against it.</p>
+    <div class="grid">
+      <div class="cell">
+        <h3>Cockpit and vehicle architecture</h3>
+        <div class="who">Machine architects, zonal E/E, 48 V systems</div>
+        <p>Machines are moving to zonal layouts with central compute. Excavators already carry up to four displays; consolidation onto fewer, smarter displays or one cockpit computer is coming.</p>
+        <div class="pc"><div class="pro"><b>Pro</b>Fewer boxes; one UX across screens; lower harness cost.</div><div class="con"><b>Con</b>Mixed-criticality software on one SoC needs a hypervisor and safety partitioning.</div></div>
+        <p class="dissent">Dissent: mid-size OEMs will keep separate displays for a decade, so the ECU-by-ECU market stays large.</p>
+      </div>
+      <div class="cell">
+        <h3>Graphics and HMI frameworks</h3>
+        <div class="who">Qt, LVGL, CODESYS and Slint specialists</div>
+        <p>No single winner. Qt keeps premium Linux HMIs, LVGL takes MCU and cost-down designs, CODESYS keeps PLC-centric OEMs. Supporting only one framework loses deals.</p>
+        <div class="pc"><div class="pro"><b>Pro</b>A multi-runtime platform matches how customers actually buy.</div><div class="con"><b>Con</b>Three runtimes triple validation and support effort.</div></div>
+        <p class="dissent">Dissent: pick LVGL as the strategic default and treat Qt as a premium add-on, to escape royalty pressure.</p>
+      </div>
+      <div class="cell">
+        <h3>Functional safety and compliance</h3>
+        <div class="who">ISO 25119, ISO 13849, IEC 61508, cyber</div>
+        <p>Nobody will certify a full GUI framework. Put safety-relevant rendering on an independent island with output checks. The EU Machinery Regulation (applies January 2027) and the Cyber Resilience Act make SBOMs and secure updates mandatory.</p>
+        <div class="pc"><div class="pro"><b>Pro</b>One safety concept works under every framework.</div><div class="con"><b>Con</b>Extra hardware cost and a longer certification lead time.</div></div>
+        <p class="dissent">Dissent: Qt Safe Renderer already covers this; building our own island duplicates it. <span class="tag r">VERIFY</span> regulation dates.</p>
+      </div>
+      <div class="cell">
+        <h3>Silicon and hardware platform</h3>
+        <div class="who">SoC/MCU selection, thermal, supply chain</div>
+        <p>Offer three tiers on one SDK: an MCU smart display, a Linux display with an NPU for edge AI, and a cockpit computer with GPU and safety domain. Keep two silicon sources per tier where possible.</p>
+        <div class="pc"><div class="pro"><b>Pro</b>Covers $150 to $3,000 price points with shared software.</div><div class="con"><b>Con</b>MCU vendors push their own free GUI tools, which pulls customers into single-vendor lock-in.</div></div>
+        <p class="dissent">Dissent: an MCU tier competes with cheap commodity displays where maximatecc has little edge.</p>
+      </div>
+      <div class="cell">
+        <h3>Business, licensing and channel</h3>
+        <div class="who">Pricing, partner programmes, procurement</div>
+        <p>Royalty-bearing runtimes are becoming the largest visible HMI cost. Bundle licenses into the hardware price, and charge for platform services instead: SDK support, OTA and fleet services, safety evidence packs.</p>
+        <div class="pc"><div class="pro"><b>Pro</b>Recurring revenue; procurement sees one price.</div><div class="con"><b>Con</b>Margin pressure if Qt royalties are absorbed into the hardware price.</div></div>
+        <p class="dissent">Dissent: Qt partner status still opens doors at large OEMs; don't be seen as moving away from Qt.</p>
+      </div>
+      <div class="cell">
+        <h3>AI tooling and developer experience</h3>
+        <div class="who">Agentic coding, CI, simulation</div>
+        <p>Design the SDK for agents first: text UI formats, a machine-readable signal model, a desktop simulator, a CLI, screenshot tests and an MCP server for the device. Humans benefit from the same things.</p>
+        <div class="pc"><div class="pro"><b>Pro</b>Days-to-first-screen becomes a sellable metric.</div><div class="con"><b>Con</b>Generated code needs review against memory, timing and safety budgets; liability questions.</div></div>
+        <p class="dissent">Dissent: OEM IT policies may block cloud AI tools, so local or on-premise models must also work.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="scen-h">
+    <h2 id="scen-h">Top 5 scenarios for 2027–2032</h2>
+    <p class="lede">These scenarios are not mutually exclusive; several will hold in different segments. Likelihood and impact are the panels' joint judgment. Signposts are the leading indicators to watch.</p>
+
+    <article class="scen">
+      <aside>
+        <div class="num">1</div>
+        <h3>Polyglot runtimes, one platform</h3>
+        <div class="meter">Likelihood · high<div class="bar"><i style="width:80%"></i></div></div>
+        <div class="meter">Impact on maximatecc · high<div class="bar"><i style="width:75%"></i></div></div>
+        <span class="tag j">JUDGMENT</span>
+      </aside>
+      <div>
+        <p>Qt, LVGL and CODESYS each keep a stable share in different segments. OEMs pick the display vendor whose platform runs their framework with the least integration work.</p>
+        <div class="cols">
+          <div><h4>Signposts</h4><ul><li>RFQs list "Qt or LVGL" instead of one framework</li><li>Qt distribution revenue keeps flattening</li><li>More silicon vendors sign LVGL partnerships</li></ul></div>
+          <div><h4>Hardware</h4><ul><li>Same i.MX 8M Plus / i.MX 93 boards qualified for all three runtimes</li><li>GPU or 2D engine sized for Qt; LVGL runs on the same parts</li></ul></div>
+          <div><h4>Firmware and maxAI moves</h4><ul><li>Yocto BSP with Qt 6 LTS, LVGL 9 and CODESYS TargetVisu as layers</li><li>Data Engine v-next: one typed signal model exported to all three</li><li>Common simulator and screenshot-test harness</li></ul></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="scen">
+      <aside>
+        <div class="num">2</div>
+        <h3>Open source takes the mid-tier</h3>
+        <div class="meter">Likelihood · medium-high<div class="bar"><i style="width:65%"></i></div></div>
+        <div class="meter">Impact on maximatecc · high<div class="bar"><i style="width:70%"></i></div></div>
+        <span class="tag j">JUDGMENT</span>
+      </aside>
+      <div>
+        <p>LVGL, and to a lesser degree Slint, become the default for 3.5"–10" displays and cost-down programmes. Qt keeps the premium tier. Cost pressure and the Qt 5 end of support are the triggers.</p>
+        <div class="cols">
+          <div><h4>Signposts</h4><ul><li>OEM Qt 5 migrations choose LVGL or Slint over Qt 6</li><li>LVGL Pro adds a safety or long-term-support offering</li><li>Price-led RFQs for instrument and secondary displays</li></ul></div>
+          <div><h4>Hardware</h4><ul><li>MCU smart-display tier: i.MX RT1170, STM32H7/U5 or RA8D1 class, no Linux</li><li>MPU entry tier: i.MX 93 class with NPU</li></ul></div>
+          <div><h4>Firmware and maxAI moves</h4><ul><li>Commercial LVGL support package: LTS branch, CVE patches, SBOM</li><li>Join the LVGL Pro partner programme; contribute off-highway widgets (gauges, telltales, ISOBUS-style soft keys)</li><li>Offer a Qt 5 → LVGL or Qt 6 migration service</li></ul></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="scen">
+      <aside>
+        <div class="num">3</div>
+        <h3>AI-native HMI engineering</h3>
+        <div class="meter">Likelihood · high<div class="bar"><i style="width:75%"></i></div></div>
+        <div class="meter">Impact on maximatecc · very high<div class="bar"><i style="width:90%"></i></div></div>
+        <span class="tag j">JUDGMENT</span>
+      </aside>
+      <div>
+        <p>Agents such as Claude Code write most HMI code from specifications, Figma and signal databases. The framework matters less; the platform's guardrails, simulator, tests and machine-readable models decide the vendor. This is the scenario where maxAI can differentiate most.</p>
+        <div class="cols">
+          <div><h4>Signposts</h4><ul><li>OEM job ads ask for "AI-assisted HMI development"</li><li>Framework vendors ship MCP servers and agent skills (Qt has started)</li><li>Customers ask for days-to-first-screen in RFQs</li></ul></div>
+          <div><h4>Hardware</h4><ul><li>A debug and agent port on every unit: an MCP server on the device exposing signals, screenshots, logs and safe test hooks</li><li>Enough RAM and flash headroom for on-device test agents</li></ul></div>
+          <div><h4>Firmware and maxAI moves</h4><ul><li>maxAI SDK: CLI, desktop simulator, golden-image tests, DBC → widget binding</li><li>Published agent skills and guardrails: memory budget, frame time, safety-zone rules, licence checks</li><li>Works with cloud and on-premise models, to satisfy OEM IT policy</li></ul></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="scen">
+      <aside>
+        <div class="num">4</div>
+        <h3>Controls engineers own the screen</h3>
+        <div class="meter">Likelihood · medium<div class="bar"><i style="width:50%"></i></div></div>
+        <div class="meter">Impact on maximatecc · medium<div class="bar"><i style="width:55%"></i></div></div>
+        <span class="tag j">JUDGMENT</span>
+      </aside>
+      <div>
+        <p>In mid-size OEMs without HMI teams, CODESYS Visualization becomes good enough. The display is bought as a CODESYS target with I/O, and WebVisu covers phones and service laptops.</p>
+        <div class="cols">
+          <div><h4>Signposts</h4><ul><li>CODESYS HMI and Visu releases close the UX gap</li><li>More requests for displays that also run machine control</li><li>Combined display-and-controller ECUs win tenders</li></ul></div>
+          <div><h4>Hardware</h4><ul><li>Display computers with more CAN, I/O and a safety PLC co-processor</li><li>SIL2/PL d certifiable variants</li></ul></div>
+          <div><h4>Firmware and maxAI moves</h4><ul><li>First-class CODESYS device package with Visu, safety and the signal layer</li><li>Visu widget library in maximatecc style</li><li>Agent skills that generate CODESYS Visu and IEC 61131-3 from the same spec</li></ul></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="scen">
+      <aside>
+        <div class="num">5</div>
+        <h3>Software-defined machine cockpit</h3>
+        <div class="meter">Likelihood · medium (large OEMs high)<div class="bar"><i style="width:55%"></i></div></div>
+        <div class="meter">Impact on maximatecc · very high<div class="bar"><i style="width:85%"></i></div></div>
+        <span class="tag j">JUDGMENT</span>
+      </aside>
+      <div>
+        <p>Large OEMs move to zonal E/E, a central cockpit computer driving several displays, and over-the-air features. Regulation forces SBOMs, secure updates and cyber processes. Display suppliers either become cockpit-computer suppliers or are reduced to commodity glass.</p>
+        <div class="cols">
+          <div><h4>Signposts</h4><ul><li>Top-10 OEMs tender a single cockpit domain controller</li><li>EU Machinery Regulation and CRA audits start</li><li>Autonomy and operator-assist features need camera, radar and AI overlays</li></ul></div>
+          <div><h4>Hardware</h4><ul><li>Cockpit computer: i.MX 95-class SoC with safety domain and NPU, GMSL camera inputs, 2–4 display outputs</li><li>Thin "smart glass" displays over a video link</li></ul></div>
+          <div><h4>Firmware and maxAI moves</h4><ul><li>Hypervisor or partitioned Linux plus RTOS; framework apps in containers</li><li>Independent safety island for telltales</li><li>Signed OTA, SBOM and CVE service; fleet data and AI-assist pipeline</li></ul></div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section aria-labelledby="seg-h">
+    <h2 id="seg-h">Where to play: large, mid-size and small OEMs</h2>
+    <p class="lede">A software-defined cockpit does not arrive at the same depth in every OEM tier. The market is concentrated at the top, but that top tier increasingly builds its own cockpit software, so the share of the market an outside SDK can win differs from each tier's share of revenue.</p>
+    <ul>
+      <li><span class="tag e">EVIDENCE</span> KHL's Yellow Table puts the top 10 construction-equipment OEMs at about 61 % of top-50 sales, with Caterpillar and Komatsu alone near a quarter. Top-50 sales were about US$247 B in 2025.</li>
+      <li><span class="tag e">EVIDENCE</span> John Deere ships its own G5 display software across its G5 CommandCenter and Universal displays, licenses it to other displays, and updates it over the air. Software at this level is in-house.</li>
+      <li><span class="tag e">EVIDENCE</span> Display vendors aimed at mid-size and small OEMs compete on CODESYS readiness: Helios/Enovation OpenView S50/S70, ifm ecomatDisplay, Intercontrol digsy HMI, TTControl.</li>
+    </ul>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Dimension</th><th>Large OEM (global top ~10)</th><th>Mid-size OEM</th><th>Small / specialty OEM</th></tr></thead>
+        <tbody>
+          <tr><td>Software-defined cockpit depth</td><td>Full: central compute, multiple displays, OTA, app ecosystems, autonomy overlays</td><td>Partial ("SDV-lite"): 1–2 smart displays, OTA, telematics, some apps</td><td>Minimal: configurable display, CODESYS screens, optional telematics</td></tr>
+          <tr><td>Who writes the HMI</td><td>In-house software org, hundreds of engineers</td><td>Small HMI team plus controls engineers; outsources peaks</td><td>Controls engineer or distributor; often no HMI specialist</td></tr>
+          <tr><td>Preferred stack</td><td>Own platform on Qt, Android/Linux, or vendor-neutral web; Qt Safe Renderer or own safety island</td><td>Qt or CODESYS, moving toward LVGL on cost-down programmes</td><td>CODESYS Visualization; vendor templates</td></tr>
+          <tr><td>What they buy from a display supplier</td><td>Hardware built to their spec (ODM), BSP, safety and environmental qualification</td><td>Hardware + platform + SDK + support: a finished base to build on</td><td>A ready product with screens configured, sold through distributors</td></tr>
+          <tr><td>Volume per platform</td><td>High (10k–100k+ per year)</td><td>Medium (1k–10k)</td><td>Low (&lt;1k)</td></tr>
+          <tr><td>Price sensitivity</td><td>High on hardware, low on proven quality</td><td>Medium; values time-to-market and support</td><td>High; values simplicity</td></tr>
+          <tr><td>Decision cycle</td><td>2–4 years, global sourcing</td><td>12–24 months</td><td>3–12 months</td></tr>
+          <tr><td>Share of market value <span class="tag j">JUDGMENT</span></td><td>Largest share of revenue, smallest share open to an outside SDK</td><td>Smaller revenue, largest share open to an outside SDK</td><td>Small and fragmented; served best through channel</td></tr>
+          <tr><td>Fit for a maxAI SDK <span class="tag j">JUDGMENT</span></td><td>Low as an SDK, medium as hardware and BSP partner</td><td><strong>High</strong></td><td>Medium, if packaged as templates and agent-built screens</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Panel debate</h3>
+    <div class="grid">
+      <div class="cell">
+        <h3>"Go high-end"</h3>
+        <div class="who">Cockpit architecture panel</div>
+        <p>The full software-defined cockpit, and the money in it, sits with large OEMs. A cockpit computer with a safety domain is the only way to avoid becoming commodity glass.</p>
+        <p class="dissent">Counter: large OEMs insource the software (Deere G5 is the template). What's left for a supplier is ODM hardware at large-OEM purchasing margins, against Tier-1s such as Bosch, Continental and Danfoss with far bigger engineering teams.</p>
+      </div>
+      <div class="cell">
+        <h3>"Own the mid-to-high band"</h3>
+        <div class="who">Business, licensing and channel panel</div>
+        <p>Mid-size and upper-mid OEMs want the same features as large OEMs (OTA, multiple displays, telematics, AI assist) but cannot build the platform. They pay for a finished base. Here an SDK is the product.</p>
+        <p class="dissent">Counter: mid-size OEMs are cautious buyers, and volumes per design-in are modest, so sales cost per unit is high.</p>
+      </div>
+      <div class="cell">
+        <h3>"Don't ignore the long tail"</h3>
+        <div class="who">AI tooling and developer-experience panel</div>
+        <p>AI agents let small OEMs get custom screens without an HMI team. A CODESYS-ready display, a template library and agent skills could reach hundreds of small OEMs through distributors.</p>
+        <p class="dissent">Counter: CODESYS-first competitors (ifm, Intercontrol, OpenView, TTControl) already price for this tier. Only enter if the channel does the selling.</p>
+      </div>
+      <div class="cell">
+        <h3>"Watch China and the fast followers"</h3>
+        <div class="who">Silicon and hardware panel</div>
+        <p>Fast-growing Chinese OEMs (XCMG ranks third globally) adopt software-defined cockpits fast and source locally. Their displays reset price expectations everywhere.</p>
+        <p class="dissent">Counter: Western mid-size OEMs facing EU cyber and machinery rules may prefer a European supplier with compliance evidence.</p>
+      </div>
+    </div>
+    <div class="bottomline">
+      <h2>Verdict on where to play</h2>
+      <ul>
+        <li><strong>Primary: mid-to-high.</strong> Upper-mid OEMs and the second tier of large OEMs (global ranks roughly 10–50). Sell maxAI as an "SDV-lite" platform: one to three displays, OTA, telematics, safety island, multi-framework SDK.</li>
+        <li><strong>Selective: high end.</strong> Bid for large-OEM programmes as hardware, BSP and safety-island partner where the OEM brings its own software. Do not build a full cockpit computer until Scenario 5 signposts move.</li>
+        <li><strong>Through channel: low end.</strong> A CODESYS-ready display with templates and agent-built screens, sold by distributors. No custom engineering.</li>
+      </ul>
+      <p class="lede">Before this drives investment, test it with a sized model: count OEMs by tier and segment, estimate display units per year, and score which tiers are open to an outside platform. Start from KHL Yellow Table data for construction and equivalent rankings for agriculture and material handling.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="swot-h">
+    <h2 id="swot-h">SWOT: maximatecc SDK strategy</h2>
+    <p class="lede">The SWOT covers the recommended framework-neutral maxAI SDK. A comparison of the four SDK strategies maximatecc could pick follows it, then the strategies that combine the SWOT quadrants.</p>
+    <div class="swot">
+      <div class="cell s"><h3>Strengths</h3><ul>
+        <li>Installed CCpilot base with Qt and CODESYS already supported</li>
+        <li>Data Engine already bridges CODESYS and Qt: the seed of one signal layer</li>
+        <li>Rugged off-highway hardware know-how and long product lifecycles</li>
+        <li>i.MX 8 platform family from 7" to 12" shares one software base</li>
+      </ul></div>
+      <div class="cell w"><h3>Weaknesses</h3><ul>
+        <li>Small software organisation compared with Qt Group, CODESYS or large Tier-1s</li>
+        <li>Three runtimes multiply validation, support and documentation</li>
+        <li>No published safety-island or certified rendering offer yet</li>
+        <li>Unclear public brand: maximatecc, CrossControl and Scanreco <span class="tag r">VERIFY</span></li>
+        <li>Thin cloud, telematics and AI tooling today</li>
+      </ul></div>
+      <div class="cell o"><h3>Opportunities</h3><ul>
+        <li>Qt 5 end of support forces every Qt 5 customer to re-decide</li>
+        <li>Mid-size OEMs want SDV-lite features without building a platform</li>
+        <li>AI-agent workflows reward text UI formats, simulators and signal models, which an SDK can provide</li>
+        <li>EU Machinery Regulation and CRA create demand for compliance as a service</li>
+        <li>LVGL partner programmes and NPUs on newer i.MX parts enable new tiers and edge-AI features</li>
+      </ul></div>
+      <div class="cell t"><h3>Threats</h3><ul>
+        <li>Large OEMs insource cockpit software (the Deere G5 model)</li>
+        <li>MCU vendors give away GUI tools tied to their own chips</li>
+        <li>CODESYS-first display competitors: ifm, Intercontrol, Helios OpenView, TTControl</li>
+        <li>Qt moving deeper into tooling and MCUs; could bypass display makers</li>
+        <li>Lower-cost Asian displays; AI lowering barriers for new entrants</li>
+        <li>Liability for defects in AI-generated HMI code</li>
+      </ul></div>
+    </div>
+
+    <h3>The four SDK strategies compared</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Strategy</th><th>Strength</th><th>Weakness</th><th>Opportunity</th><th>Threat</th></tr></thead>
+        <tbody>
+          <tr><td>A · Qt-centric SDK</td><td>Continuity for today's customers; premium UX; Qt Safe Renderer path</td><td>Royalty cost stays in the BOM; depends on Qt pricing</td><td>Qt 5 → Qt 6 migrations; Qt partner co-selling</td><td>Customers moving to LVGL or Slint on cost; Qt selling direct</td></tr>
+          <tr><td>B · Framework-neutral maxAI SDK <em>(recommended)</em></td><td>Wins whatever the customer picks; value sits in the signal model, safety and tooling</td><td>Highest engineering and support load</td><td>AI-native engineering; mid-tier SDV-lite demand</td><td>Spread too thin; partner frictions</td></tr>
+          <tr><td>C · CODESYS-first SDK</td><td>Matches how small and mid-size OEMs work; one tool for logic and screens</td><td>Weak at premium UX; hard to stand out</td><td>Display-plus-controller products; SIL2 path</td><td>Crowded with ifm, Intercontrol, OpenView, TTControl</td></tr>
+          <tr><td>D · LVGL open-core SDK</td><td>No runtime royalty; MCU-to-MPU portability; open community</td><td>Thin safety story; fewer HMI designers</td><td>Cost-down programmes; LTS, CVE and SBOM support as a paid service</td><td>MCU vendors bundle LVGL for free (GUI Guider)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Combining the quadrants</h3>
+    <div class="grid">
+      <div class="cell"><h3>Strengths × Opportunities</h3><ul><li>Package the Qt 5 exit as a programme: assess, migrate to Qt 6 or LVGL on the same signal layer, deliver on CCpilot hardware</li><li>Grow Data Engine into the maxAI signal model with DBC import and agent skills</li></ul></div>
+      <div class="cell"><h3>Weaknesses × Opportunities</h3><ul><li>Partner rather than build: Qt Safe Renderer or a silicon safety domain for telltales; LVGL Pro for the editor</li><li>Use AI agents internally to multiply a small software team, gated by the same tests sold to customers</li></ul></div>
+      <div class="cell"><h3>Strengths × Threats</h3><ul><li>Against insourcing, sell large OEMs rugged hardware, BSP and safety qualification they don't want to build</li><li>Against CODESYS-first rivals, offer CODESYS parity plus a premium Qt or LVGL upgrade path on the same hardware</li></ul></div>
+      <div class="cell"><h3>Weaknesses × Threats</h3><ul><li>Limit validated combinations (three runtimes × two SoC families, LTS only) to keep support load bounded</li><li>Publish clear rules for AI-generated code: review gates, test evidence, liability terms</li><li>Settle the brand story before launching maxAI publicly</li></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="road-h">
+    <h2 id="road-h">maxAI roadmap moves</h2>
+    <p class="lede">These moves pay off in every scenario. They come first; the scenario-specific bets follow once the signposts move.</p>
+    <div class="roadmap">
+      <div class="cell"><h3>Next 90 days</h3><ul><li>Win/loss review of the last 30 design-ins by framework</li><li>Buy independent framework share data</li><li>Run 15 jobs-to-be-done interviews across OEM HMI, controls, safety and dealer roles</li><li>Build the "48-hour HMI" prototype on a CCpilot unit</li></ul></div>
+      <div class="cell"><h3>12 months</h3><ul><li>maxAI SDK 1.0: signal model, simulator, CLI, screenshot tests</li><li>Qt 6 LTS and LVGL 9 runtimes validated on the i.MX 8/9 platforms</li><li>Published agent skills and guardrails</li><li>SBOM, CVE and signed OTA service</li></ul></div>
+      <div class="cell"><h3>24 months</h3><ul><li>Safety island with telltale rendering and CRC checking</li><li>MCU smart-display tier on the same SDK</li><li>MCP server on the device</li><li>CODESYS device package at parity with Qt</li></ul></div>
+      <div class="cell"><h3>36 months and later</h3><ul><li>Cockpit computer for multiple displays, if Scenario 5 signposts move</li><li>Edge-AI assist features (diagnostics, operator guidance) on the NPU</li><li>Fleet data products with OEM revenue share</li></ul></div>
+    </div>
+    <div class="note">Main risks: supporting three runtimes stretches validation capacity (mitigate with one shared test harness); Qt partner relations if LVGL is promoted (position as choice, not replacement); liability for AI-generated code (guardrails, review gates, test evidence); and silicon allocation during shortages (dual-source each tier).</div>
+  </section>
+
+  <section aria-labelledby="src-h">
+    <h2 id="src-h">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://crosscontrol.com/displays-computers/ccpilot-v1200/" target="_blank" rel="noopener">CrossControl: CCpilot V1200</a> · <a href="https://crosscontrol.com/displays-computers/ccpilot-x900/" target="_blank" rel="noopener">CCpilot X900</a> · <a href="https://crosscontrol.com/newsroom/news/imx8-based-displays-from-7-12/" target="_blank" rel="noopener">i.MX 8 displays 7"–12"</a> · <a href="https://crosscontrol.com/displays-computers/ccpilot-vi/" target="_blank" rel="noopener">CCpilot VI</a></li>
+      <li><a href="https://crosscontrol.zohodesk.eu/portal/en/kb/articles/device-description-files-and-libraries-for-codesys" target="_blank" rel="noopener">CrossControl KB: CODESYS libraries and Data Engine</a></li>
+      <li><a href="https://www.oemoffhighway.com/electronics/press-release/10875917/maxima-technologies-turotest-and-crosscontrol-form-vehicle-electronics-provider-maximatecc" target="_blank" rel="noopener">OEM Off-Highway: maximatecc formed</a> · <a href="https://www.khl.com/news/scanreco-set-to-acquire-crosscontrol/8121115.article" target="_blank" rel="noopener">KHL: Scanreco to acquire CrossControl</a></li>
+      <li><a href="https://www.qt.io/hubfs/_website/QtV2/QtV2%20Investors/2025/Qt_AnnualReport_2025-EN.pdf?hsLang=en" target="_blank" rel="noopener">Qt Group annual report 2025</a> · <a href="https://quartr.com/events/qt-group-qtcom-q4-2025_3YEx7gfe" target="_blank" rel="noopener">Qt Q4 2025 summary</a> · <a href="https://www.qt.io/press/qt-group-collaborates-with-infineon-to-build-ai-powered-consumer-devices" target="_blank" rel="noopener">Qt + Infineon</a></li>
+      <li><a href="https://www.qt.io/blog/ai-assisted-design-in-qt-design-studio" target="_blank" rel="noopener">Qt Design Studio AI assistant</a> · <a href="https://doc.qt.io/qtdesignstudio/figma-mcp-tutorial.html" target="_blank" rel="noopener">Figma MCP tutorial</a> · <a href="https://www.qt.io/development/tools/ai-powered-development-tools" target="_blank" rel="noopener">Qt AI tools</a></li>
+      <li><a href="https://www.qt.io/functional-safety-and-qt" target="_blank" rel="noopener">Qt functional safety</a> · <a href="https://qt.io/blog/certified-qt-safe-renderer-2.0-is-released" target="_blank" rel="noopener">Qt Safe Renderer 2.0</a></li>
+      <li><a href="https://slint.dev/qt-5-end-of-support" target="_blank" rel="noopener">Slint: Qt 5 end of support</a> · <a href="https://slint.dev/use-cases" target="_blank" rel="noopener">Slint use cases</a> · <a href="https://www.kdab.com/software-technologies/slint/" target="_blank" rel="noopener">KDAB: Slint</a></li>
+      <li><a href="https://www.renesas.com/en/blogs/renesas-joins-forces-lvgl-empower-embedded-ui-innovation-open-source" target="_blank" rel="noopener">Renesas + LVGL</a> · <a href="https://lvgl.io/editor" target="_blank" rel="noopener">LVGL editor</a> · <a href="https://docs.lvgl.io/master/details/xml/editor/overview.html" target="_blank" rel="noopener">LVGL XML editor docs</a> · <a href="https://www.st.com/content/st_com/en/partner/partner-program/partnerpage/lvgl.html" target="_blank" rel="noopener">ST partner: LVGL</a> · <a href="https://www.ti.com/partner/LVGL" target="_blank" rel="noopener">TI partner: LVGL</a></li>
+      <li><a href="https://forum.lvgl.io/t/tool-ai-skill-that-generates-complete-squareline-studio-projects-to-export-as-lvgl-widget-trees/24322" target="_blank" rel="noopener">LVGL forum: AI skill for Claude Code</a> · <a href="https://industrialmonitordirect.com/blogs/knowledgebase/ai-coding-in-embedded-development-practical-use-cases-and-pitfalls" target="_blank" rel="noopener">AI coding in embedded: pitfalls</a> · <a href="https://dev.blues.io/webinars/write-better-iot-firmware-using-ai/" target="_blank" rel="noopener">Blues: firmware with AI</a> · <a href="https://dev.to/jovan_chan_9500711396d4e6/ai-tools-for-embedded-and-firmware-developers-in-2026-what-actually-works-53b4" target="_blank" rel="noopener">AI tools for firmware, 2026</a></li>
+      <li><a href="https://blog.st.com/?p=25706" target="_blank" rel="noopener">ST: TouchGFX 4.26</a> · <a href="https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-HOW-GUI-GUIDER-IMPROVED-EMBEDDED-INTERFACE-DEV" target="_blank" rel="noopener">NXP: GUI Guider</a> · <a href="https://www.microchip.com/en-us/about/blog/design-corner/tightly-coupled-gui-tools" target="_blank" rel="noopener">Microchip: Harmony graphics</a> · <a href="https://riverdi.com/knowledge-base/embedded-gui-development-tools" target="_blank" rel="noopener">Riverdi: embedded GUI tools</a></li>
+      <li><a href="https://www.codesys.com/products/visualization/" target="_blank" rel="noopener">CODESYS Visualization</a> · <a href="https://codesys.com/industries/mobile-automation/page/2.html" target="_blank" rel="noopener">CODESYS mobile automation</a></li>
+      <li><a href="https://www.cranksoftware.com/resources/blogs/AMETEK-acquires-Crank-Software" target="_blank" rel="noopener">AMETEK acquires Crank</a> · <a href="https://en.wikipedia.org/wiki/Rightware" target="_blank" rel="noopener">Rightware (Kanzi)</a></li>
+      <li><a href="https://finance.yahoo.com/news/embedded-graphical-user-interface-gui-150000555.html" target="_blank" rel="noopener">Embedded GUI software market (GIA)</a> · <a href="https://marketresearchfuture.com/reports/embedded-graphical-user-interface-gui-development-software-market/market-size" target="_blank" rel="noopener">Market Research Future</a> · <a href="https://www.marketsandmarkets.com/PressReleases/human-machine-interface.asp" target="_blank" rel="noopener">MarketsandMarkets HMI</a></li>
+      <li><a href="https://www.constructionbriefing.com/news/yellow-table-2025-in-4-charts-market-share-cagr-and-regional-power-shift/8062551.article" target="_blank" rel="noopener">Yellow Table 2025 in 4 charts</a> · <a href="https://www.equipmentworld.com/market-pulse/article/15827092/worlds-largest-construction-equipment-manufacturers-in-2025" target="_blank" rel="noopener">Equipment World: largest OEMs 2025</a> · <a href="https://www.aap.com.au/aapreleases/cision20260503ae49764/" target="_blank" rel="noopener">XCMG in 2026 Yellow Table</a></li>
+      <li><a href="https://www.deere.com/en/technology-products/precision-ag-technology/guidance/g5-commandcenter/" target="_blank" rel="noopener">Deere G5 CommandCenter</a> · <a href="https://www.deere.com/assets/pdfs/common/privacy-and-data/g5-display/1-license-agreement-john-deere-g5-display.pdf" target="_blank" rel="noopener">G5 software license</a> · <a href="https://www.deere.com/en/technology-products/precision-ag-technology/guidance/display-updates" target="_blank" rel="noopener">Deere display updates</a></li>
+      <li><a href="https://enovationcontrols.com/codesys-is-now-available-on-openview-s50-s70/" target="_blank" rel="noopener">OpenView S50/S70 CODESYS</a> · <a href="https://www.ifm.com/it/en/shared/productnews/2022/ecomatdisplay-powerful-robust-hmis-for-mobile-machines" target="_blank" rel="noopener">ifm ecomatDisplay</a> · <a href="https://www.intercontrol.de/en/off-highway-electronics/products/software/software/graphics-creation" target="_blank" rel="noopener">Intercontrol graphics creation</a> · <a href="https://ivt.mydigitalpublication.co.uk/articles/lifecycle-support" target="_blank" rel="noopener">IVT: lifecycle support</a></li>
+      <li><a href="https://www.khl.com/news/key-trends-in-hmi-and-telematics-for-off-highway-equipment/8038667.article" target="_blank" rel="noopener">KHL: HMI and telematics trends</a> · <a href="https://www.avnet.com/americas/resources/article/zonal-architectures-in-off-highway-vehicles/" target="_blank" rel="noopener">Avnet: zonal off-highway architectures</a></li>
+    </ul>
+  </section>
+</div>
+
+</body></html>
