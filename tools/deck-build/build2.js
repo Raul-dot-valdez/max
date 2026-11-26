@@ -155,7 +155,7 @@ pres.addSection({ title: "Opening" });
   card(s, M + 4.143, 1.35, 3.843, 3.85, "Five gaps hold back growth", "Two incompatible GUI builds, a locked STM32 hardware layer, custom CAN only through sales, no simulator or CI, and no secure field update. Each slows customers and caps scale.", { kicker: "WHAT HOLDS IT BACK", size: 14, headH: 0.45 });
   card(s, M + 8.287, 1.35, 3.843, 3.85, "M1 SDK 2.0", "One signal model and data layer across the range, a GUI bridge so TouchGFX, Qt for MCUs and LVGL share app code, self-service J1939, a host simulator and CLI built for AI agents, and secure updates over USB and Bluetooth.", { kicker: "WHAT WE PROPOSE", size: 14, headH: 0.45, fill: "FFF1E6" });
   s.addText([{ text: "Correction to the earlier strategy deck: ", options: { bold: true, color: C.accent5 } },
-    { text: "M1 is A99's own MCU display line (130, 200, 280, M1), part of CentroMotion. CrossControl CCpilot is a separate company's Linux display range and is used here only as a benchmark.", options: { color: C.text2 } }],
+    { text: "M1 is A99's own MCU display line (130, 200, 280, M1), part of Compania. CrossControl CCpilot is a separate company's Linux display range and is used here only as a benchmark.", options: { color: C.text2 } }],
     { x: M, y: 5.45, w: CW, h: 0.95, fontSize: 14, margin: 12, fill: { color: C.background2 }, valign: "middle", isTextBox: true });
 }
 {
