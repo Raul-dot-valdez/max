@@ -15,7 +15,7 @@ reviews, strategy decks, the CRA roadmap and a synthetic J1939 dataset.
 | `firmware/mower-hmi/tools/edge_ai_poc/` | Edge-AI PoC phase 1: training, TFLM check, artifacts for the vendor tools, `PHASE1_REPORT.md` |
 | `firmware/mower-hmi/tools/resource_budget/` | Worst-case graphics + AI resource budget for maxAI 430-class displays |
 | `docs/architecture/` | Scag EVZ MowNet architecture, maxAI edge-AI architecture, maxAI 430 graphics + AI budget (HTML pages, open in a browser) |
-| `docs/strategy/` | maxAI graphics framework strategy (HTML and deck), maxAI SDK review deck (PPTX + PDF) |
+| `docs/strategy/` | maxAI graphics framework strategy (HTML and deck), maxAI SDK review deck (PPTX + PDF), Bad Boy North Star and family-by-family edge-AI rollout debate |
 | `docs/wainbee/` | Wainbee working-session deck and `maximatecc_for_claude.md` |
 | `docs/fleet-expansion/` | Bad Boy + Hustler fleet review: models, engine families, J1939 signal matrix, expert debate |
 | `docs/cra/` | maxAI 430 CRA dual roadmap workbook (XLSX) |

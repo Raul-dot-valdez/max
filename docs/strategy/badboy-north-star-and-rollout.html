@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Bad Boy North Star and Rollout</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: left-aligned spec sheet, hairline rules, a tag column on wide screens. */
+:root{
+  --bg:#0F1418; --panel:#161C21; --ink:#E8EDF0; --muted:#8B98A3; --rule:#2A343C; --accent:#FF7A1A;
+  --ok:#3FB27F; --tight:#E2B53A; --over:#E5484D; --info:#5B8FD0;
+  --f-head:"Space Grotesk",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F4F6F7; --panel:#FFFFFF; --ink:#11181D; --muted:#56636E; --rule:#D3DAE0; --accent:#C9580A;
+  --ok:#1F8A5B; --tight:#946C00; --over:#C4282E; --info:#3A6DB0; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#F4F6F7; --panel:#FFFFFF; --ink:#11181D; --muted:#56636E; --rule:#D3DAE0; --accent:#C9580A;
+  --ok:#1F8A5B; --tight:#946C00; --over:#C4282E; --info:#3A6DB0; color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body);margin:0}
+.wrap{max-width:1120px;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.1;font-weight:700}
+h2{font-size:24px;font-weight:600} h3{font-size:16px;font-weight:600}
+p{margin:0;max-width:70ch}
+code,.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.accent{color:var(--accent)}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:14px;border-bottom:1px solid var(--rule);padding-bottom:28px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 28px;font:13px var(--f-mono);color:var(--muted)} .meta b{color:var(--ink);font-weight:500}
+section{display:grid;grid-template-columns:120px minmax(0,1fr);gap:24px;border-bottom:1px solid var(--rule);padding-block:36px}
+section>.tag{font:500 12px var(--f-mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding-top:6px}
+section>.body{display:grid;gap:18px;min-width:0}
+@media (max-width:760px){section{grid-template-columns:minmax(0,1fr);gap:10px}}
+.kv{display:grid;border-top:1px solid var(--rule)}
+.kv>div{display:grid;grid-template-columns:170px minmax(0,1fr);gap:16px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.kv .k{font:500 13px var(--f-mono);color:var(--accent)}
+@media (max-width:560px){.kv>div{grid-template-columns:minmax(0,1fr);gap:2px}}
+.tbl{overflow-x:auto;border:1px solid var(--rule);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:500 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.c{text-align:center;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:5px;font:500 11px var(--f-mono);white-space:nowrap}
+.chip::before{content:"";width:8px;height:8px;background:currentColor}
+.chip.confirmed{color:var(--ok)} .chip.inferred{color:var(--info)} .chip.verify{color:var(--tight)} .chip.verify::before{clip-path:polygon(50% 0,100% 100%,0 100%)}
+.chip.none{color:var(--muted)} .chip.none::before{background:none;border:1px solid currentColor}
+.chip.analog,.chip.switch,.chip.derived{color:var(--accent)} .chip.analog::before,.chip.switch::before,.chip.derived::before{border-radius:50%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.seg{font:500 11px var(--f-mono);color:var(--muted);text-transform:uppercase}
+.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.teams>div{padding:16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);display:grid;gap:8px;align-content:start}
+.teams .who{font:500 12px var(--f-mono);color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+.teams .pos{font-size:14px}
+.teams .push{font-size:13px;color:var(--muted);border-top:1px dashed var(--rule);padding-top:8px}
+.clash{display:grid;border-top:1px solid var(--rule)}
+.clash>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.clash .q{font-weight:600;font-family:var(--f-head)}
+.clash .r{border-left:2px solid var(--accent);padding-left:10px}
+@media (max-width:760px){.clash>div{grid-template-columns:minmax(0,1fr)}}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.tiers>div{padding:16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);display:grid;gap:6px;align-content:start}
+.tiers .tn{font:700 22px var(--f-head);color:var(--accent)}
+.tiers ul{margin:0;padding-left:18px;font-size:14px;display:grid;gap:3px}
+.tiers .hw{font:500 12px var(--f-mono);color:var(--muted)}
+.layers{display:grid;gap:0;border:1px solid var(--rule);background:var(--panel)}
+.layers>div{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;padding:12px 14px;border-bottom:1px solid var(--rule)}
+.layers>div:last-child{border-bottom:0}
+.layers .ln{font:500 13px var(--f-mono);color:var(--accent)}
+@media (max-width:560px){.layers>div{grid-template-columns:minmax(0,1fr);gap:2px}}
+ol.phases{list-style:none;margin:0;padding:0;display:grid;border-top:1px solid var(--rule)}
+ol.phases li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid var(--rule)}
+ol.phases .pn{font:500 13px var(--f-mono);color:var(--accent)}
+.note{border-left:2px solid var(--accent);padding-left:12px;font-size:14px;max-width:80ch}
+.small{font-size:13px;color:var(--muted)}
+.sources{font-size:13px;color:var(--muted);display:grid;gap:3px;padding-left:18px;margin:0}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+<style>
+.q{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.q>div{padding:16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);display:grid;gap:8px;align-content:start}
+.q .ans{font:600 18px var(--f-head)}
+.share{display:grid;gap:6px;font:12px var(--f-mono)}
+.share .row{display:grid;grid-template-columns:150px minmax(0,1fr) 56px;gap:10px;align-items:center}
+.share .bar{height:12px;background:var(--rule)}
+.share .bar i{display:block;height:100%;background:var(--info);border-radius:0 2px 2px 0}
+.share .row.me .bar i{background:var(--accent)}
+.share .v{text-align:right;color:var(--ink)}
+.share .n{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gates td:first-child{font:500 13px var(--f-mono);color:var(--accent);white-space:nowrap}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">AI Terra · strategy review · Bad Boy product, marketing and sales debate</div>
+  <h1>Should Bad Boy aim for <span class="accent">number 1</span>, and roll out edge AI family by family?</h1>
+  <p>Two questions put to a panel playing Bad Boy's product management, marketing and sales teams, plus the dealer channel, finance, engineering and legal. These are role views built from public information, not statements by Bad Boy staff. Each question gets a reflection first, then the debate, then a recommendation.</p>
+  <div class="meta"><span>Date <b>2026-11-26</b></span><span>Context <b>Hustler deal signed, not closed</b></span><span>Basis <b>public data, synthetic AI results</b></span></div>
+</header>
+
+<section>
+  <div class="tag">Answers</div>
+  <div class="body">
+    <div class="q">
+      <div><span class="eyebrow">Question 1 · number 1 mower company?</span><span class="ans">Yes as an ambition. No as a plan, until "number 1" names a race Bad Boy can win.</span>
+        <p>Deere, Toro and Husqvarna run mower businesses many times Bad Boy's size. Estimates put Bad Boy near 3–4 % of zero-turn sales, and adding Hustler makes it larger but not the leader. A goal that can't be measured or reached turns into price cutting and scattered launches. Pick a number 1 that is specific, measurable and winnable within five years, and make edge AI the proof of it.</p></div>
+      <div><span class="eyebrow">Question 2 · family 1, then 2, then 3?</span><span class="ans">Yes, staged, with two changes.</span>
+        <p>1. Define the families by what the machine can tell the display and by who pays for uptime, not by model name. 2. Put a thin connected layer on every family from day one (hours, service reminders, manuals, the phone app), and stage only the deep edge AI. Each family starts when the previous one passes measured gates, not on a calendar date.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Context</div>
+  <div class="body">
+    <h2>Where Bad Boy stands</h2>
+    <p class="small">Zero-turn share, one market-research estimate (Ken Research). Other firms give Deere 21–23 % and put Deere, Toro and Husqvarna together at 55–60 % of the global market. Read these as direction only: methods and definitions differ, and Toro, Exmark and Hustler are not in this table.</p>
+    <div class="chart" style="border:1px solid var(--rule);background:var(--panel);padding:16px">
+      <div class="share" id="share"></div>
+    </div>
+    <div class="kv">
+      <div><span class="k">Hustler (Excel)</span><span>About $300 M of FY2026 revenue. The deal was signed in September 2026 and had not closed at the last public report. It adds a second commercial brand and dealer network.</span></div>
+      <div><span class="k">Bad Boy itself</span><span>Private. Third-party revenue estimates run from $11 M to $190 M, so treat any outside figure as unreliable and use Bad Boy's own numbers.</span></div>
+      <div><span class="k">Competitors' connectivity</span><span>Scag EVZ already ships a Bluetooth fleet module (Smartec 487051, from our earlier teardown). Other majors offer fleet and service software (<b>VERIFY</b> current offers). Connected mowing is no longer unique. Useful AI on the display still is.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Debate 1</div>
+  <div class="body">
+    <h2>"Number 1 mower company"</h2>
+    <div class="teams">
+      <div><span class="who">Product management</span><p class="pos">"Number 1" has to rank on something. Revenue against Deere is not a race we can enter. I want a definition that decides the roadmap: number 1 in uptime for commercial cutters, measured in hours lost per machine per season.</p><p class="push">Pushed back by marketing: "uptime" doesn't sell to homeowners.</p></div>
+      <div><span class="who">Marketing</span><p class="pos">Bad Boy's brand is attitude: built tough, heavy steel, "Outlaw". Number 1 has to be something a buyer feels. I'd claim number 1 in owner loyalty, and make the smart features an "Outlaw that tells you before it breaks."</p><p class="push">Pushed back by legal: any "predicts failures" claim needs field evidence first.</p></div>
+      <div><span class="who">Sales</span><p class="pos">Dealers decide this race. Number 1 for us means number 1 in dealer floor space and units per dealer in the South and Midwest, then nationally with Hustler's network. Edge AI must bring dealers service work, or they won't push it.</p><p class="push">Pushed back by finance: bigger floor space at lower margin is not winning.</p></div>
+      <div><span class="who">Dealer channel</span><p class="pos">After the close, many towns will have a Bad Boy dealer and a Hustler dealer. Two brands, two price ladders, one owner. Toro and Exmark run that way. The smart features must not set one brand against the other.</p><p class="push">Accepted: shared platform, brand-specific screens and names.</p></div>
+      <div><span class="who">Finance</span><p class="pos">Measure number 1 in profit per unit and service attach, not just units. A maxAI 430 adds real cost per machine, so it belongs where a contractor's lost day costs more than the display does.</p><p class="push">Accepted. This sets which family goes first.</p></div>
+      <div><span class="who">Legal and compliance</span><p class="pos">US regulators have acted against "AI washing", meaning AI claims that can't be backed up. Claims must match measured performance. Our own synthetic results already show the gap: a clog alert works well on liquid-cooled engines and only modestly on air-cooled ones.</p><p class="push">Accepted. Claims are tied to the stage gates below.</p></div>
+    </div>
+    <h3>What the panel settled on</h3>
+    <div class="clash">
+      <div><span class="q">The North Star</span><span>"Number 1 mower company", undefined</span><span class="r">The number 1 independent zero-turn maker by 2030, measured in units and dealer count with Hustler. Proven by being number 1 in commercial uptime, measured in hours lost per machine per season. Bad Boy confirms the baseline data.</span></div>
+      <div><span class="q">Edge AI's job</span><span>"Be the AI mower"</span><span class="r">The proof point for uptime and the reason a dealer earns service revenue. A feature, not the brand.</span></div>
+      <div><span class="q">What we will not do</span><span>Chase Deere on price or breadth</span><span class="r">Compete on toughness plus uptime, through dealers, with two brands on one platform.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Debate 2</div>
+  <div class="body">
+    <h2>Family-by-family rollout</h2>
+    <div class="teams">
+      <div><span class="who">Product management</span><p class="pos">Start where the signals are richest and the value is highest: commercial EFI flagships. They have a J1939 engine ECU, they suit the maxAI 430, and their owners lose money every hour the machine is down.</p><p class="push">Agreed by sales and finance.</p></div>
+      <div><span class="who">Marketing</span><p class="pos">Commercial-only hides the story from homeowners, who are most of the units sold (VERIFY with Bad Boy's mix). I want something visible on residential machines in year one, even if it isn't AI.</p><p class="push">Resolved: the connected app and service reminders go on every family in year one. The deep AI stays staged.</p></div>
+      <div><span class="who">Sales</span><p class="pos">Families by price ladder confuse dealers. Families by what the customer gets are easy to sell: "Pro Uptime" on flagships, "Pro Care" on commercial carbureted, "Owner Care" on residential.</p><p class="push">Accepted. Names are placeholders for marketing.</p></div>
+      <div><span class="who">Engineering (AI Terra)</span><p class="pos">Our data supports that order. The liquid-cooled head is trained (0.960 hybrid). The air-cooled head is rules only (clog F1 0.40). On carbureted engines a pressure switch sees 6 % of an oil loss, and a clogged screen can't be seen at all. Residential value has to come from the vibration tag, not engine data.</p><p class="push">Accepted: family 3 waits for the tag hardware.</p></div>
+      <div><span class="who">Dealer channel</span><p class="pos">Alerts must reach the selling dealer with the fault and the part number, or the dealer sees no benefit. Pilot with dealers who already service contractor fleets.</p><p class="push">Accepted as a gate.</p></div>
+      <div><span class="who">Legal</span><p class="pos">Hustler models can't be in any pilot until the deal closes. Add them to family 1 afterwards; they share Kawasaki FX EFI and Vanguard EFI profiles.</p><p class="push">Accepted.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Roadmap</div>
+  <div class="body">
+    <h2>Recommended rollout</h2>
+    <div class="tiers">
+      <div><span class="tn">F0</span><h3>Every family</h3><span class="hw">Year one · phone app</span>
+        <ul><li>Hours, service reminders, manuals, dealer locator</li><li>QR code on the machine, Bluetooth where fitted</li><li>No AI claims</li></ul></div>
+      <div><span class="tn">F1</span><h3>"Pro Uptime"</h3><span class="hw">maxAI 430 · J1939 ECU engines</span>
+        <ul><li>Bad Boy Renegade, Rogue EFI, Revolt EFI, Rebel EFI, Maverick HD EFI</li><li>Hustler Super Z EFI and HyperDrive after the close</li><li>Edge AI, fuel and runtime, DM1 in plain words, dealer alerts</li></ul></div>
+      <div><span class="tn">F2</span><h3>"Pro Care"</h3><span class="hw">maxAI 280 or a box with no screen</span>
+        <ul><li>Commercial carbureted: Rogue, Rebel and Revolt carb, ZT Elite</li><li>Hustler FasTrak, X-ONE carb</li><li>Hours, low-oil switch, rpm, service planning</li></ul></div>
+      <div><span class="tn">F3</span><h3>"Owner Care"</h3><span class="hw">BLE health tag · phone</span>
+        <ul><li>MZ Rambler and Magnum, ZT Avenger, E-Magnum</li><li>Hustler Raptor</li><li>Blade-wear vibration model, run hours, battery runtime</li></ul></div>
+    </div>
+    <div class="tbl gates"><table>
+      <tr><th>Gate</th><th>To start</th><th>Must be true (proposed targets, set with Bad Boy)</th></tr>
+      <tr><td>G1</td><td>F1 pilot</td><td>Bench CAN logs done for the F1 engine families. maxAI 430 fitment confirmed. ST Edge AI build measured on hardware. False alerts &lt; 1 per 100 engine hours in a summer of synthetic plus bench replay.</td></tr>
+      <tr><td>G2</td><td>F1 launch, F2 pilot</td><td>One season with about 50 machines at 3–5 contractors through 3 dealers. At least one confirmed fault caught before failure per 20 machines. False alerts &lt; 1 per 100 engine hours. Dealers record the service work the alerts generated. Marketing claims limited to what the pilot measured.</td></tr>
+      <tr><td>G3</td><td>F2 launch, F3 pilot</td><td>F1 attach rate and dealer satisfaction at the targets Bad Boy sets. The no-ECU head validated on F2 machines. BLE tag hardware passes cost and durability tests.</td></tr>
+      <tr><td>G4</td><td>Hustler in F1</td><td>Deal closed. Hustler engines mapped to existing profiles. Brand screens done.</td></tr>
+    </table></div>
+    <p class="small">Timing follows the mowing season: pilots run April to October, launches go to the late-summer dealer meetings for the next model year. One gate per season makes F1 a 2027 pilot, F1 launch and F2 pilot in 2028, and F3 in 2029. Hustler joins F1 as soon as G4 is met.</p>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Reflection</div>
+  <div class="body">
+    <h2>The fellow's view</h2>
+    <p>The ambition is right. The order is right. Two traps remain. First, "number 1" pursued by acquisition alone can blur what Bad Boy stands for, and the Hustler integration will pull attention for a year. Second, an "AI mower" campaign that runs ahead of field evidence would spend the trust this program is meant to build. The staged rollout protects against both, provided the gates are measured and the claims follow them.</p>
+  </div>
+</section>
+
+<section>
+  <div class="tag">Sources</div>
+  <div class="body">
+    <ul class="sources">
+      <li><a href="https://www.kenresearch.com/industry-reports/global-zero-turn-mowers-market" target="_blank" rel="noopener">Ken Research: global zero-turn mowers market share (estimate)</a></li>
+      <li><a href="https://www.maximizemarketresearch.com/market-report/zero-turn-mower-market/220645/" target="_blank" rel="noopener">Maximize Market Research: zero-turn mower market</a></li>
+      <li><a href="https://www.grandviewresearch.com/industry-analysis/zero-turn-mowers-market" target="_blank" rel="noopener">Grand View Research: zero-turn mower market</a></li>
+      <li><a href="https://www.owler.com/company/badboymowers" target="_blank" rel="noopener">Owler: Bad Boy Mowers profile (estimates)</a></li>
+      <li><a href="https://www.sec.gov/Archives/edgar/data/0000093556/000119312526383511/d493257dex991.htm" target="_blank" rel="noopener">Stanley Black &amp; Decker 8-K: Excel sale to Bad Boy</a></li>
+      <li><a href="https://ope-plus.com/2026/09/11/stanley-black-decker-to-sell-excel-industries-to-bad-boy-mowers/26923/" target="_blank" rel="noopener">OPE+: deal pending regulatory approval</a></li>
+    </ul>
+  </div>
+</section>
+</div>
+<script>
+const SH=[["Deere & Company",12.9],["Kubota",7.7],["AriensCo",5.9],["Husqvarna Group",4.6],["Scag / Metalcraft",3.9],["Bad Boy",3.6],["Briggs & Stratton / Ferris",2.8]];
+const box=document.getElementById("share"), mx=14;
+SH.forEach(([n,v])=>{const r=document.createElement("div");r.className="row"+(n==="Bad Boy"?" me":"");
+r.innerHTML=`<span class="n" title="${n}">${n}</span><span class="bar"><i style="width:${v/mx*100}%"></i></span><span class="v">${v.toFixed(1)} %</span>`;box.appendChild(r);});
+</script>
+
+</body></html>
