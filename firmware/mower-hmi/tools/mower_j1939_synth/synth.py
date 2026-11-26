@@ -25,7 +25,7 @@ import numpy as np
 
 import j1939_codec as jc
 
-GENERATOR_VERSION = "0.1.0"
+GENERATOR_VERSION = "0.2.0"
 HERE = os.path.dirname(os.path.abspath(__file__))
 UTC = dt.timezone.utc
 
@@ -39,6 +39,19 @@ CLIMATES = {
 FEATURES = ["rpm", "load_pct", "coolant_c", "oil_press_kpa", "fuel_rate_lph",
             "hyd_oil_c", "ambient_c", "wheel_speed_kmh", "blade_engaged"]
 CLASSES = ["normal", "screen_clog", "low_oil", "hyd_overheat", "dull_blades"]
+
+# Engine families (firmware architecture 2, docs/fleet-expansion/fleet_profiles.json). They change
+# what the display can see, not the machine physics:
+#   liquid_j1939  liquid-cooled engine with a J1939 ECU (phase 1 default)
+#   air_efi       air-cooled EFI with a J1939 ECU (Kawasaki FX EFI, Vanguard EFI): no coolant SPN 110;
+#                 the engine's thermal signal is oil temperature SPN 175, which runs hotter
+#   carb          carbureted, no ECU, no J1939: rpm from ignition pulses, fuel sender, battery,
+#                 PTO switch and a low-oil-pressure switch, read by the display's own inputs
+ENGINE_FAMILIES = ("liquid_j1939", "air_efi", "carb")
+AIR_COOLED_OFFSET_C = 25.0     # air-cooled oil runs about this much above the liquid-cooled coolant state
+OIL_SWITCH_KPA = 70.0          # low-oil-pressure switch closes below this
+CARB_HIDDEN = ("load_pct", "coolant_c", "oil_temp_c", "engine_temp_c", "oil_press_kpa", "fuel_rate_lph",
+               "hyd_oil_c", "ambient_c", "wheel_speed_kmh")
 
 
 def clamp(x, lo, hi):
@@ -106,6 +119,10 @@ class Machine:
         self.sender_bias = r.uniform(-1.2, 1.2)
         mode = cfg["rtc"]["modes"][idx % len(cfg["rtc"]["modes"])]
         self.rtc = RTC(r, mode, cfg["rtc"]["supercap_backup_days"])
+        fams = cfg.get("engine_families", ["liquid_j1939"])
+        self.family = fams[idx % len(fams)]
+        if self.family not in ENGINE_FAMILIES:
+            raise ValueError(f"unknown engine family {self.family}")
         # persistent state
         self.coolant = self.oil_t = self.hyd = 10.0
         self.fuel_l = self.tank_l * r.uniform(0.6, 0.95)
@@ -290,10 +307,10 @@ def simulate(cfg, out):
                     labels.append(dict(machine=m.id, type="screen_cleaned", start=_iso(t_end), end=None, severity="info", note="operator cleaned radiator screen"))
                 sess_rows.append(dict(machine=m.id, session=session_no, boot_id=m.boot_id,
                                       start_utc=_iso(t_true), end_utc=_iso(t_end), duration_s=len(srows),
-                                      rtc_mode=m.rtc.mode, rtc_synced=synced,
+                                      rtc_mode=m.rtc.mode, rtc_synced=synced, engine_family=m.family,
                                       rtc_error_s_at_start=round(srows[0]["t_rtc_error_s"], 3) if srows else None,
                                       site_grass=round(s["site"]["grass"], 2), site_slope_deg=round(s["site"]["slope"], 1)))
-                if len(can_targets) < cfg["can_log"]["sessions_per_machine"] * (mi + 1) and srows:
+                if m.family != "carb" and srows and sum(1 for c in can_targets if c[0] is m) < cfg["can_log"]["sessions_per_machine"]:
                     can_targets.append((m, srows, session_no))
 
             if dr.random() < faults["screen_clean_prob_end_of_day"]:
@@ -303,6 +320,22 @@ def simulate(cfg, out):
             open_labels["oil_leak"]["end"] = _iso(m.last_off)
 
     return rows, labels, sess_rows, can_targets
+
+
+def apply_family(r, m, oil_p_true, rng):
+    """Turn the physics row into what a display on this engine family can see."""
+    r["engine_family"] = m.family
+    r["_hyd_true"] = r["hyd_oil_c"]  # labels use the truth, whatever the display can see
+    r["engine_temp_c"] = r["oil_temp_c"]
+    r["oil_low_sw"] = None
+    if m.family == "air_efi":
+        r["engine_temp_c"] = r["oil_temp_c"] = round(m.coolant + AIR_COOLED_OFFSET_C, 1)
+        r["coolant_c"] = None
+    elif m.family == "carb":
+        r["oil_low_sw"] = int(oil_p_true < OIL_SWITCH_KPA and r["phase"] != "crank")
+        r["rpm"] = round(r["rpm"] + rng.gauss(0, 15), 1)  # pulse-count quantisation and jitter
+        for k in CARB_HIDDEN:
+            r[k] = None
 
 
 def _iso(t):
@@ -413,10 +446,11 @@ def run_session(cfg, m, s, t0, rng, labels, session_no):
 
         # --- diagnostics (DM1) ------------------------------------------------------------
         dtcs = []
+        temp_spn = 110 if m.family == "liquid_j1939" else 175  # air-cooled ECUs flag oil temperature
         if m.coolant > 112:
-            dtcs.append((110, 0))
+            dtcs.append((temp_spn, 0))
         elif m.coolant > 105:
-            dtcs.append((110, 16))
+            dtcs.append((temp_spn, 16))
         if oil_p < 70 and rpm > 2000:
             dtcs.append((100, 18))
             m.low_oil_s += 1
@@ -426,6 +460,8 @@ def run_session(cfg, m, s, t0, rng, labels, session_no):
             dtcs.append((1638, 16))
         if sender is None:
             dtcs.append((96, 2))
+        if m.family == "carb":
+            dtcs = []  # no ECU, nothing on a bus; low_oil_s above still drives the dealer visit
         dtc_full = []
         for spn, fmi in dtcs:
             key = (spn, fmi)
@@ -456,6 +492,7 @@ def run_session(cfg, m, s, t0, rng, labels, session_no):
             "_dtcs": {(a, b) for a, b, _ in dtc_full}, "_dtc_full": dtc_full, "_amber": amber, "_red": red,
             "_pedal": 100.0 if rpm_set == m.work_rpm else 0.0,
         })
+        apply_family(rows[-1], m, oil_p, rng)
         t += dt.timedelta(seconds=1)
         uptime += 1
         phase_left -= 1
@@ -576,15 +613,20 @@ def window_class(r):
         return 2
     if r["gt_screen_clog"] > 0.55 and r["blade_engaged"]:
         return 1
-    if r["hyd_oil_c"] > 90:
+    if r.get("_hyd_true", r["hyd_oil_c"]) > 90:
         return 3
     if r["gt_blade_dullness"] > 0.5 and r["blade_engaged"]:
         return 4
     return 0
 
 
+AUX = ["engine_temp_c", "oil_low_sw"]
+
+
 def make_windows(rows, size=60, stride=30):
-    X, y, meta = [], [], []
+    """x: model features (missing -> 0.0, as in phase 1); mask: 1 where the family provides the
+    feature; aux: extra signals the other AI heads use; family: engine family per window."""
+    X, y, meta, mask, aux, fam = [], [], [], [], [], []
     start = 0
     while start < len(rows):
         end = start
@@ -596,10 +638,14 @@ def make_windows(rows, size=60, stride=30):
             if any(r["phase"] in ("crank",) for r in w):
                 continue
             X.append([[float(r[f]) if r[f] is not None else 0.0 for f in FEATURES] for r in w])
+            mask.append([int(any(r[f] is not None for r in w)) for f in FEATURES])
+            aux.append([[float(r[a]) if r[a] is not None else float("nan") for a in AUX] for r in w])
+            fam.append(w[0]["engine_family"])
             y.append(window_class(w[-1]))
             meta.append(f'{w[0]["machine"]}|{w[0]["session"]}|{w[0]["t_true_utc"]}')
         start = end
-    return np.array(X, dtype=np.float32), np.array(y, dtype=np.int8), np.array(meta)
+    return (np.array(X, dtype=np.float32), np.array(y, dtype=np.int8), np.array(meta),
+            np.array(mask, dtype=np.int8), np.array(aux, dtype=np.float32), np.array(fam))
 
 
 # ---------------------------------------------------------------------------
@@ -616,6 +662,9 @@ SIGNAL_DICTIONARY = [
     ("wheel_speed_kmh", "CCVS1", 65265, 84, "1/256 km/h per bit", "km/h"),
     ("hyd_oil_c", "VF", 65128, 1638, "1 °C/bit, -40", "°C"),
     ("ambient_c", "AMB", 65269, 171, "0.03125 °C/bit, -273", "°C"),
+    ("engine_temp_c", "ET1", 65262, 175, "engine thermal signal: oil temp (same as oil_temp_c on ECU engines)", "°C"),
+    ("oil_low_sw", "display input (no J1939)", None, None, "1 = low-oil-pressure switch closed, carb engines only", "0/1"),
+    ("engine_family", "-", None, None, "liquid_j1939 | air_efi | carb", ""),
     ("engine_hours", "HOURS", 65253, 247, "0.05 h/bit (on request)", "h"),
     ("blade_engaged", "Proprietary B (placeholder)", 0xFF10, None, "byte 1 bits 0-1", "0/1"),
     ("deck_height_mm", "Proprietary B (placeholder)", 0xFF10, None, "byte 2, 2 mm/bit", "mm"),
@@ -657,9 +706,10 @@ def main():
         nfr = write_candump(p, m, srows, cfg, seeded(cfg["seed"], "can", m.id, sn))
         can_files.append({"file": os.path.relpath(p, a.out), "frames": nfr, "machine": m.id, "session": sn})
 
-    X, y, meta = make_windows(rows)
+    X, y, meta, mask, aux, fam = make_windows(rows)
     np.savez_compressed(os.path.join(a.out, "windows.npz"), x=X, y=y, meta=meta,
-                        features=np.array(FEATURES), classes=np.array(CLASSES))
+                        features=np.array(FEATURES), classes=np.array(CLASSES),
+                        mask=mask, aux=aux, aux_features=np.array(AUX), family=fam)
 
     cfg_hash = hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()[:12]
     md = {

@@ -25,6 +25,8 @@ SRC := test_main.c osal_host.c \
        $(ROOT)/services/anomaly.c \
        $(ROOT)/services/fleet_ble.c \
        $(ROOT)/gui/ui_model.c \
+       $(ROOT)/services/machine_profile.c \
+       $(ROOT)/services/analog_signals.c \
        $(ROOT)/ai/ai_health.c
 
 SYNTAX_SRC := $(ROOT)/app/app_tasks.c $(ROOT)/app/main.c $(ROOT)/ai/backends/ai_backend_gd32.c \

@@ -30,6 +30,7 @@ static int hexval(char c)
 static const char *NAMES[VD_COUNT] = {
     "rpm", "load_pct", "coolant_c", "oil_press_kpa", "fuel_rate_lph", "fuel_level_pct",
     "engine_hours", "battery_v", "wheel_speed_kmh", "hyd_oil_c", "blade_engaged", "deck_height_mm", "ambient_c",
+    "engine_temp_c", "intake_c", "baro_kpa", "oil_low_sw",
 };
 
 static void dump(double t_log)

@@ -25,6 +25,7 @@ enum {
     NV_KEY_LOG_ACK_SEQ   = 0x0003, /* last log sequence acknowledged by the fleet app */
     NV_KEY_MACHINE_ID    = 0x0004, /* VIN / OEM serial, ASCII */
     NV_KEY_BACKLIGHT     = 0x0005,
+    NV_KEY_MACHINE_PROFILE = 0x0006, /* mp_family_t (uint8_t), set by auto-detect or the dealer */
     NV_KEY_GEOFENCE_BASE = 0x0100, /* + slot * 0x10 + chunk */
     NV_KEY_ML_MODEL_BASE = 0x0200, /* anomaly model blob, chunked */
 };

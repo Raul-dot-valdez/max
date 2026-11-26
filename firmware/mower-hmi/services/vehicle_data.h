@@ -24,6 +24,10 @@ typedef enum {
     VD_BLADE_ENGAGED,     /* 0/1, OEM proprietary PGN */
     VD_DECK_HEIGHT_MM,    /* OEM proprietary PGN */
     VD_AMBIENT_C,         /* AMB, SPN 171 */
+    VD_ENGINE_TEMP_C,     /* ET1, SPN 175 engine oil temp: the thermal signal of air-cooled engines */
+    VD_INTAKE_C,          /* IC1, SPN 105 intake manifold temp */
+    VD_BARO_KPA,          /* AMB, SPN 108 barometric pressure */
+    VD_OIL_LOW_SW,        /* 1 = low-oil-pressure switch closed; analog input on engines without an ECU */
     VD_COUNT
 } vd_id_t;
 

@@ -21,6 +21,7 @@
 #define PGN_DD1    65276u /* 0xFEFC fuel level */
 #define PGN_VF     65128u /* 0xFE68 hydraulic oil temp */
 #define PGN_AMB    65269u /* 0xFEF5 ambient conditions */
+#define PGN_IC1    65270u /* 0xFEF6 inlet / exhaust conditions */
 #define PGN_OEM_DECK 0xFF10u /* Proprietary B — OEM to confirm layout */
 
 void j1939_signals_on_rx(const j1939_msg_t *m, void *ctx);

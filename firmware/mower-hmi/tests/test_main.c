@@ -8,6 +8,7 @@
 
 #include "ai_backend.h"
 #include "ai_health.h"
+#include "analog_signals.h"
 #include "anomaly.h"
 #include "crc.h"
 #include "datalog.h"
@@ -17,6 +18,7 @@
 #include "gps_services.h"
 #include "j1939.h"
 #include "j1939_signals.h"
+#include "machine_profile.h"
 #include "nmea.h"
 #include "nvstore.h"
 #include "psoc_link.h"
@@ -610,7 +612,7 @@ static void test_ai_health(void)
     int results = 0;
     for (int t = 1; t <= 120; t++) {
         sample(f, 2900, 85, 290, 60);
-        if (ai_health_push(f, &r)) results++;
+        if (ai_health_push(f, NULL, &r)) results++;
     }
     CHECK(results == 3 && stub_calls == 3);              /* first at 60 s, then every 30 s */
     CHECK(r.cls == AI_CLASS_NORMAL && !r.alert);
@@ -618,20 +620,20 @@ static void test_ai_health(void)
     NEAR(stub_last_x[0], (2900 - 2894.845459) / 221.851395, 1e-4);
 
     /* rules: hot coolant with blades engaged -> screen clog, alert on the second repeat */
-    for (int t = 0; t < 30; t++) { sample(f, 2900, 99, 290, 60); ai_health_push(f, &r); }
+    for (int t = 0; t < 30; t++) { sample(f, 2900, 99, 290, 60); ai_health_push(f, NULL, &r); }
     CHECK(r.cls == AI_CLASS_SCREEN_CLOG && r.rule_cls == AI_CLASS_SCREEN_CLOG && !r.alert);
     bool raised = false;
-    for (int t = 0; t < 30; t++) { sample(f, 2900, 99, 290, 60); if (ai_health_push(f, &r)) raised = r.new_alert; }
+    for (int t = 0; t < 30; t++) { sample(f, 2900, 99, 290, 60); if (ai_health_push(f, NULL, &r)) raised = r.new_alert; }
     CHECK(r.alert && raised);
 
     /* model owns low oil: rules see nothing (pressure 180 kPa > 150), model says low oil */
     ai_health_reset();
     stub_probs[0] = 0.1f; stub_probs[2] = 0.9f;
-    for (int t = 0; t < 90; t++) { sample(f, 2900, 85, 180, 60); ai_health_push(f, &r); }
+    for (int t = 0; t < 90; t++) { sample(f, 2900, 85, 180, 60); ai_health_push(f, NULL, &r); }
     CHECK(r.cls == AI_CLASS_LOW_OIL && r.model_cls == AI_CLASS_LOW_OIL && r.rule_cls == AI_CLASS_NORMAL && r.alert);
 
     /* rules override the model for hydraulic overheat */
-    for (int t = 0; t < 30; t++) { sample(f, 2900, 85, 290, 96); ai_health_push(f, &r); }
+    for (int t = 0; t < 30; t++) { sample(f, 2900, 85, 290, 96); ai_health_push(f, NULL, &r); }
     CHECK(r.cls == AI_CLASS_HYD_OVERHEAT && r.model_cls == AI_CLASS_LOW_OIL);
 
     /* not-available values hold the last valid sample; no result before every feature was seen */
@@ -639,12 +641,191 @@ static void test_ai_health(void)
     stub_probs[0] = 1; stub_probs[2] = 0;
     float nan_f[AI_F_COUNT];
     for (int i = 0; i < AI_F_COUNT; i++) nan_f[i] = NAN;
-    CHECK(!ai_health_push(nan_f, &r));
-    for (int t = 0; t < 59; t++) { sample(f, 2900, 85, 290, 60); ai_health_push(f, &r); }
+    CHECK(!ai_health_push(nan_f, NULL, &r));
+    for (int t = 0; t < 59; t++) { sample(f, 2900, 85, 290, 60); ai_health_push(f, NULL, &r); }
     f[AI_F_OILP] = NAN;
-    CHECK(ai_health_push(f, &r) && r.cls == AI_CLASS_NORMAL);
+    CHECK(ai_health_push(f, NULL, &r) && r.cls == AI_CLASS_NORMAL);
     NEAR(stub_last_x[59 * 9 + AI_F_OILP], (290 - 288.332642) / 38.168674, 1e-4);
     CHECK(strcmp(ai_class_name(AI_CLASS_LOW_OIL), "low_oil") == 0);
+}
+
+/* ---- firmware architecture 2: machine profiles, analog inputs, per-head AI ---- */
+
+static void test_machine_profile(void)
+{
+    puts("machine_profile");
+    /* table invariants */
+    for (int f = MP_FAM_UNKNOWN + 1; f < MP_FAM_COUNT; f++) {
+        const mp_profile_t *p = mp_get((mp_family_t)f);
+        CHECK(p && p->family == (mp_family_t)f && p->name);
+        if (!p->liquid_cooled) CHECK(p->src[VD_COOLANT_C] == MP_SRC_NONE);  /* air-cooled: no coolant */
+        if (!p->has_ecu) {
+            for (int i = 0; i < VD_COUNT; i++) CHECK(p->src[i] != MP_SRC_J1939); /* no ECU: nothing from J1939 */
+        }
+        if (p->head == MP_HEAD_AIR_EFI) CHECK(p->src[VD_ENGINE_TEMP_C] == MP_SRC_J1939 && p->clog_rise_c > 0);
+    }
+    CHECK(mp_get(MP_FAM_UNKNOWN) == NULL && mp_get(MP_FAM_COUNT) == NULL);
+    CHECK(mp_get(MP_FAM_KAW_FX_EFI)->conf[VD_ENGINE_RPM] == MP_CONF_INFERRED);
+    CHECK(mp_get(MP_FAM_KOH_EFI)->conf[VD_ENGINE_RPM] == MP_CONF_VERIFY);
+
+    mp_set_active(MP_FAM_UNKNOWN);
+    CHECK(mp_active() == NULL && mp_expects(VD_COOLANT_C));
+    mp_set_active(MP_FAM_VAN_EFI_ETC);
+    CHECK(!mp_expects(VD_COOLANT_C) && mp_expects(VD_ENGINE_TEMP_C));
+    mp_set_active(MP_FAM_UNKNOWN);
+
+    /* auto-detect from what the bus shows */
+    vd_snapshot_t v;
+    mp_detect_t d;
+    memset(&v, 0, sizeof(v));
+    mp_detect_reset(&d);
+    v.valid[VD_ENGINE_RPM] = v.valid[VD_COOLANT_C] = true;
+    mp_family_t got = MP_FAM_UNKNOWN;
+    for (unsigned t = 0; t < MP_DETECT_SECONDS; t++) {
+        CHECK(mp_detect_step(&d, &v, false) == MP_FAM_UNKNOWN); /* engine off: no progress */
+        got = mp_detect_step(&d, &v, true);
+    }
+    CHECK(got == MP_FAM_LIQUID_J1939);
+    mp_detect_reset(&d);
+    v.valid[VD_COOLANT_C] = false; v.valid[VD_ENGINE_TEMP_C] = true;
+    for (unsigned t = 0; t < MP_DETECT_SECONDS; t++) got = mp_detect_step(&d, &v, true);
+    CHECK(got == MP_FAM_AIR_EFI);
+    mp_detect_reset(&d);
+    memset(&v, 0, sizeof(v)); /* engine running (charging) but nobody on the bus */
+    for (unsigned t = 0; t < MP_DETECT_SECONDS - 1; t++) CHECK(mp_detect_step(&d, &v, true) == MP_FAM_UNKNOWN);
+    CHECK(mp_detect_step(&d, &v, true) == MP_FAM_CARB);
+}
+
+static void test_analog_signals(void)
+{
+    puts("analog_signals");
+    NEAR(as_rpm(50, 1000, 1.0f), 3000.0, 1e-3);           /* 50 pulses/s, 1 per rev */
+    NEAR(as_rpm(100, 1000, 2.0f), 3000.0, 1e-3);
+    CHECK(as_rpm(10, 0, 1.0f) == 0.0f);
+    NEAR(as_battery_v(2350, 6.0f), 14.1, 1e-3);
+    NEAR(as_fuel_pct(240, 240, 33), 0.0, 1e-3);
+    NEAR(as_fuel_pct(33, 240, 33), 100.0, 1e-3);
+    NEAR(as_fuel_pct(136.5f, 240, 33), 50.0, 1e-3);
+
+    float x;
+    pal_analog_raw_t raw = { .pulses = 48, .window_ms = 1000, .battery_mv = 2300, .fuel_sender_ohm = 136.5f,
+                             .oil_switch_closed = true, .pto_on = true };
+    vd_init();
+    /* no profile: battery only */
+    as_publish(&raw, &AS_CFG_DEFAULT, NULL, 1000);
+    CHECK(vd_get(VD_BATTERY_V, &x, 1000) && fabsf(x - 13.8f) < 1e-3f);
+    CHECK(!vd_get(VD_ENGINE_RPM, &x, 1000));
+    /* carbureted profile: rpm, fuel, oil switch, PTO from inputs */
+    as_publish(&raw, &AS_CFG_DEFAULT, mp_get(MP_FAM_CARB), 2000);
+    CHECK(vd_get(VD_ENGINE_RPM, &x, 2000) && fabsf(x - 2880.0f) < 1e-2f);
+    CHECK(vd_get(VD_FUEL_LEVEL_PCT, &x, 2000) && fabsf(x - 50.0f) < 1e-3f);
+    CHECK(vd_get(VD_OIL_LOW_SW, &x, 2000) && x == 1.0f);
+    CHECK(vd_get(VD_BLADE_ENGAGED, &x, 2000) && x == 1.0f);
+    /* open fuel sender reads as not available */
+    raw.fuel_sender_ohm = 5000;
+    as_publish(&raw, &AS_CFG_DEFAULT, mp_get(MP_FAM_CARB), 3000);
+    CHECK(!vd_get(VD_FUEL_LEVEL_PCT, &x, 3000));
+    /* an ECU profile never takes rpm from the inputs */
+    vd_init();
+    as_publish(&raw, &AS_CFG_DEFAULT, mp_get(MP_FAM_KAW_FX_EFI), 4000);
+    CHECK(!vd_get(VD_ENGINE_RPM, &x, 4000) && !vd_get(VD_BATTERY_V, &x, 4000));
+    CHECK(pal_analog_sample(&raw) == PAL_ERR); /* host links the weak default */
+}
+
+static void test_j1939_arch2_signals(void)
+{
+    puts("j1939 arch2 signals");
+    vd_init();
+    float x;
+    /* ET1 from an air-cooled engine: coolant not available (0xFF), oil temp 112.5 °C */
+    uint16_t oil = (uint16_t)((112.5f + 273.0f) / 0.03125f);
+    const uint8_t et1d[8] = { 0xFF, 0xFF, (uint8_t)oil, (uint8_t)(oil >> 8), 0xFF, 0xFF, 0xFF, 0xFF };
+    j1939_msg_t et1 = { .pgn = PGN_ET1, .sa = 0, .len = 8, .ts_ms = 10, .data = et1d };
+    j1939_signals_on_rx(&et1, NULL);
+    CHECK(!vd_get(VD_COOLANT_C, &x, 10));
+    CHECK(vd_get(VD_ENGINE_TEMP_C, &x, 10) && fabsf(x - 112.5f) < 0.05f);
+    const uint8_t ic1d[8] = { 0xFF, 0xFF, 40 + 45, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+    j1939_msg_t ic1 = { .pgn = PGN_IC1, .sa = 0, .len = 8, .ts_ms = 10, .data = ic1d };
+    j1939_signals_on_rx(&ic1, NULL);
+    CHECK(vd_get(VD_INTAKE_C, &x, 10) && x == 45.0f);
+    uint16_t amb = (uint16_t)((25.0f + 273.0f) / 0.03125f);
+    const uint8_t ambd[8] = { 196, 0xFF, 0xFF, (uint8_t)amb, (uint8_t)(amb >> 8), 0xFF, 0xFF, 0xFF };
+    j1939_msg_t ambm = { .pgn = PGN_AMB, .sa = 0, .len = 8, .ts_ms = 10, .data = ambd };
+    j1939_signals_on_rx(&ambm, NULL);
+    CHECK(vd_get(VD_BARO_KPA, &x, 10) && x == 98.0f);
+    CHECK(vd_get(VD_AMBIENT_C, &x, 10) && fabsf(x - 25.0f) < 0.05f);
+}
+
+static void test_ai_health_heads(void)
+{
+    puts("ai_health heads");
+    ai_health_result_t r;
+    float f[AI_F_COUNT];
+    ai_health_init();
+    stub_probs[0] = 1; stub_probs[1] = stub_probs[2] = stub_probs[3] = 0;
+
+    /* air-cooled EFI: coolant is never sent, yet windows complete; the clog rule uses oil temp */
+    ai_health_set_profile(mp_get(MP_FAM_KAW_FX_EFI));
+    int calls0 = stub_calls, results = 0;
+    ai_aux_t aux = { .engine_temp_c = 110, .oil_low_sw = NAN };
+    for (int t = 0; t < 60; t++) { sample(f, 2900, NAN, 290, 60); if (ai_health_push(f, &aux, &r)) results++; }
+    CHECK(results == 1 && r.cls == AI_CLASS_NORMAL && r.head == MP_HEAD_AIR_EFI);
+    CHECK(!r.model_ran && stub_calls == calls0);            /* no trained air-cooled model yet */
+    /* the baseline is not armed before 10 min of mowing: a hot start alone raises nothing */
+    aux.engine_temp_c = 125;
+    for (int t = 0; t < 60; t++) { sample(f, 2900, NAN, 290, 60); ai_health_push(f, &aux, &r); }
+    CHECK(r.cls == AI_CLASS_NORMAL);
+    /* learn a 110 °C baseline, then a 7 °C rise with blades engaged is a clog */
+    ai_health_set_profile(mp_get(MP_FAM_KAW_FX_EFI));
+    aux.engine_temp_c = 110;
+    for (int t = 0; t < 900; t++) { sample(f, 2900, NAN, 290, 60); ai_health_push(f, &aux, &r); }
+    CHECK(r.cls == AI_CLASS_NORMAL);
+    aux.engine_temp_c = 117;
+    bool raised = false;
+    for (int t = 0; t < 60; t++) { sample(f, 2900, NAN, 290, 60); if (ai_health_push(f, &aux, &r)) raised |= r.new_alert; }
+    CHECK(r.cls == AI_CLASS_SCREEN_CLOG && r.alert && raised && r.prob == 0.0f);
+    /* a 3 °C rise is inside normal variation */
+    ai_health_reset();
+    aux.engine_temp_c = 113;
+    for (int t = 0; t < 90; t++) { sample(f, 2900, NAN, 290, 60); ai_health_push(f, &aux, &r); }
+    CHECK(r.cls == AI_CLASS_NORMAL);
+    aux.engine_temp_c = 117;
+    /* blades off: hot engine is not a clogged screen */
+    for (int t = 0; t < 60; t++) { sample(f, 2900, NAN, 290, 60); f[AI_F_BLADE] = 0; ai_health_push(f, &aux, &r); }
+    CHECK(r.cls == AI_CLASS_NORMAL);
+
+    /* carbureted: only rpm (pulse input) and blade (PTO switch) exist; low oil from the switch */
+    ai_health_set_profile(mp_get(MP_FAM_CARB));
+    ai_aux_t carb = { .engine_temp_c = NAN, .oil_low_sw = 0 };
+    float only[AI_F_COUNT];
+    for (int i = 0; i < AI_F_COUNT; i++) only[i] = NAN;
+    only[AI_F_RPM] = 3100; only[AI_F_BLADE] = 1;
+    results = 0;
+    for (int t = 0; t < 60; t++) if (ai_health_push(only, &carb, &r)) results++;
+    CHECK(results == 1 && r.cls == AI_CLASS_NORMAL && r.head == MP_HEAD_NO_ECU);
+    carb.oil_low_sw = 1;
+    for (int t = 0; t < 60; t++) ai_health_push(only, &carb, &r);
+    CHECK(r.cls == AI_CLASS_LOW_OIL && r.alert);
+    /* switch closed at idle is normal for these switches: no alarm below 1500 rpm */
+    ai_health_reset();
+    only[AI_F_RPM] = 1200;
+    for (int t = 0; t < 90; t++) ai_health_push(only, &carb, &r);
+    CHECK(r.cls == AI_CLASS_NORMAL);
+
+    /* electric: rules only, never an engine class */
+    ai_health_set_profile(mp_get(MP_FAM_EV_80V));
+    float ev[AI_F_COUNT];
+    for (int i = 0; i < AI_F_COUNT; i++) ev[i] = NAN;
+    ev[AI_F_BLADE] = 1;
+    results = 0;
+    for (int t = 0; t < 60; t++) if (ai_health_push(ev, NULL, &r)) results++;
+    CHECK(results == 1 && r.cls == AI_CLASS_NORMAL && r.head == MP_HEAD_ELECTRIC);
+
+    /* back to the liquid head: the model runs again */
+    ai_health_set_profile(mp_get(MP_FAM_LIQUID_J1939));
+    calls0 = stub_calls;
+    for (int t = 0; t < 60; t++) { sample(f, 2900, 85, 290, 60); ai_health_push(f, NULL, &r); }
+    CHECK(r.model_ran && stub_calls == calls0 + 1 && r.head == MP_HEAD_LIQUID);
 }
 
 int main(void)
@@ -660,6 +841,10 @@ int main(void)
     test_anomaly();
     test_fleet_ble();
     test_ai_health();
+    test_machine_profile();
+    test_analog_signals();
+    test_j1939_arch2_signals();
+    test_ai_health_heads();
     printf("\n%d checks, %d failed\n", g_checks, g_fail);
     return g_fail ? 1 : 0;
 }

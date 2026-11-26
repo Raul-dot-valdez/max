@@ -43,6 +43,8 @@ set(PORTABLE_SRC
   services/gps_services.c
   services/anomaly.c
   services/fleet_ble.c
+  services/machine_profile.c
+  services/analog_signals.c
   ai/ai_health.c
   gui/ui_model.c
   app/app_tasks.c

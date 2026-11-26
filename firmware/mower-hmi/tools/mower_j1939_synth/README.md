@@ -33,6 +33,13 @@ Edit `config_default.json` or pass a copy with `--config`:
 - fault rates
 - RTC modes and storage period
 - CAN log length and EEC1 rate
+- `engine_families` (generator 0.2.0): list cycled over the machines, from `liquid_j1939`
+  (default), `air_efi` (no coolant SPN, oil temperature SPN 175) and `carb` (no ECU, no CAN log;
+  rpm, fuel level, battery, PTO and a low-oil switch come from the display's inputs)
+
+`config_fleet.json` is a ready-made mixed fleet: 6 machines, 14 days, all three families. Its
+`windows.npz` adds `mask`, `aux` and `family` arrays for training per-family AI heads. See
+`docs/firmware_architecture_2.md`.
 
 The same config and seed always give the same data.
 

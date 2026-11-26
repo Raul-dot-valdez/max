@@ -38,10 +38,42 @@ def check(cond, msg):
         failures.append(msg)
 
 
+def families(d):
+    """Engine-family visibility (firmware architecture 2)."""
+    print("Engine-family checks")
+    fams = sorted(d.engine_family.unique())
+    for f in fams:
+        s = d[d.engine_family == f]
+        if f == "liquid_j1939":
+            check(s.coolant_c.notna().all(), "liquid_j1939: coolant always present")
+        elif f == "air_efi":
+            check(s.coolant_c.isna().all(), "air_efi: no coolant temperature (air-cooled)")
+            warm = s[(s.phase == "mowing") & (s.uptime_s > 1200)]
+            check(100 <= warm.engine_temp_c.median() <= 120,
+                  f"air_efi: warm oil temperature median {warm.engine_temp_c.median():.0f} °C in 100-120")
+        elif f == "carb":
+            hidden = ["load_pct", "coolant_c", "oil_press_kpa", "fuel_rate_lph", "engine_temp_c", "hyd_oil_c"]
+            check(s[hidden].isna().all().all(), "carb: no ECU signals")
+            check((s.dtc_count == 0).all(), "carb: no DM1 faults")
+            check(s.rpm.notna().all() and s.fuel_level_pct.notna().any(), "carb: rpm and fuel level from display inputs")
+            low = s[(s.gt_oil_loss > 0.3) & s.phase.isin(["mowing", "transport"])]
+            if len(low):
+                # a pressure switch only sees the last stage of an oil loss: report how much of it
+                check(low.oil_low_sw.max() == 1, "carb: low-oil switch closes during the oil-loss episode")
+                print(f"  INFO  carb: switch closed for {low.oil_low_sw.mean() * 100:.0f} % of the running time with oil loss > 30 % "
+                      "(an ECU's pressure signal sees all of it)")
+            check((s[s.gt_oil_loss < 0.05].oil_low_sw.fillna(0) == 0).all(), "carb: switch stays open with healthy oil")
+    return fams
+
+
 def physics(d, labels):
     print("Range and physics checks")
     run = d[d.phase != "crank"]
     check(run.rpm.between(0, 8031.875).all(), "engine speed inside the SPN 190 range")
+    d = d[d.engine_family == "liquid_j1939"]
+    if d.empty:
+        print("  (no liquid_j1939 machines: physics checks below skipped)")
+        return
     check(d.coolant_c.between(-40, 210).all(), "coolant inside the SPN 110 range")
     mow = d[d.phase == "mowing"]
     check(2700 <= mow.rpm.median() <= 3100, f"mowing rpm median {mow.rpm.median():.0f} in 2700-3100")
@@ -107,7 +139,7 @@ def firmware(d, out):
         s = d[(d.machine == c["machine"]) & (d.session == c["session"])].reset_index(drop=True)
         p = subprocess.run([exe, os.path.join(out, c["file"])], capture_output=True, text=True)
         rows = [json.loads(x) for x in p.stdout.splitlines()]
-        worst, compared, stale = {k: 0.0 for k in ("coolant_c", "oil_press_kpa", "fuel_level_pct", "hyd_oil_c", "battery_v")}, 0, 0
+        worst, compared, stale = {k: 0.0 for k in ("coolant_c", "oil_press_kpa", "fuel_level_pct", "hyd_oil_c", "battery_v", "engine_temp_c")}, 0, 0
         hours_seen = False
         for r_ in rows[5:]:
             i = int(r_["t"]) - 1
@@ -122,7 +154,11 @@ def firmware(d, out):
                     continue
                 worst[k] = max(worst[k], min(abs(a - b) for b in refs))
             hours_seen |= r_["engine_hours"] is not None
-        tol = {"coolant_c": 1.01, "oil_press_kpa": 8.01, "fuel_level_pct": 0.81, "hyd_oil_c": 1.01, "battery_v": 0.11}
+        tol = {"coolant_c": 1.01, "oil_press_kpa": 8.01, "fuel_level_pct": 0.81, "hyd_oil_c": 1.01, "battery_v": 0.11,
+               "engine_temp_c": 0.6}
+        if s.engine_family.iloc[0] == "air_efi":
+            seen_cool = any(r_["coolant_c"] is not None for r_ in rows)
+            check(not seen_cool, f"{c['file']}: air-cooled engine, firmware sees no coolant temperature")
         ok = p.returncode == 0 and compared > 60 and all(worst[k] <= tol[k] for k in worst)
         check(ok, f"{c['file']}: firmware decode matches over {compared} s; " + ", ".join(f"{k}≤{v:.2f}" for k, v in worst.items()))
         check(hours_seen, f"{c['file']}: engine hours received via request/response (PGN 65253)")
@@ -135,6 +171,9 @@ def main():
     a = ap.parse_args()
     d = pd.read_csv(os.path.join(a.out, "signals_1hz.csv.gz"), dtype={"dtcs": str})
     labels = pd.read_csv(os.path.join(a.out, "labels.csv"))
+    if "engine_family" not in d:  # datasets from generator 0.1.x
+        d["engine_family"] = "liquid_j1939"
+    families(d)
     physics(d, labels)
     frames_vs_table(d, a.out)
     if a.firmware:

@@ -17,6 +17,8 @@
 #include <string.h>
 
 #include "ai_health.h"
+#include "analog_signals.h"
+#include "machine_profile.h"
 #include "anomaly.h"
 #include "board_config.h"
 #include "datalog.h"
@@ -83,6 +85,7 @@ static uint8_t     cov_grid[COV_GRID_BYTES] PAL_SDRAM_BSS;
 static fr_counters_t counters;
 static fr_cfg_t      fuel_cfg;
 static an_model_t    an_model;
+static mp_detect_t   mp_det;          /* architecture 2: machine profile auto-detect */
 static an_result_t   an_res;
 static float         deck_width_m = APP_DECK_WIDTH_M;
 static uint32_t      log_acked;
@@ -692,6 +695,11 @@ static void task_app(void *arg)
         acc_ms += dt;
         while (acc_ms >= 1000) { acc_ms -= 1000; uptime_s++; }
 
+        /* architecture 2: analog inputs feed the same signal store on machines without an ECU */
+        pal_analog_raw_t araw;
+        if (ms_since_1hz + dt >= 1000 && pal_analog_sample(&araw) == PAL_OK)
+            as_publish(&araw, &AS_CFG_DEFAULT, mp_active(), now);
+
         vd_snapshot(&v, now);
         osal_mutex_lock(mtx_fix);
         if (now - g_fix_ms > GNSS_STALE_MS) g_fix.valid = false;
@@ -738,15 +746,30 @@ static void task_app(void *arg)
             }
             osal_mutex_unlock(mtx_app);
 
+            /* architecture 2: learn the machine profile at the first engine runs, then keep it */
+            if (!mp_active()) {
+                bool charging = v.valid[VD_BATTERY_V] && v.value[VD_BATTERY_V] > 13.2f;
+                bool spinning = v.valid[VD_ENGINE_RPM] && v.value[VD_ENGINE_RPM] > 500.0f;
+                mp_family_t fam = mp_detect_step(&mp_det, &v, key_on && (charging || spinning));
+                if (fam != MP_FAM_UNKNOWN) {
+                    uint8_t b = (uint8_t)fam;
+                    mp_set_active(fam);
+                    nv_set(NV_KEY_MACHINE_PROFILE, &b, 1);
+                    ai_health_set_profile(mp_active());
+                    app_log_event(EV_MACHINE_PROFILE, fam, 1);
+                }
+            }
+
             /* edge-AI health classifier (same code on the STM32H743 and GD32H759 paths) */
             if (fs.engine_running) {
 #define VDF(id) (v.valid[id] ? v.value[id] : NAN)
                 const float smp[AI_F_COUNT] = { VDF(VD_ENGINE_RPM), VDF(VD_ENGINE_LOAD_PCT), VDF(VD_COOLANT_C),
                                                 VDF(VD_OIL_PRESS_KPA), VDF(VD_FUEL_RATE_LPH), VDF(VD_HYD_OIL_C),
                                                 VDF(VD_AMBIENT_C), VDF(VD_WHEEL_SPEED_KMH), blade ? 1.0f : 0.0f };
+                const ai_aux_t aux = { VDF(VD_ENGINE_TEMP_C), VDF(VD_OIL_LOW_SW) };
 #undef VDF
                 ai_health_result_t ar;
-                if (ai_health_push(smp, &ar) && ar.new_alert)
+                if (ai_health_push(smp, &aux, &ar) && ar.new_alert)
                     app_log_event(EV_AI_HEALTH, ar.cls, (int32_t)(ar.prob * 100.0f));
             } else {
                 ai_health_reset();
@@ -877,6 +900,13 @@ void app_init(void)
     fr_init(&fuel_cfg, &counters, app_log_event);
     an_init(&an_model, app_log_event);
     ai_health_init(); /* inactive when no AI backend is linked */
+    /* machine profile: stored by an earlier auto-detect or by the dealer; otherwise detect */
+    uint8_t fam = 0;
+    mp_detect_reset(&mp_det);
+    if (nv_get(NV_KEY_MACHINE_PROFILE, &fam, 1) == 1 && mp_get((mp_family_t)fam)) {
+        mp_set_active((mp_family_t)fam);
+        ai_health_set_profile(mp_active());
+    }
     gps_svc_init(cov_grid, deck_width_m, app_log_event);
     for (uint8_t i = 0; i < GEOFENCE_SLOTS; i++) {
         geofence_t g;

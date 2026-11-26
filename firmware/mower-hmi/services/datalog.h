@@ -85,6 +85,7 @@ typedef enum {
     EV_BLE_SYNC,          /* a = acked seq */
     EV_OVERSPEED,         /* a = speed x10 */
     EV_AI_HEALTH,         /* a = ai_class_t (1 screen clog, 2 low oil, 3 hydraulic overheat), b = model probability % */
+    EV_MACHINE_PROFILE,   /* a = mp_family_t now active, b = 1 auto-detected, 0 set by dealer / stored */
 } dl_event_code_t;
 
 typedef struct PAL_PACKED {

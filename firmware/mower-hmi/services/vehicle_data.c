@@ -19,6 +19,10 @@ static const uint32_t k_timeout_ms[VD_COUNT] = {
     [VD_BLADE_ENGAGED]   = 1000,
     [VD_DECK_HEIGHT_MM]  = 3000,
     [VD_AMBIENT_C]       = 3000,  /* AMB 1 s */
+    [VD_ENGINE_TEMP_C]   = 3000,  /* ET1 1 s */
+    [VD_INTAKE_C]        = 3000,  /* IC1 0.5 s */
+    [VD_BARO_KPA]        = 3000,  /* AMB 1 s */
+    [VD_OIL_LOW_SW]      = 3000,  /* analog inputs, published at 1 Hz */
 };
 
 #define DM1_TIMEOUT_MS 3500u /* DM1 is sent every 1 s; drop a source after 3 misses */

@@ -75,8 +75,12 @@ void j1939_signals_on_rx(const j1939_msg_t *m, void *ctx)
     case PGN_EEC2: /* SPN 92, byte 3, 1 %/bit */
         PUT(VD_ENGINE_LOAD_PCT, u8(m, 2, &v), (float)v);
         break;
-    case PGN_ET1: /* SPN 110, byte 1, 1 °C/bit, -40 */
-        PUT(VD_COOLANT_C, u8(m, 0, &v), (float)v - 40.0f);
+    case PGN_ET1: /* SPN 110, byte 1, 1 °C/bit, -40; SPN 175, bytes 3-4, 0.03125 °C/bit, -273 */
+        PUT(VD_COOLANT_C, u8(m, 0, &v), (float)v - 40.0f);   /* air-cooled engines send 0xFF here */
+        PUT(VD_ENGINE_TEMP_C, u16(m, 2, &v), v * 0.03125f - 273.0f);
+        break;
+    case PGN_IC1: /* SPN 105, byte 3, 1 °C/bit, -40 */
+        PUT(VD_INTAKE_C, u8(m, 2, &v), (float)v - 40.0f);
         break;
     case PGN_EFLP1: /* SPN 100, byte 4, 4 kPa/bit */
         PUT(VD_OIL_PRESS_KPA, u8(m, 3, &v), v * 4.0f);
@@ -101,6 +105,7 @@ void j1939_signals_on_rx(const j1939_msg_t *m, void *ctx)
         break;
     case PGN_AMB: /* SPN 171, bytes 4-5, 0.03125 °C/bit, -273 */
         PUT(VD_AMBIENT_C, u16(m, 3, &v), v * 0.03125f - 273.0f);
+        PUT(VD_BARO_KPA, u8(m, 0, &v), v * 0.5f); /* SPN 108, byte 1, 0.5 kPa/bit */
         break;
     case PGN_OEM_DECK: /* byte 1 bits 0-1: blade clutch (J1939 2-bit state); byte 2: deck height, 2 mm/bit */
         if (m->len >= 2) {
