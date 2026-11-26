@@ -18,7 +18,7 @@ if (WB) {
     card(s, M + 6.2, 1.4, 5.9, 3.0, "What they told us", ["They like the M1 and 280", "Their engineers want to work more with Claude Code", "Assumed: they build screens for several OEM customers, so faster development multiplies across projects"], { kicker: "FROM THE ACCOUNT · VERIFY THE ASSUMPTION", kickerColor: C.accent4, size: 13 });
     s.addShape(pres.shapes.RECTANGLE, { x: M, y: 4.65, w: CW, h: 1.9, fill: { color: "FFF1E6" }, line: { color: HEX.rule, width: 0.75 } });
     s.addText([{ text: "WHY IT MATTERS   ", options: { bold: true, color: C.accent2, fontSize: 12 } },
-      { text: "Wainbee can sell CrossControl as well as M1. At the MCU display tier, M1 wins if it is the easiest display to build with an AI agent. A good pilot gives maximatecc a reference customer, real data for SDK 2.0 and a template for other integrators.", options: { fontSize: 15, color: C.text1 } }],
+      { text: "Wainbee can sell CrossControl as well as M1. At the MCU display tier, M1 wins if it is the easiest display to build with an AI agent. A good pilot gives A99 a reference customer, real data for SDK 2.0 and a template for other integrators.", options: { fontSize: 15, color: C.text1 } }],
       { x: M + 0.25, y: 4.7, w: CW - 0.5, h: 1.8, margin: 0, valign: "middle", isTextBox: true });
   }
   {
@@ -28,7 +28,7 @@ if (WB) {
     card(s, M + 4.2, 1.4, 3.9, 4.6, "Within 30 days", ["Pilot running on their bench with the agent pack", "First screen built from their signal list", "Two feedback sessions logged"], { kicker: "AFTER", size: 14 });
     card(s, M + 8.4, 1.4, 3.9, 4.6, "Measured", ["Hours from signal list to first screen", "Hours to add a proprietary PGN", "Defects caught by tests before hardware", "Wainbee decision: roll out to a customer project"], { kicker: "SUCCESS METRICS", size: 14, fill: "FFF1E6" });
   }
-  debate(WSEC, "Panel debate: what to show Wainbee", "Which slides create the most value for Wainbee and maximatecc, and what stays internal?",
+  debate(WSEC, "Panel debate: what to show Wainbee", "Which slides create the most value for Wainbee and A99, and what stays internal?",
     [["AI TOOLING LEAD", "Lead with a live demo", "Ten minutes of Claude Code adding a real J1939 signal to a 280 screen beats any slide. Bring a prepared repo, a recorded fallback and a simulated CAN log so it works without a machine."],
      ["PRODUCT MANAGER", "Close on a pilot", "Show today's SDK honestly, then a concrete six-week pilot with named deliverables. The goal is a signed scope, not applause."],
      ["DISSENT · SAFETY AND CYBER LEAD", "Mind what we promise", "Keep the deficiency scorecard and competitor benchmark internal. Say clearly that agent-written code is for non-safety screens, reviewed by people, and that roadmap items are plans, not commitments."]],
@@ -38,7 +38,7 @@ if (WB) {
     const s = content(WSEC, "Slide selection: value against risk");
     mark(s, "internal");
     const G = C.accent3, A = C.accent4, R = C.accent5;
-    table(s, ["Candidate slide", "Value to Wainbee", "Value to maximatecc", "Risk", "Decision"], [
+    table(s, ["Candidate slide", "Value to Wainbee", "Value to A99", "Risk", "Decision"], [
       ["Today's M1 SDK (facts)", "High", "Medium", "Low", { text: "Show", bold: true, color: G }],
       ["Claude Code workflow on M1", "High", "High", "Low", { text: "Show", bold: true, color: G }],
       ["Example agent session (code)", "High", "High", "Low", { text: "Show + live demo", bold: true, color: G }],
@@ -135,7 +135,7 @@ if (WB) {
 {
   const s = content(WSEC, "Proposed joint pilot: six weeks");
   mark(s, "show");
-  card(s, M, 1.4, 3.9, 4.6, "maximatecc provides", ["M1 agent pack: project guide (CLAUDE.md), data-layer rules, memory budget checks", "Signal generator for J1939 and DBC", "PC test harness for the 280", "Early access to the M1 SDK", "Weekly engineering check-in"], { kicker: "MAXIMATECC", size: 14, fill: "FFF1E6" });
+  card(s, M, 1.4, 3.9, 4.6, "A99 provides", ["M1 agent pack: project guide (CLAUDE.md), data-layer rules, memory budget checks", "Signal generator for J1939 and DBC", "PC test harness for the 280", "Early access to the M1 SDK", "Weekly engineering check-in"], { kicker: "A99", size: 14, fill: "FFF1E6" });
   card(s, M + 4.2, 1.4, 3.9, 4.6, "Wainbee provides", ["One real application on a 280 or 430", "Its signal list or DBC file", "Two engineers using Claude Code", "Bench hardware and CAN access", "Honest feedback after each sprint"], { kicker: "WAINBEE", size: 14 });
   card(s, M + 8.4, 1.4, 3.9, 4.6, "We measure", ["Hours from signal list to first screen", "Hours to add a proprietary PGN", "Defects caught on the PC before hardware", "Go / no-go for a customer project in week 6"], { kicker: "SUCCESS", size: 14 });
 }
@@ -157,7 +157,7 @@ if (WB) {
   mark(s, "show");
   const N = [
     ["This meeting", "Agree the pilot application, the two engineers and the bench setup"],
-    ["Week 1", "maximatecc delivers the agent pack and PC test harness; kick-off session"],
+    ["Week 1", "A99 delivers the agent pack and PC test harness; kick-off session"],
     ["Weeks 2–5", "Wainbee builds screens with Claude Code; weekly check-ins; metrics logged"],
     ["Week 6", "Joint review of results; decision on a customer project and M1 SDK early adoption"],
   ];

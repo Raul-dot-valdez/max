@@ -101,7 +101,7 @@ DTCs are generated from the physics, with occurrence counts:
 
 ## Debate 5: the M1 clock
 
-- **Timekeeping engineer:** "maximatecc's public M1 specifications don't state whether it has a battery-backed RTC (**verify**). So simulate the three realistic cases:
+- **Timekeeping engineer:** "A99's public M1 specifications don't state whether it has a battery-backed RTC (**verify**). So simulate the three realistic cases:
   - a coin-cell RTC
   - a supercapacitor RTC that holds for about a week
   - no RTC at all."

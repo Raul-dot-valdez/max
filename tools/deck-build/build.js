@@ -19,7 +19,7 @@ const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.33 x 7.5
 pres.title = "M1 Graphics Framework Strategy";
 pres.author = "AI Terra";
-pres.subject = "Off-highway HMI graphics strategy for maximatecc";
+pres.subject = "Off-highway HMI graphics strategy for A99";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 const C = pres.SchemeColor;
 
@@ -108,7 +108,7 @@ function circleNum(s, n, x, y, d = 0.6, fill = C.accent1) {
 pres.addSection({ title: "Opening" });
 {
   const s = pres.addSlide({ masterName: "TITLE_DARK", sectionTitle: "Opening" });
-  s.addText("Graphics framework strategy for the maximatecc M1 roadmap", { placeholder: "title" });
+  s.addText("Graphics framework strategy for the A99 M1 roadmap", { placeholder: "title" });
   s.addText("Market evidence, jobs to be done, OEM-tier segmentation, SDK SWOT, an expert-panel debate and five scenarios for hardware and firmware planning. Prepared November 2026 from public sources.", { placeholder: "body" });
   s.addNotes("Pre-read deck. Every claim carries a label: EVIDENCE (stated in a cited public source), JUDGMENT (expert-panel assessment, not measured), VERIFY (check before it drives a decision). Sources are listed at the end of the deck.");
 }
@@ -121,7 +121,7 @@ pres.addSection({ title: "Opening" });
      "AI coding tools such as Claude Code make the framework itself less of a moat",
      "OEMs will pay for what surrounds the framework: machine signals ready to bind, safety-certified rendering, fast simulators, update and cyber compliance, and an AI-ready toolchain"],
     { kicker: "MARKET", size: 15 });
-  card(s, M + 6.2, 1.35, 5.9, 5.3, "What maximatecc should do",
+  card(s, M + 6.2, 1.35, 5.9, 5.3, "What A99 should do",
     ["Position M1 as a framework-neutral HMI platform",
      "One signal layer, one safety island, one build/simulation/OTA pipeline",
      "Three supported runtimes: Qt 6, LVGL 9, CODESYS Visualization",
@@ -144,7 +144,7 @@ pres.addSection({ title: "Opening" });
     tag(s, it[0], M, 1.6 + i * 0.6);
     s.addText(it[1], { x: M + 1.35, y: 1.6 + i * 0.6, w: 4, h: 0.28, fontSize: 14, color: C.text1, margin: 0, valign: "middle", isTextBox: true });
   });
-  s.addText("Market share by graphics framework for off-highway displays is not published. Shifts shown here come from vendor filings, partner programmes and product releases; get real share numbers from VDC Research or similar, and from a win/loss review of maximatecc design-ins.",
+  s.addText("Market share by graphics framework for off-highway displays is not published. Shifts shown here come from vendor filings, partner programmes and product releases; get real share numbers from VDC Research or similar, and from a win/loss review of A99 design-ins.",
     { x: M, y: 3.6, w: 5.4, h: 1.6, fontSize: 13, color: C.text2, margin: 10, fill: { color: "FFF1E6" }, isTextBox: true, valign: "top" });
   const agenda = ["Market evidence", "Customer: jobs to be done and design thinking", "Expert panel debate", "Five scenarios for 2027–2032", "Where to play: large, mid-size, small OEMs", "SDK strategy SWOT", "Roadmap, risks and sources"];
   agenda.forEach((a, i) => {
@@ -158,7 +158,7 @@ pres.addSection({ title: "Market evidence" });
 {
   const s = pres.addSlide({ masterName: "SECTION_DARK", sectionTitle: "Market evidence" });
   s.addText("Market evidence", { placeholder: "title" });
-  s.addText("Framework landscape, market size, maximatecc today, and the influence of AI coding tools", { placeholder: "body" });
+  s.addText("Framework landscape, market size, A99 today, and the influence of AI coding tools", { placeholder: "body" });
 }
 {
   const s = content("Market evidence", "Framework landscape 1/2: the three runtimes in demand");
@@ -198,7 +198,7 @@ pres.addSection({ title: "Market evidence" });
   s.addNotes("Sources: Global Industry Analysts via GII/Yahoo Finance (US$240.5M in 2024 to US$883.1M by 2030, 24.2% CAGR); Market Research Future (US$1,012.4M by 2030, 25.9% CAGR 2022-2030); broader HMI estimates from Grand View, GIA, MRFR, Global Info Research.");
 }
 {
-  const s = content("Market evidence", "maximatecc and CCpilot today");
+  const s = content("Market evidence", "A99 and CCpilot today");
   table(s, ["CCpilot model", "Processor", "Screen", "Frameworks"], [
     ["V1200", "NXP i.MX 8QuadXPlus", "12.1\"", "Qt 5.15+ open source, Qt 6 support; CODESYS 3.5"],
     ["X900", "Intel Atom x5-E3940", "—", "Qt 5.12+; CODESYS"],
@@ -207,7 +207,7 @@ pres.addSection({ title: "Market evidence" });
   ], [2.2, 2.6, 1.4, 5.9], 1.4, { fontSize: 13 });
   tag(s, "EVIDENCE", 11.58, 1.03);
   card(s, M, 4.15, 5.9, 2.6, "Data Engine: seed of a neutral signal layer", "The Data Engine already exchanges signals between a CODESYS project and a Qt application. Extending it to LVGL and to a typed, exportable signal model is the core of the M1 SDK.", { size: 14, kicker: "ASSET", headH: 0.45 });
-  card(s, M + 6.2, 4.15, 5.9, 2.6, "Open questions", ["Maxima, Turotest and CrossControl merged as maximatecc in 2012; CrossControl later moved to the Scanreco group (public dates conflict)", "maximatecc.com could not be read from this session; details come from crosscontrol.com and resellers", "No public reference to \"M1\": treated as your internal roadmap name"], { size: 13, kicker: "VERIFY", kickerColor: C.accent5, headH: 0.4 });
+  card(s, M + 6.2, 4.15, 5.9, 2.6, "Open questions", ["Maxima, Turotest and CrossControl merged as A99 in 2012; CrossControl later moved to the Scanreco group (public dates conflict)", "maximatecc.com could not be read from this session; details come from crosscontrol.com and resellers", "No public reference to \"M1\": treated as your internal roadmap name"], { size: 13, kicker: "VERIFY", kickerColor: C.accent5, headH: 0.4 });
 }
 {
   const s = content("Market evidence", "Is Claude Code changing embedded graphics? Yes, early");
@@ -231,7 +231,7 @@ pres.addSection({ title: "Customer" });
 {
   const s = pres.addSlide({ masterName: "SECTION_DARK", sectionTitle: "Customer" });
   s.addText("Jobs to be done and design thinking", { placeholder: "title" });
-  s.addText("Eight customer roles; the innovation column is where maximatecc can win regardless of the customer's framework choice", { placeholder: "body" });
+  s.addText("Eight customer roles; the innovation column is where A99 can win regardless of the customer's framework choice", { placeholder: "body" });
 }
 const JTBD = [
   ["OEM HMI engineer", "When a new variant is defined, I want its screens on the real display within days, so I can test with operators before design freeze.", "Board bring-up, porting and signal wiring eat weeks before the first screen.", "Pre-integrated runtimes; desktop simulator matching the target; agent skills from spec or Figma; signals bound from the DBC."],
@@ -275,7 +275,7 @@ const PANELS = [
   ["Cockpit & vehicle architecture", "Machine architects, zonal E/E, 48 V", "Zonal layouts with central compute are coming; excavators carry up to four displays, consolidation will follow.", "Fewer boxes; one UX; lower harness cost", "Mixed-criticality software needs a hypervisor and safety partitioning", "Mid-size OEMs keep separate displays for a decade; the ECU-by-ECU market stays large."],
   ["Graphics & HMI frameworks", "Qt, LVGL, CODESYS, Slint specialists", "No single winner. Qt premium Linux, LVGL MCU and cost-down, CODESYS PLC-centric OEMs. One framework loses deals.", "Multi-runtime matches how customers buy", "Three runtimes triple validation and support", "Make LVGL the default and Qt a premium add-on, to escape royalties."],
   ["Functional safety & compliance", "ISO 25119, ISO 13849, IEC 61508, cyber", "Nobody certifies a full GUI framework. Put safety rendering on an independent island with output checks. Machinery Regulation (Jan 2027) and CRA make SBOM and secure updates mandatory.", "One safety concept for every framework", "Extra hardware cost; longer certification lead time", "Qt Safe Renderer already covers this; our own island duplicates it."],
-  ["Silicon & hardware platform", "SoC/MCU selection, thermal, supply", "Three tiers on one SDK: MCU smart display, Linux display with NPU, cockpit computer with GPU and safety domain. Two silicon sources per tier.", "Covers $150–$3,000 price points with shared software", "MCU vendors push free GUI tools that lock customers to one chip", "An MCU tier competes with cheap commodity displays where maximatecc has little edge."],
+  ["Silicon & hardware platform", "SoC/MCU selection, thermal, supply", "Three tiers on one SDK: MCU smart display, Linux display with NPU, cockpit computer with GPU and safety domain. Two silicon sources per tier.", "Covers $150–$3,000 price points with shared software", "MCU vendors push free GUI tools that lock customers to one chip", "An MCU tier competes with cheap commodity displays where A99 has little edge."],
   ["Business, licensing & channel", "Pricing, partners, procurement", "Royalty runtimes become the biggest visible HMI cost. Bundle licences in hardware; charge for SDK support, OTA and fleet services, safety evidence packs.", "Recurring revenue; one price for procurement", "Margin pressure if Qt royalties are absorbed", "Qt partner status opens doors at large OEMs; don't look like leaving Qt."],
   ["AI tooling & developer experience", "Agentic coding, CI, simulation", "Design the SDK for agents first: text UI formats, machine-readable signal model, simulator, CLI, screenshot tests, MCP server on the device.", "Days-to-first-screen becomes a sellable metric", "Generated code needs review against memory, timing, safety; liability", "OEM IT may block cloud AI; local or on-premise models must also work."],
 ];
@@ -322,7 +322,7 @@ const SCEN = [
     "In mid-size OEMs without HMI teams, CODESYS Visualization becomes good enough. The display is bought as a CODESYS target with I/O; WebVisu covers phones and service laptops.",
     ["CODESYS HMI and Visu releases close the UX gap", "More requests for displays that also run machine control", "Combined display-and-controller ECUs win tenders"],
     ["Display computers with more CAN, I/O and a safety PLC co-processor", "SIL2 / PL d certifiable variants"],
-    ["First-class CODESYS device package with Visu, safety and the signal layer", "Visu widget library in maximatecc style", "Agent skills generating CODESYS Visu and IEC 61131-3 from the same spec"]],
+    ["First-class CODESYS device package with Visu, safety and the signal layer", "Visu widget library in A99 style", "Agent skills generating CODESYS Visu and IEC 61131-3 from the same spec"]],
   ["Software-defined machine cockpit", 0.55, "Medium (large OEMs high)", 0.85, "Very high",
     "Large OEMs move to zonal E/E, a central cockpit computer driving several displays, and OTA features. Regulation forces SBOM, secure updates and cyber processes. Display suppliers become cockpit-computer suppliers or commodity glass.",
     ["Top-10 OEMs tender a single cockpit domain controller", "Machinery Regulation and CRA audits start", "Autonomy and operator-assist need camera, radar and AI overlays"],
@@ -333,7 +333,7 @@ const SCEN = [
   const s = content("Scenarios", "Scenario overview: likelihood and impact");
   const lx = M + 4.6, bw = 3.2;
   s.addText("LIKELIHOOD", { x: lx, y: 1.35, w: bw, h: 0.3, fontSize: 11, bold: true, color: C.accent6, margin: 0, charSpacing: 1, isTextBox: true });
-  s.addText("IMPACT ON MAXIMATECC", { x: lx + bw + 0.5, y: 1.35, w: bw, h: 0.3, fontSize: 11, bold: true, color: C.accent6, margin: 0, charSpacing: 1, isTextBox: true });
+  s.addText("IMPACT ON A99", { x: lx + bw + 0.5, y: 1.35, w: bw, h: 0.3, fontSize: 11, bold: true, color: C.accent6, margin: 0, charSpacing: 1, isTextBox: true });
   SCEN.forEach((sc, i) => {
     const y = 1.85 + i * 0.95;
     circleNum(s, i + 1, M, y, 0.6);
@@ -424,14 +424,14 @@ pres.addSection({ title: "Where to play" });
 pres.addSection({ title: "SDK SWOT" });
 {
   const s = pres.addSlide({ masterName: "SECTION_DARK", sectionTitle: "SDK SWOT" });
-  s.addText("SWOT: maximatecc SDK strategy", { placeholder: "title" });
+  s.addText("SWOT: A99 SDK strategy", { placeholder: "title" });
   s.addText("The recommended framework-neutral M1 SDK, four alternative strategies, and moves that combine the quadrants", { placeholder: "body" });
 }
 {
   const s = content("SDK SWOT", "SWOT of the framework-neutral M1 SDK");
   const Q = [
     ["S", "Strengths", C.accent3, ["Installed CCpilot base with Qt and CODESYS already supported", "Data Engine already bridges CODESYS and Qt", "Rugged off-highway hardware know-how, long lifecycles", "i.MX 8 family from 7\" to 12\" shares one software base"]],
-    ["W", "Weaknesses", C.accent4, ["Small software org vs Qt Group, CODESYS, Tier-1s", "Three runtimes multiply validation and support", "No published safety-island / certified rendering offer", "Unclear brand: maximatecc, CrossControl, Scanreco", "Thin cloud, telematics and AI tooling today"]],
+    ["W", "Weaknesses", C.accent4, ["Small software org vs Qt Group, CODESYS, Tier-1s", "Three runtimes multiply validation and support", "No published safety-island / certified rendering offer", "Unclear brand: A99, CrossControl, Scanreco", "Thin cloud, telematics and AI tooling today"]],
     ["O", "Opportunities", C.accent2, ["Qt 5 end of support forces every Qt 5 customer to re-decide", "Mid-size OEMs want SDV-lite without building a platform", "AI-agent workflows reward simulators and signal models", "Machinery Regulation and CRA: compliance as a service", "LVGL partner programmes; NPUs on newer i.MX parts"]],
     ["T", "Threats", C.accent5, ["Large OEMs insource cockpit software (Deere G5 model)", "Free MCU-vendor GUI tools tied to their chips", "CODESYS-first rivals: ifm, Intercontrol, OpenView, TTControl", "Qt moving into tooling and MCUs; could bypass display makers", "Lower-cost Asian displays; AI lowers entry barriers; liability for AI code"]],
   ];
@@ -507,7 +507,7 @@ const SRC = [
   ["CrossControl: CCpilot X900", "https://crosscontrol.com/displays-computers/ccpilot-x900/"],
   ["CrossControl: i.MX 8 displays 7\"–12\"", "https://crosscontrol.com/newsroom/news/imx8-based-displays-from-7-12/"],
   ["CrossControl KB: CODESYS libraries and Data Engine", "https://crosscontrol.zohodesk.eu/portal/en/kb/articles/device-description-files-and-libraries-for-codesys"],
-  ["OEM Off-Highway: maximatecc formed", "https://www.oemoffhighway.com/electronics/press-release/10875917/maxima-technologies-turotest-and-crosscontrol-form-vehicle-electronics-provider-maximatecc"],
+  ["OEM Off-Highway: A99 formed", "https://www.oemoffhighway.com/electronics/press-release/10875917/maxima-technologies-turotest-and-crosscontrol-form-vehicle-electronics-provider-maximatecc"],
   ["KHL: Scanreco to acquire CrossControl", "https://www.khl.com/news/scanreco-set-to-acquire-crosscontrol/8121115.article"],
   ["Qt Group annual report 2025", "https://www.qt.io/hubfs/_website/QtV2/QtV2%20Investors/2025/Qt_AnnualReport_2025-EN.pdf"],
   ["Qt Group Q4 2025 earnings summary", "https://quartr.com/events/qt-group-qtcom-q4-2025_3YEx7gfe"],

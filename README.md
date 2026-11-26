@@ -14,7 +14,7 @@ architecture reviews, strategy decks
 | `firmware/mower-hmi/tools/resource_budget/` | Worst-case graphics + AI resource budget for M1-class displays |
 | `docs/architecture/` | Scag EVZ MowNet architecture, M1 edge-AI architecture, M1 graphics + AI budget (HTML pages, open in a browser) |
 | `docs/strategy/` | M1 graphics framework strategy (HTML and deck), M1 SDK review deck (PPTX + PDF), C1 North Star and family-by-family edge-AI rollout debate |
-| `docs/wainbee/` | Wainbee working-session deck and `maximatecc_for_claude.md` |
+| `docs/wainbee/` | Wainbee working-session deck and `A99_for_claude.md` |
 | `docs/fleet-expansion/` | C1 + C2 fleet review: models, engine families, J1939 signal matrix, expert debate |
 | `docs/cra/` | M1 CRA dual roadmap workbook (XLSX) |
 | `data/mower_j1939_sample/` | Sample of the synthetic dataset: candump logs, 1 Hz signals, labels, `windows.npz` |

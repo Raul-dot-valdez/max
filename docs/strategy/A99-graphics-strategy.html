@@ -98,8 +98,8 @@ code { font: 12.5px var(--mono); }
 <div class="wrap">
   <header>
     <div class="eyebrow">Strategy brief · off-highway cockpit HMI · prepared November 2026</div>
-    <h1>Graphics framework strategy for the maximatecc M1 roadmap</h1>
-    <p class="lede">Where embedded HMI graphics is heading across agriculture, construction, forestry, mining, material handling and specialty vehicles, and what that means for maximatecc display hardware and firmware. Built from public sources, a jobs-to-be-done analysis and a structured debate between cross-functional expert panels.</p>
+    <h1>Graphics framework strategy for the A99 M1 roadmap</h1>
+    <p class="lede">Where embedded HMI graphics is heading across agriculture, construction, forestry, mining, material handling and specialty vehicles, and what that means for A99 display hardware and firmware. Built from public sources, a jobs-to-be-done analysis and a structured debate between cross-functional expert panels.</p>
     <div class="legend" aria-label="Evidence legend">
       <span><span class="tag e">EVIDENCE</span> stated in a cited public source</span>
       <span><span class="tag j">JUDGMENT</span> panel assessment, not measured</span>
@@ -115,7 +115,7 @@ code { font: 12.5px var(--mono); }
 
   <section aria-labelledby="ev-h">
     <h2 id="ev-h">What the evidence shows</h2>
-    <div class="note">No public source gives market share by graphics framework for off-highway displays. The shifts below come from vendor filings, partner programmes and product releases. To get real share numbers, buy a VDC Research or similar report and run a win/loss review of maximatecc's own design-ins.</div>
+    <div class="note">No public source gives market share by graphics framework for off-highway displays. The shifts below come from vendor filings, partner programmes and product releases. To get real share numbers, buy a VDC Research or similar report and run a win/loss review of A99's own design-ins.</div>
     <div class="tablewrap">
       <table>
         <thead><tr><th>Option</th><th>Where it stands in 2026</th><th>Strength off-highway</th><th>Weakness off-highway</th><th>Basis</th></tr></thead>
@@ -158,11 +158,11 @@ code { font: 12.5px var(--mono); }
       </table>
     </div>
 
-    <h3>maximatecc and CCpilot today</h3>
+    <h3>A99 and CCpilot today</h3>
     <ul>
       <li>CCpilot display computers from the CrossControl lineage include the <strong>V1200</strong> (12.1", NXP i.MX 8QuadXPlus, Qt 5.15+ open source with Qt 6 support, CODESYS 3.5), the <strong>X900</strong> (Intel Atom x5-E3940, Qt 5.12+, CODESYS), the i.MX 8 family from 7" to 12", and the 3.5" <strong>VI</strong>. <span class="tag e">EVIDENCE</span></li>
       <li>The <strong>Data Engine</strong> exchanges signals between a CODESYS project and a Qt application. This is already the seed of a framework-neutral signal layer. <span class="tag e">EVIDENCE</span></li>
-      <li>Corporate history: Maxima Technologies, Turotest and CrossControl merged as maximatecc in 2012. CrossControl later became part of the Scanreco group; public dates conflict. How the maximatecc brand and the CCpilot line relate today is unclear from public sources. <span class="tag r">VERIFY</span></li>
+      <li>Corporate history: Maxima Technologies, Turotest and CrossControl merged as A99 in 2012. CrossControl later became part of the Scanreco group; public dates conflict. How the A99 brand and the CCpilot line relate today is unclear from public sources. <span class="tag r">VERIFY</span></li>
       <li>maximatecc.com could not be read from this session (network access was refused), so current models and supported frameworks come from crosscontrol.com and reseller pages. I found no public reference to "M1", so this brief treats it as your internal roadmap name. <span class="tag r">VERIFY</span></li>
     </ul>
   </section>
@@ -182,7 +182,7 @@ code { font: 12.5px var(--mono); }
 
   <section aria-labelledby="jtbd-h">
     <h2 id="jtbd-h">Jobs to be done</h2>
-    <p class="lede">Each job is written as "when … I want … so I can …". The innovation column is where maximatecc can win, regardless of which framework the customer prefers.</p>
+    <p class="lede">Each job is written as "when … I want … so I can …". The innovation column is where A99 can win, regardless of which framework the customer prefers.</p>
     <div class="tablewrap">
       <table>
         <thead><tr><th>Who</th><th>Job</th><th>Pain today</th><th>Innovation that does the job</th></tr></thead>
@@ -238,7 +238,7 @@ code { font: 12.5px var(--mono); }
         <div class="who">SoC/MCU selection, thermal, supply chain</div>
         <p>Offer three tiers on one SDK: an MCU smart display, a Linux display with an NPU for edge AI, and a cockpit computer with GPU and safety domain. Keep two silicon sources per tier where possible.</p>
         <div class="pc"><div class="pro"><b>Pro</b>Covers $150 to $3,000 price points with shared software.</div><div class="con"><b>Con</b>MCU vendors push their own free GUI tools, which pulls customers into single-vendor lock-in.</div></div>
-        <p class="dissent">Dissent: an MCU tier competes with cheap commodity displays where maximatecc has little edge.</p>
+        <p class="dissent">Dissent: an MCU tier competes with cheap commodity displays where A99 has little edge.</p>
       </div>
       <div class="cell">
         <h3>Business, licensing and channel</h3>
@@ -266,7 +266,7 @@ code { font: 12.5px var(--mono); }
         <div class="num">1</div>
         <h3>Polyglot runtimes, one platform</h3>
         <div class="meter">Likelihood · high<div class="bar"><i style="width:80%"></i></div></div>
-        <div class="meter">Impact on maximatecc · high<div class="bar"><i style="width:75%"></i></div></div>
+        <div class="meter">Impact on A99 · high<div class="bar"><i style="width:75%"></i></div></div>
         <span class="tag j">JUDGMENT</span>
       </aside>
       <div>
@@ -284,7 +284,7 @@ code { font: 12.5px var(--mono); }
         <div class="num">2</div>
         <h3>Open source takes the mid-tier</h3>
         <div class="meter">Likelihood · medium-high<div class="bar"><i style="width:65%"></i></div></div>
-        <div class="meter">Impact on maximatecc · high<div class="bar"><i style="width:70%"></i></div></div>
+        <div class="meter">Impact on A99 · high<div class="bar"><i style="width:70%"></i></div></div>
         <span class="tag j">JUDGMENT</span>
       </aside>
       <div>
@@ -302,7 +302,7 @@ code { font: 12.5px var(--mono); }
         <div class="num">3</div>
         <h3>AI-native HMI engineering</h3>
         <div class="meter">Likelihood · high<div class="bar"><i style="width:75%"></i></div></div>
-        <div class="meter">Impact on maximatecc · very high<div class="bar"><i style="width:90%"></i></div></div>
+        <div class="meter">Impact on A99 · very high<div class="bar"><i style="width:90%"></i></div></div>
         <span class="tag j">JUDGMENT</span>
       </aside>
       <div>
@@ -320,7 +320,7 @@ code { font: 12.5px var(--mono); }
         <div class="num">4</div>
         <h3>Controls engineers own the screen</h3>
         <div class="meter">Likelihood · medium<div class="bar"><i style="width:50%"></i></div></div>
-        <div class="meter">Impact on maximatecc · medium<div class="bar"><i style="width:55%"></i></div></div>
+        <div class="meter">Impact on A99 · medium<div class="bar"><i style="width:55%"></i></div></div>
         <span class="tag j">JUDGMENT</span>
       </aside>
       <div>
@@ -328,7 +328,7 @@ code { font: 12.5px var(--mono); }
         <div class="cols">
           <div><h4>Signposts</h4><ul><li>CODESYS HMI and Visu releases close the UX gap</li><li>More requests for displays that also run machine control</li><li>Combined display-and-controller ECUs win tenders</li></ul></div>
           <div><h4>Hardware</h4><ul><li>Display computers with more CAN, I/O and a safety PLC co-processor</li><li>SIL2/PL d certifiable variants</li></ul></div>
-          <div><h4>Firmware and M1 moves</h4><ul><li>First-class CODESYS device package with Visu, safety and the signal layer</li><li>Visu widget library in maximatecc style</li><li>Agent skills that generate CODESYS Visu and IEC 61131-3 from the same spec</li></ul></div>
+          <div><h4>Firmware and M1 moves</h4><ul><li>First-class CODESYS device package with Visu, safety and the signal layer</li><li>Visu widget library in A99 style</li><li>Agent skills that generate CODESYS Visu and IEC 61131-3 from the same spec</li></ul></div>
         </div>
       </div>
     </article>
@@ -338,7 +338,7 @@ code { font: 12.5px var(--mono); }
         <div class="num">5</div>
         <h3>Software-defined machine cockpit</h3>
         <div class="meter">Likelihood · medium (large OEMs high)<div class="bar"><i style="width:55%"></i></div></div>
-        <div class="meter">Impact on maximatecc · very high<div class="bar"><i style="width:85%"></i></div></div>
+        <div class="meter">Impact on A99 · very high<div class="bar"><i style="width:85%"></i></div></div>
         <span class="tag j">JUDGMENT</span>
       </aside>
       <div>
@@ -416,8 +416,8 @@ code { font: 12.5px var(--mono); }
   </section>
 
   <section aria-labelledby="swot-h">
-    <h2 id="swot-h">SWOT: maximatecc SDK strategy</h2>
-    <p class="lede">The SWOT covers the recommended framework-neutral M1 SDK. A comparison of the four SDK strategies maximatecc could pick follows it, then the strategies that combine the SWOT quadrants.</p>
+    <h2 id="swot-h">SWOT: A99 SDK strategy</h2>
+    <p class="lede">The SWOT covers the recommended framework-neutral M1 SDK. A comparison of the four SDK strategies A99 could pick follows it, then the strategies that combine the SWOT quadrants.</p>
     <div class="swot">
       <div class="cell s"><h3>Strengths</h3><ul>
         <li>Installed CCpilot base with Qt and CODESYS already supported</li>
@@ -429,7 +429,7 @@ code { font: 12.5px var(--mono); }
         <li>Small software organisation compared with Qt Group, CODESYS or large Tier-1s</li>
         <li>Three runtimes multiply validation, support and documentation</li>
         <li>No published safety-island or certified rendering offer yet</li>
-        <li>Unclear public brand: maximatecc, CrossControl and Scanreco <span class="tag r">VERIFY</span></li>
+        <li>Unclear public brand: A99, CrossControl and Scanreco <span class="tag r">VERIFY</span></li>
         <li>Thin cloud, telematics and AI tooling today</li>
       </ul></div>
       <div class="cell o"><h3>Opportunities</h3><ul>
@@ -488,7 +488,7 @@ code { font: 12.5px var(--mono); }
     <ul class="sources">
       <li><a href="https://crosscontrol.com/displays-computers/ccpilot-v1200/" target="_blank" rel="noopener">CrossControl: CCpilot V1200</a> · <a href="https://crosscontrol.com/displays-computers/ccpilot-x900/" target="_blank" rel="noopener">CCpilot X900</a> · <a href="https://crosscontrol.com/newsroom/news/imx8-based-displays-from-7-12/" target="_blank" rel="noopener">i.MX 8 displays 7"–12"</a> · <a href="https://crosscontrol.com/displays-computers/ccpilot-vi/" target="_blank" rel="noopener">CCpilot VI</a></li>
       <li><a href="https://crosscontrol.zohodesk.eu/portal/en/kb/articles/device-description-files-and-libraries-for-codesys" target="_blank" rel="noopener">CrossControl KB: CODESYS libraries and Data Engine</a></li>
-      <li><a href="https://www.oemoffhighway.com/electronics/press-release/10875917/maxima-technologies-turotest-and-crosscontrol-form-vehicle-electronics-provider-maximatecc" target="_blank" rel="noopener">OEM Off-Highway: maximatecc formed</a> · <a href="https://www.khl.com/news/scanreco-set-to-acquire-crosscontrol/8121115.article" target="_blank" rel="noopener">KHL: Scanreco to acquire CrossControl</a></li>
+      <li><a href="https://www.oemoffhighway.com/electronics/press-release/10875917/maxima-technologies-turotest-and-crosscontrol-form-vehicle-electronics-provider-maximatecc" target="_blank" rel="noopener">OEM Off-Highway: A99 formed</a> · <a href="https://www.khl.com/news/scanreco-set-to-acquire-crosscontrol/8121115.article" target="_blank" rel="noopener">KHL: Scanreco to acquire CrossControl</a></li>
       <li><a href="https://www.qt.io/hubfs/_website/QtV2/QtV2%20Investors/2025/Qt_AnnualReport_2025-EN.pdf?hsLang=en" target="_blank" rel="noopener">Qt Group annual report 2025</a> · <a href="https://quartr.com/events/qt-group-qtcom-q4-2025_3YEx7gfe" target="_blank" rel="noopener">Qt Q4 2025 summary</a> · <a href="https://www.qt.io/press/qt-group-collaborates-with-infineon-to-build-ai-powered-consumer-devices" target="_blank" rel="noopener">Qt + Infineon</a></li>
       <li><a href="https://www.qt.io/blog/ai-assisted-design-in-qt-design-studio" target="_blank" rel="noopener">Qt Design Studio AI assistant</a> · <a href="https://doc.qt.io/qtdesignstudio/figma-mcp-tutorial.html" target="_blank" rel="noopener">Figma MCP tutorial</a> · <a href="https://www.qt.io/development/tools/ai-powered-development-tools" target="_blank" rel="noopener">Qt AI tools</a></li>
       <li><a href="https://www.qt.io/functional-safety-and-qt" target="_blank" rel="noopener">Qt functional safety</a> · <a href="https://qt.io/blog/certified-qt-safe-renderer-2.0-is-released" target="_blank" rel="noopener">Qt Safe Renderer 2.0</a></li>

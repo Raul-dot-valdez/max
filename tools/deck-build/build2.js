@@ -19,7 +19,7 @@ const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.33 x 7.5
 pres.title = "M1 SDK Review";
 pres.author = "AI Terra";
-pres.subject = "maximatecc M1 SDK deficiencies and opportunities";
+pres.subject = "A99 M1 SDK deficiencies and opportunities";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 const C = pres.SchemeColor;
 
@@ -146,7 +146,7 @@ pres.addSection({ title: "Opening" });
 {
   const s = pres.addSlide({ masterName: "TITLE_DARK", sectionTitle: "Opening" });
   s.addText("M1 SDK review: gaps, opportunities and the path to growth", { placeholder: "title" });
-  s.addText("A senior expert panel debates maximatecc's M1 display SDKs, benchmarks them against CrossControl CCpilot, and proposes an SDK 2.0 for GUI firmware teams and an investment case for the CTO. Based on maximatecc.com as read on 24 November 2026.", { placeholder: "body" });
+  s.addText("A senior expert panel debates A99's M1 display SDKs, benchmarks them against CrossControl CCpilot, and proposes an SDK 2.0 for GUI firmware teams and an investment case for the CTO. Based on maximatecc.com as read on 24 November 2026.", { placeholder: "body" });
   s.addNotes("Labels used throughout: EVIDENCE = stated on maximatecc.com, crosscontrol.com or another cited source; JUDGMENT = panel assessment; VERIFY = check before deciding.");
 }
 {
@@ -155,7 +155,7 @@ pres.addSection({ title: "Opening" });
   card(s, M + 4.143, 1.35, 3.843, 3.85, "Five gaps hold back growth", "Two incompatible GUI builds, a locked STM32 hardware layer, custom CAN only through sales, no simulator or CI, and no secure field update. Each slows customers and caps scale.", { kicker: "WHAT HOLDS IT BACK", size: 14, headH: 0.45 });
   card(s, M + 8.287, 1.35, 3.843, 3.85, "M1 SDK 2.0", "One signal model and data layer across the range, a GUI bridge so TouchGFX, Qt for MCUs and LVGL share app code, self-service J1939, a host simulator and CLI built for AI agents, and secure updates over USB and Bluetooth.", { kicker: "WHAT WE PROPOSE", size: 14, headH: 0.45, fill: "FFF1E6" });
   s.addText([{ text: "Correction to the earlier strategy deck: ", options: { bold: true, color: C.accent5 } },
-    { text: "M1 is maximatecc's own MCU display line (130, 200, 280, M1), part of CentroMotion. CrossControl CCpilot is a separate company's Linux display range and is used here only as a benchmark.", options: { color: C.text2 } }],
+    { text: "M1 is A99's own MCU display line (130, 200, 280, M1), part of CentroMotion. CrossControl CCpilot is a separate company's Linux display range and is used here only as a benchmark.", options: { color: C.text2 } }],
     { x: M, y: 5.45, w: CW, h: 0.95, fontSize: 14, margin: 12, fill: { color: C.background2 }, valign: "middle", isTextBox: true });
 }
 {
@@ -201,7 +201,7 @@ divider("Current state", "Where the M1 SDKs stand today", "Facts from maximatecc
     ["M1 STM SDK (ST-SDK)", "STM32CubeIDE project with TouchGFX GUI, FreeRTOS, CAN stack, data layer", "—", "—", { text: "v1.0 (2025)", bold: true }, { text: "Not documented", color: C.accent5 }],
     ["M1 Qt SDK (Qt-SDK)", "Qt for MCUs 2.11 project; needs a commercial Qt licence", "—", "—", { text: "v1.0 (2025)", bold: true }, { text: "\"Qt for MCU compatibility\" claimed, no package", color: C.accent5 }],
     ["M1 Design Studio", "Listed on downloads pages", "—", "—", "Contact sales", "Contact sales"],
-    ["M1 Specialized", "Custom interface development by maximatecc engineers", "Quote", "Quote", "Quote", "Quote"],
+    ["M1 Specialized", "Custom interface development by A99 engineers", "Quote", "Quote", "Quote", "Quote"],
   ], [2.4, 4.3, 1.1, 1.1, 1.4, 1.83], 1.4, { fontSize: 13 });
   tag(s, "EVIDENCE", 11.58, 1.03);
   s.addText("Implication: a customer who outgrows the configurator on a M1, the flagship, has no documented SDK to move to.",
@@ -251,7 +251,7 @@ divider("Current state", "Where the M1 SDKs stand today", "Facts from maximatecc
 divider("Benchmark", "Benchmark: M1 SDKs vs CrossControl CCpilot", "CCpilot is a separate company's Linux display range (7\"–12\"). It shows what a mature display SDK offers, and where the white space is.");
 {
   const s = content("Benchmark", "Side by side 1/2: platform and runtime");
-  table(s, ["Dimension", "maximatecc M1 SDKs", "CrossControl CCpilot SDK"], [
+  table(s, ["Dimension", "A99 M1 SDKs", "CrossControl CCpilot SDK"], [
     ["Hardware class", "MCU instrument displays, 1.36\"–4.3\" (Cortex-M0/M3/M7)", "Linux display computers, 7\"–12\" (NXP i.MX 8; Intel on X900)"],
     ["Operating system", "FreeRTOS (280, M1); bare firmware on 130/200", "CCLinux, Yocto-based; LinX Core manages system integrity and settings"],
     ["GUI options", "TouchGFX (ST-SDK) or Qt for MCUs (Qt-SDK), separate builds; configurator", "Qt 6 (CCLinux 5.0 with Qt 6.8.3; 5.1 with Qt 6.12.0), UX Designer, CODESYS, HTML5"],
@@ -264,7 +264,7 @@ divider("Benchmark", "Benchmark: M1 SDKs vs CrossControl CCpilot", "CCpilot is a
 }
 {
   const s = content("Benchmark", "Side by side 2/2: developer experience and lifecycle");
-  table(s, ["Dimension", "maximatecc M1 SDKs", "CrossControl CCpilot SDK"], [
+  table(s, ["Dimension", "A99 M1 SDKs", "CrossControl CCpilot SDK"], [
     ["Host and build", "Windows install steps; STM32CubeIDE; two pinned compilers", "Linux VM or native; Yocto SDK installers; Docker images (e.g. crosscontrol/v1x00-sdk:4.2.0.0_qt-6.8.3); Qt Creator integration"],
     ["Headless / CI build", "Not documented", "Yes: Docker command-line build documented"],
     ["Simulator", "Not stated", "Not confirmed in sources read"],
@@ -315,7 +315,7 @@ debate("Deficiencies", "Debate A: one GUI path or two?", "Should M1 keep separat
    ["PRODUCT MANAGER", "Two paths sell", "TouchGFX is free on STM32 and wins price-led deals. Qt for MCUs wins teams that already use QML and Qt Design Studio. Dropping either loses customers."],
    ["DISSENT · EMBEDDED ARCHITECT", "Add LVGL as the neutral path", "TouchGFX ties us to ST; Qt for MCUs adds a licence. LVGL is MIT-licensed, runs on monochrome 130/200 screens and colour 280/430, and works on any future silicon."]],
   "One data layer plus GUI bridge; TouchGFX and Qt for MCUs as supported front-ends; prototype LVGL on the M1 and the monochrome models before committing.",
-  "Customers keep their GUI tool; maximatecc maintains one application layer instead of two.");
+  "Customers keep their GUI tool; A99 maintains one application layer instead of two.");
 debate("Deficiencies", "Debate B: silicon lock-in and the MCAL", "Is a CubeMX-generated MCAL that customers must not touch acceptable for a 10-year product line?",
   [["EMBEDDED ARCHITECT", "Add a platform layer now", "Wrap the MCAL behind a small platform API (CAN, UART, I2C, flash, display, GPIO). Everything above it stops including ST headers, so a second MCU vendor becomes a port, not a rewrite."],
    ["CTO OFFICE", "Supply risk is real", "The 2021–2023 chip shortage hit single-source display makers hardest. A second-source plan for the M7 tier protects revenue and OEM confidence."],
@@ -370,7 +370,7 @@ divider("Evolution", "Evolution: M1 SDK 2.0", "Target architecture, product tier
     ["No-code", "130 · 200 · all", "Configurator, extended with J1939 signal picker and templates", C.accent6],
     ["SDK Lite", "280 · 430", "Signal model, data layer, GUI bridge, simulator; TouchGFX or LVGL front-end; free download", C.accent3],
     ["SDK Pro", "280 · M1 · new 5\"–7\"", "Adds Qt for MCUs licence bundle, secure update, Bluetooth fleet sync, agent skills, priority support", C.accent2],
-    ["Specialized", "Any", "maximatecc engineers: custom UI, CAN validation, diagnostics, certification support", C.text1],
+    ["Specialized", "Any", "A99 engineers: custom UI, CAN validation, diagnostics, certification support", C.text1],
   ];
   T.forEach((t, i) => {
     const y = 1.4 + i * 1.28, x = M + i * 0.35;
@@ -427,7 +427,7 @@ divider("Evolution", "Evolution: M1 SDK 2.0", "Target architecture, product tier
   ];
   const cw = (CW - 0.3) / 2;
   L.forEach((l, i) => card(s, M + (i % 2) * (cw + 0.3), 1.4 + Math.floor(i / 2) * 2.25, cw, 2.05, l[0], l[1], { size: 15, headSize: 18, headH: 0.45, fill: i === 0 ? "FFF1E6" : undefined }));
-  s.addText("No revenue figures are given: they need maximatecc's own design-in, pricing and pipeline data. The first 90 days should produce that model.", { x: M, y: 6.0, w: CW, h: 0.6, fontSize: 13, italic: true, color: C.accent6, margin: 0, isTextBox: true });
+  s.addText("No revenue figures are given: they need A99's own design-in, pricing and pipeline data. The first 90 days should produce that model.", { x: M, y: 6.0, w: CW, h: 0.6, fontSize: 13, italic: true, color: C.accent6, margin: 0, isTextBox: true });
   tag(s, "JUDGMENT", 11.58, 1.03);
 }
 {
@@ -483,7 +483,7 @@ if (WB) {
     card(s, M + 6.2, 1.4, 5.9, 3.0, "What they told us", ["They like the M1 and 280", "Their engineers want to work more with Claude Code", "Assumed: they build screens for several OEM customers, so faster development multiplies across projects"], { kicker: "FROM THE ACCOUNT · VERIFY THE ASSUMPTION", kickerColor: C.accent4, size: 13 });
     s.addShape(pres.shapes.RECTANGLE, { x: M, y: 4.65, w: CW, h: 1.9, fill: { color: "FFF1E6" }, line: { color: HEX.rule, width: 0.75 } });
     s.addText([{ text: "WHY IT MATTERS   ", options: { bold: true, color: C.accent2, fontSize: 12 } },
-      { text: "Wainbee can sell CrossControl as well as M1. At the MCU display tier, M1 wins if it is the easiest display to build with an AI agent. A good pilot gives maximatecc a reference customer, real data for SDK 2.0 and a template for other integrators.", options: { fontSize: 15, color: C.text1 } }],
+      { text: "Wainbee can sell CrossControl as well as M1. At the MCU display tier, M1 wins if it is the easiest display to build with an AI agent. A good pilot gives A99 a reference customer, real data for SDK 2.0 and a template for other integrators.", options: { fontSize: 15, color: C.text1 } }],
       { x: M + 0.25, y: 4.7, w: CW - 0.5, h: 1.8, margin: 0, valign: "middle", isTextBox: true });
   }
   {
@@ -493,7 +493,7 @@ if (WB) {
     card(s, M + 4.143, 1.4, 3.843, 4.6, "Within 30 days", ["Pilot running on their bench with the agent pack", "First screen built from their signal list", "Two feedback sessions logged"], { kicker: "AFTER", size: 14 });
     card(s, M + 8.287, 1.4, 3.843, 4.6, "Measured", ["Hours from signal list to first screen", "Hours to add a proprietary PGN", "Defects caught by tests before hardware", "Wainbee decision: roll out to a customer project"], { kicker: "SUCCESS METRICS", size: 14, fill: "FFF1E6" });
   }
-  debate(WSEC, "Panel debate: what to show Wainbee", "Which slides create the most value for Wainbee and maximatecc, and what stays internal?",
+  debate(WSEC, "Panel debate: what to show Wainbee", "Which slides create the most value for Wainbee and A99, and what stays internal?",
     [["AI TOOLING LEAD", "Lead with a live demo", "Ten minutes of Claude Code adding a real J1939 signal to a 280 screen beats any slide. Bring a prepared repo, a recorded fallback and a simulated CAN log so it works without a machine."],
      ["PRODUCT MANAGER", "Close on a pilot", "Show today's SDK honestly, then a concrete six-week pilot with named deliverables. The goal is a signed scope, not applause."],
      ["DISSENT · SAFETY AND CYBER LEAD", "Mind what we promise", "Keep the deficiency scorecard and competitor benchmark internal. Say clearly that agent-written code is for non-safety screens, reviewed by people, and that roadmap items are plans, not commitments."]],
@@ -503,7 +503,7 @@ if (WB) {
     const s = content(WSEC, "Slide selection: value against risk");
     mark(s, "internal");
     const G = C.accent3, A = C.accent4, R = C.accent5;
-    table(s, ["Candidate slide", "Value to Wainbee", "Value to maximatecc", "Risk", "Decision"], [
+    table(s, ["Candidate slide", "Value to Wainbee", "Value to A99", "Risk", "Decision"], [
       ["Today's M1 SDK (facts)", "High", "Medium", "Low", { text: "Show", bold: true, color: G }],
       ["Claude Code workflow on M1", "High", "High", "Low", { text: "Show", bold: true, color: G }],
       ["Example agent session (code)", "High", "High", "Low", { text: "Show + live demo", bold: true, color: G }],
@@ -600,7 +600,7 @@ if (WB) {
 {
   const s = content(WSEC, "Proposed joint pilot: six weeks");
   mark(s, "show");
-  card(s, M, 1.4, 3.843, 4.6, "maximatecc provides", ["M1 agent pack: project guide (CLAUDE.md), data-layer rules, memory budget checks", "Signal generator for J1939 and DBC", "PC test harness for the 280", "Early access to the M1 SDK", "Weekly engineering check-in"], { kicker: "MAXIMATECC", size: 14, fill: "FFF1E6" });
+  card(s, M, 1.4, 3.843, 4.6, "A99 provides", ["M1 agent pack: project guide (CLAUDE.md), data-layer rules, memory budget checks", "Signal generator for J1939 and DBC", "PC test harness for the 280", "Early access to the M1 SDK", "Weekly engineering check-in"], { kicker: "A99", size: 14, fill: "FFF1E6" });
   card(s, M + 4.143, 1.4, 3.843, 4.6, "Wainbee provides", ["One real application on a 280 or 430", "Its signal list or DBC file", "Two engineers using Claude Code", "Bench hardware and CAN access", "Honest feedback after each sprint"], { kicker: "WAINBEE", size: 14 });
   card(s, M + 8.287, 1.4, 3.843, 4.6, "We measure", ["Hours from signal list to first screen", "Hours to add a proprietary PGN", "Defects caught on the PC before hardware", "Go / no-go for a customer project in week 6"], { kicker: "SUCCESS", size: 14 });
 }
@@ -622,7 +622,7 @@ if (WB) {
   mark(s, "show");
   const N = [
     ["This meeting", "Agree the pilot application, the two engineers and the bench setup"],
-    ["Week 1", "maximatecc delivers the agent pack and PC test harness; kick-off session"],
+    ["Week 1", "A99 delivers the agent pack and PC test harness; kick-off session"],
     ["Weeks 2–5", "Wainbee builds screens with Claude Code; weekly check-ins; metrics logged"],
     ["Week 6", "Joint review of results; decision on a customer project and M1 SDK early adoption"],
   ];
@@ -651,12 +651,12 @@ if (!WB) {
 // ============ Appendix ============
 divider("Appendix", "Appendix", "Open questions and sources");
 {
-  const s = content("Appendix", "Open questions to verify with maximatecc");
+  const s = content("Appendix", "Open questions to verify with A99");
   table(s, ["Item", "What the sources say", "Why it matters"], [
     ["M1 280 CAN bit rate", "Product page says \"5Mbps\"; J1939 runs at 250 or 500 kbit/s", "Likely a typo; confusing for buyers"],
     ["M1 output current", "Spec: high-side 0.5 A; FAQ: 350 mA", "Load design on the customer side"],
     ["M1 processor", "\"Arm Cortex-M7\"; part number not stated", "Decides whether the 280 SDK ports directly"],
-    ["M1 Design Studio", "\"Contact maximatecc\" on downloads pages", "May already cover part of the gap"],
+    ["M1 Design Studio", "\"Contact A99\" on downloads pages", "May already cover part of the gap"],
     ["280 SDK pages not read", "Project start (c2), platform services (c4), release notes", "May document flashing and task details"],
     ["CCpilot Qt 6.12.0", "From a search summary of the V1290 page", "Benchmark accuracy"],
     ["EU CRA dates", "Main obligations December 2027", "Timing of the secure-update work"],
@@ -664,9 +664,9 @@ divider("Appendix", "Appendix", "Open questions and sources");
   tag(s, "VERIFY", 11.58, 1.03);
 }
 const SRC2 = [
-  ["maximatecc home", "https://www.maximatecc.com/"],
+  ["A99 home", "https://www.maximatecc.com/"],
   ["M1 software solutions", "https://www.maximatecc.com/maxai-software-solutions/"],
-  ["maximatecc downloads", "https://www.maximatecc.com/downloads/"],
+  ["A99 downloads", "https://www.maximatecc.com/downloads/"],
   ["M1 CAN bus displays", "https://www.maximatecc.com/products/maxai-can-bus-displays/"],
   ["M1", "https://www.maximatecc.com/maxai-430/"],
   ["M1 280", "https://www.maximatecc.com/maxai-280/"],
@@ -681,8 +681,8 @@ const SRC2 = [
   ["280 SDK: architecture", "https://maximatecc.com/280-instrument-displays-SDK-manual/content/c3_280_sdk_architecture.html"],
   ["280 SDK: GUI design", "https://maximatecc.com/280-instrument-displays-SDK-manual/content/c5_280_sdk_GUI_design.html"],
   ["280 SDK: CAN communication", "https://maximatecc.com/280-instrument-displays-SDK-manual/content/c6_280_sdk_CAN_comm.html"],
-  ["maximatecc knowledge center", "https://www.maximatecc.com/knowledge-center/"],
-  ["About maximatecc", "https://www.maximatecc.com/about-maximatecc/"],
+  ["A99 knowledge center", "https://www.maximatecc.com/knowledge-center/"],
+  ["About A99", "https://www.maximatecc.com/about-maximatecc/"],
   ["CCpilot V1290", "https://crosscontrol.com/displays-computers/ccpilot-v1290/"],
   ["CCpilot V710", "https://crosscontrol.com/displays-computers/ccpilot-v710/"],
   ["CCpilot V1200", "https://crosscontrol.com/displays-computers/ccpilot-v1200/"],

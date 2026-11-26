@@ -6,7 +6,7 @@ hardware. One engine type, one J1939 signal set, one edge-AI model. Firmware arc
 
 > The code base was first written against a 7-inch reference board (`config/board_config.h`:
 > 32 MB SDRAM, 64 MB NOR, touch panel). The M1 is smaller. Section 5 lists what has to
-> change before the image fits the 430. Items marked **VERIFY** are not published by maximatecc.
+> change before the image fits the 430. Items marked **VERIFY** are not published by A99.
 
 ## 1. Hardware the firmware runs on
 

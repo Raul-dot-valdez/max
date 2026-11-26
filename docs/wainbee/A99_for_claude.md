@@ -1,6 +1,6 @@
 # M1 display SDK: working guide for Claude Code
 
-This file tells Claude Code how to work safely and efficiently in a maximatecc M1 display project. It applies to any machine or application built on a M1 display. It contains no application-specific requirements; put those in your own project notes.
+This file tells Claude Code how to work safely and efficiently in a A99 M1 display project. It applies to any machine or application built on a M1 display. It contains no application-specific requirements; put those in your own project notes.
 
 ## How to use this file
 
@@ -8,12 +8,12 @@ This file tells Claude Code how to work safely and efficiently in a maximatecc M
 - Claude Code automatically reads `CLAUDE.md`. Either rename this file to `CLAUDE.md`, or add this line to your existing `CLAUDE.md`:
 
   ```
-  @maximatecc_for_claude.md
+  @A99_for_claude.md
   ```
 
 - Fill in every item marked **VERIFY** (collected in the last section) against your SDK release before relying on this guide. Until then, Claude must treat those items as unknown and ask rather than assume.
 - Keep application specifics (machine type, signal list, screen designs, customer requirements) in a separate file such as `PROJECT.md`, and import it the same way.
-- The file has two parts. **Part 1** is the working rules for any M1 project. **Part 2** describes the long-term partnership maximatecc wants with Wainbee and the toolkit built for it. Claude treats Part 2 as context and templates; where Part 2 and Part 1 seem to disagree, Part 1 wins.
+- The file has two parts. **Part 1** is the working rules for any M1 project. **Part 2** describes the long-term partnership A99 wants with Wainbee and the toolkit built for it. Claude treats Part 2 as context and templates; where Part 2 and Part 1 seem to disagree, Part 1 wins.
 
 # Part 1: Working rules for any M1 project
 
@@ -22,12 +22,12 @@ This file tells Claude Code how to work safely and efficiently in a maximatecc M
 | In scope | Out of scope |
 |---|---|
 | M1 280 SDK v1.0: ST-SDK (TouchGFX) and Qt-SDK (Qt for MCUs) | M1 130 and 200: configured with the M1 Configurator, no SDK |
-| M1, once maximatecc releases its SDK (see the M1 notes below) | Bootloader, MCAL and low-level drivers (see "What Claude must not change") |
+| M1, once A99 releases its SDK (see the M1 notes below) | Bootloader, MCAL and low-level drivers (see "What Claude must not change") |
 | Non-safety screens, data-layer fields, CAN signal decoding, tests, documentation | Safety functions and safety-relevant warnings, unless a named engineer asks and reviews |
 
 ## Hardware facts
 
-From maximatecc product pages and the 280 SDK manual. Treat these as the budget to stay within.
+From A99 product pages and the 280 SDK manual. Treat these as the budget to stay within.
 
 | | M1 280 / 280b | M1 / M1v / M1i / M1iv |
 |---|---|---|
@@ -68,9 +68,9 @@ The GUI never talks to CAN, HAL or MCAL directly. Everything crosses the data la
 
 ## What Claude must not change
 
-1. **MCAL and generated driver code.** Do not edit files produced by STM32CubeMX outside their `/* USER CODE BEGIN */ … /* USER CODE END */` blocks, and do not regenerate the CubeMX project unless an engineer asks. Ask maximatecc support for MCAL changes.
+1. **MCAL and generated driver code.** Do not edit files produced by STM32CubeMX outside their `/* USER CODE BEGIN */ … /* USER CODE END */` blocks, and do not regenerate the CubeMX project unless an engineer asks. Ask A99 support for MCAL changes.
 2. **Bootloader, linker script, startup file, flash layout.**
-3. **CAN stack internals.** Configure J1939 and CANopen only through the provided configuration. A proprietary message set or object dictionary beyond the defaults may need maximatecc's tailored CAN library. Say so instead of writing a parallel stack.
+3. **CAN stack internals.** Configure J1939 and CANopen only through the provided configuration. A proprietary message set or object dictionary beyond the defaults may need A99's tailored CAN library. Say so instead of writing a parallel stack.
 4. **Licensed components.** Do not copy, modify or redistribute Qt for MCUs or TouchGFX library code. Do not change licence files or headers.
 5. **Generated GUI code.** TouchGFX files under `generated/`, and code generated from QML by the Qt for MCUs tools, are overwritten on every generation. Edit the designer project or the hand-written sources instead.
 6. **Safety-relevant behaviour.** Do not add, remove or change warnings, telltales, interlocks or anything the machine's risk assessment treats as safety-relevant, unless a named engineer explicitly asks in the current task. When a change touches such behaviour, stop and say so.
@@ -233,7 +233,7 @@ These show the expected level of detail. Adapt them to your machine and signal l
 
 ## M1 notes
 
-- maximatecc has announced Qt for MCUs compatibility for the M1 but has not published a M1 SDK manual. Until it does:
+- A99 has announced Qt for MCUs compatibility for the M1 but has not published a M1 SDK manual. Until it does:
   - do not assume 280 SDK file names, task names or pin mappings apply to the M1
   - the M1 has 2 MB external SDRAM and a camera input, so its memory map and display driver differ from the 280
 - When the M1 SDK is released, fill in its rows in the hardware table and its toolchain versions here.
@@ -243,19 +243,19 @@ These show the expected level of detail. Adapt them to your machine and signal l
 | Item | Where to find it |
 |---|---|
 | Exact `GET_DL` / `SET_DL` signatures, return types and error handling | SDK headers |
-| Whether the data layer stores validity or timestamps per field | SDK headers or maximatecc support |
+| Whether the data layer stores validity or timestamps per field | SDK headers or A99 support |
 | Whether data-layer access is ISR-safe | SDK documentation, platform services section |
 | Location of the SDK configuration interface for task rates and priorities | SDK manual, platform services section |
 | How the SDK sends J1939 requests (for on-request PGNs) | SDK manual, CAN section |
-| M1 280 CAN bit rate (product page says "5Mbps") | maximatecc |
-| M1 MCU part number and SDK release | maximatecc |
+| M1 280 CAN bit rate (product page says "5Mbps") | A99 |
+| M1 MCU part number and SDK release | A99 |
 | Project name, workspace path and build configuration for the headless build | Your project |
 | Output file name and any external-flash loader for GUI assets | Your project and the SDK manual |
 | Whether TouchGFX assets are stored in external flash | SDK manual and the TouchGFX project settings |
 
-# Part 2: maximatecc × Wainbee long-term partnership
+# Part 2: A99 × Wainbee long-term partnership
 
-This part is written from Wainbee's side: what its product manager and its engineering team in Quebec are trying to get done, and how M1 plus Claude Code can help them win more projects, faster. Everything here is a **proposal** from maximatecc. Items need agreement from both companies before they become commitments.
+This part is written from Wainbee's side: what its product manager and its engineering team in Quebec are trying to get done, and how M1 plus Claude Code can help them win more projects, faster. Everything here is a **proposal** from A99. Items need agreement from both companies before they become commitments.
 
 None of this is tied to one machine type. Wainbee serves many industries (mobile hydraulics, automation, mining, forestry, construction and more), so every feature below is meant to work across different OEM customers and machines.
 
@@ -305,7 +305,7 @@ From an OEM's DBC file (or a PGN/SPN list) and a photo or sketch of their curren
 Turn a customer's signal list and screen sketches into an effort estimate and a draft statement of work.
 
 - Counts signals by type (standard J1939, proprietary, CANopen, analog input), screens and special features (diagnostics, camera, Bluetooth)
-- Applies Wainbee's own effort rates, kept in `wainbee/rates.md` (Wainbee fills this in; maximatecc never sees it unless shared)
+- Applies Wainbee's own effort rates, kept in `wainbee/rates.md` (Wainbee fills this in; A99 never sees it unless shared)
 - Lists the open questions to ask the customer before committing
 - Output: estimate table plus statement-of-work draft, for an engineer to check
 
@@ -346,7 +346,7 @@ customers/<oem-b>/      ...
 
 The M1 280 and M1 are specified for operation from −20 °C (storage from −30 °C). Quebec winters regularly go colder, and machines may sit outside overnight.
 
-- Raise this with maximatecc for each project: extended-temperature variant, cab installation, or a warm-up strategy (**VERIFY** options with maximatecc)
+- Raise this with A99 for each project: extended-temperature variant, cab installation, or a warm-up strategy (**VERIFY** options with A99)
 - Screen design for cold: LCD response slows in the cold, so avoid fast animations and thin moving needles; prefer large digits and solid bars
 - Show a clear warm-up or "display warming" state if the application needs it
 - Large targets and key-based navigation for gloved hands
@@ -452,7 +452,7 @@ questions for the customer, and draft a statement of work for an engineer to che
 
 ## How the relationship grows
 
-| Stage | Timing | Focus | maximatecc offers | Wainbee offers |
+| Stage | Timing | Focus | A99 offers | Wainbee offers |
 |---|---|---|---|---|
 | 1. Pilot | First 6 weeks | Prove the Claude Code workflow on one real application | This guide, data-layer rules, signal generator, PC test harness, weekly check-in | One application, signal list, two engineers, honest feedback |
 | 2. Integrator programme | Months 2–12 | Make M1 Wainbee's fastest display offer | Early access to new SDK releases (M1 first), training for Wainbee engineers, joint demos for OEM prospects | Catalogue built and shared back where generic, two to three OEM projects on M1, quarterly feature requests |
@@ -461,18 +461,18 @@ questions for the customer, and draft a statement of work for an engineer to che
 **Ways of working (proposed)**
 
 - Monthly 30-minute engineering call; quarterly business review with the product manager
-- A shared backlog of SDK requests from Wainbee, with maximatecc's response on each item
+- A shared backlog of SDK requests from Wainbee, with A99's response on each item
 - Shared metrics, reviewed quarterly:
   - days from first OEM meeting to first demo screen
   - hours to add a proprietary signal
   - defects found on the PC before hardware
   - OEM projects won with M1
   - support tickets solved without a site visit
-- Wainbee owns its catalogue, customer folders and rates; maximatecc owns the SDK. Generic improvements Wainbee chooses to share can flow back into the SDK for all customers, by written agreement
+- Wainbee owns its catalogue, customer folders and rates; A99 owns the SDK. Generic improvements Wainbee chooses to share can flow back into the SDK for all customers, by written agreement
 
 ## Sources
 
-- maximatecc M1 software solutions: https://www.maximatecc.com/maxai-software-solutions/
+- A99 M1 software solutions: https://www.maximatecc.com/maxai-software-solutions/
 - M1 280 SDK manual: https://maximatecc.com/280-instrument-displays-SDK-manual/
 - M1 280 product page: https://www.maximatecc.com/maxai-280/
 - M1 product page: https://www.maximatecc.com/maxai-430/
